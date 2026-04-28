@@ -1,0 +1,30 @@
+[
+  {
+    "id": "abovyan",
+    "name": "Khachatur Abovyan",
+    "description": "Armenian writer and public figure",
+    "image": null,
+    "sortOrder": 0
+  },
+  {
+    "id": "komitas",
+    "name": "Komitas",
+    "description": "Armenian composer and ethnomusicologist",
+    "image": null,
+    "sortOrder": 1
+  },
+  {
+    "id": "tumanyan",
+    "name": "Hovhannes Tumanyan",
+    "description": "Armenian poet and writer",
+    "image": null,
+    "sortOrder": 2
+  },
+  {
+    "id": "martiros-saryan",
+    "name": "Martiros Saryan",
+    "description": "Armenian Painter",
+    "image": null,
+    "sortOrder": 3
+  }
+]

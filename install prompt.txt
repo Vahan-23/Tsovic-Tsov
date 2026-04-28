@@ -1,0 +1,157 @@
+📄 Tsovic-Tsov — Product & MVP Specification
+🧠 Project Idea
+
+Tsovic-Tsov is a mobile application that transforms city exploration into a collectible and gamified experience.
+
+Users walk around the city, find real-world statues, scan QR codes near them, and unlock digital versions of those statues inside the app.
+
+Each unlocked statue contains:
+
+short historical description
+interesting facts
+visual content
+
+The goal is to turn walking in the city into an interactive cultural journey.
+
+🎯 MVP Goal
+
+Build a simple working demo where:
+
+User opens the app
+Sees a grid of statues (locked/unlocked)
+Scans a QR code
+Unlocks a statue
+Opens statue details
+🧩 Core Features (MVP)
+1. Collection Screen (Home)
+Grid layout (3x3 or similar)
+Statues:
+locked → gray
+unlocked → colored
+Progress indicator: X / N collected
+2. QR Scanner
+Button: “Scan QR”
+Opens camera
+Reads QR code
+If QR matches statue ID → unlock it
+3. Unlock Logic
+
+Each statue has unique ID:
+
+abovyan
+komitas
+tumanyan
+
+When scanned:
+
+find statue by ID
+set unlocked = true
+4. Statue Details Screen
+
+When user taps unlocked statue:
+
+name
+short description
+optional image
+message: “You discovered this statue”
+
+When user taps locked statue:
+
+show message:
+
+“Find this statue in real life and scan the QR code”
+
+5. Local Storage
+Save unlocked statues locally
+Use AsyncStorage
+Data persists after app restart
+🗿 Initial Data (Example)
+const figures = [
+  {
+    id: "abovyan",
+    name: "Khachatur Abovyan",
+    unlocked: false,
+    description: "Armenian writer and public figure"
+  },
+  {
+    id: "komitas",
+    name: "Komitas",
+    unlocked: false,
+    description: "Armenian composer and ethnomusicologist"
+  },
+  {
+    id: "tumanyan",
+    name: "Hovhannes Tumanyan",
+    unlocked: false,
+    description: "Armenian poet and writer"
+  }
+];
+🎨 UI / UX Concept
+Minimalistic interface
+Focus on collection
+Visual difference:
+locked → gray / blurred
+unlocked → colored
+Smooth animations when unlocking
+Simple navigation
+🔥 User Experience
+
+Main loop:
+
+User sees locked statues
+Gets curious
+Finds QR in real world
+Scans
+Unlocks
+Feels reward
+Continues collecting
+🧱 Tech Stack
+React Native (Expo)
+JavaScript (React)
+Expo Camera (QR scanning)
+AsyncStorage (local persistence)
+⚠️ Out of Scope (for now)
+
+Do NOT implement:
+
+backend (FastAPI, etc.)
+authentication
+marketplace
+payments
+AR features
+maps (optional later)
+🚀 Future Ideas (not for MVP)
+Map with statue locations
+Categories (writers, heroes, etc.)
+Achievements system
+Rare statues
+Marketplace for physical statues
+AR interactions
+🎯 Development Strategy
+
+Build step-by-step:
+
+Create Expo project
+Build collection screen
+Add QR scanner
+Implement unlock logic
+Add detail screen
+Add local storage
+Polish UI
+🧠 Key Principle
+
+Keep it simple.
+
+Focus only on:
+👉 scan → unlock → collect
+
+Everything else comes later.
+
+🏁 Success Criteria
+
+MVP is successful if:
+
+user can unlock at least 1 statue via QR
+progress is saved
+UI clearly shows locked vs unlocked
+flow feels satisfying
