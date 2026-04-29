@@ -7,12 +7,12 @@ export default function StatueDetailScreen({ route, navigation }) {
   const { figures } = useFigures();
 
   const figure = useMemo(
-    () => figures.find((f) => f.id === statueId),
+    () => figures.find((f) => String(f.id) === String(statueId)),
     [figures, statueId]
   );
 
   useLayoutEffect(() => {
-    navigation.setOptions({ title: figure ? figure.name : 'Արձան' });
+    navigation.setOptions({ title: figure ? figure.displayName ?? figure.name : 'Արձան' });
   }, [navigation, figure]);
 
   if (!figure) {
@@ -34,7 +34,7 @@ export default function StatueDetailScreen({ route, navigation }) {
 
   return (
     <ScrollView contentContainerStyle={styles.scroll}>
-      <Text style={styles.title}>{figure.name}</Text>
+      <Text style={styles.title}>{figure.displayName ?? figure.name}</Text>
       {figure.image ? (
         <Image
           source={

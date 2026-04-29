@@ -9,6 +9,7 @@ import { FiguresProvider } from './src/context/FiguresContext';
 import CollectionScreen from './src/screens/CollectionScreen';
 import StatueDetailScreen from './src/screens/StatueDetailScreen';
 import ScanScreen from './src/screens/ScanScreen';
+import NavigationScreen from './src/screens/NavigationScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -44,6 +45,13 @@ export default function App() {
                 options={{
                   headerShown: false,
                   presentation: 'modal',
+                }}
+              />
+              <Stack.Screen
+                name="Navigate"
+                component={NavigationScreen}
+                options={{
+                  headerShown: false,
                 }}
               />
             </Stack.Navigator>

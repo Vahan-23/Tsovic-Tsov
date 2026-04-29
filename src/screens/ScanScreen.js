@@ -74,7 +74,7 @@ export default function ScanScreen({ navigation }) {
       nearbyLockedStatues.forEach((figure) => {
         const result = unlockById(figure.id);
         if (result.ok && !result.alreadyHad) {
-          discoveredNames.push(figure.name);
+          discoveredNames.push(figure.displayName ?? figure.name);
         }
       });
 

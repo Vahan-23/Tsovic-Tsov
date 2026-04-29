@@ -18,6 +18,11 @@ import { haversineDistanceMeters } from '../utils/haversine';
 import MiniMap from '../components/MiniMap';
 
 const FOOTPRINT_ICON = require('../../assets/footprints_21766.png');
+const SEARCH_ICONS = [
+  require('../../assets/search_ico/Gemini_Generated_Image_rcrvqkrcrvqkrcrv.png'),
+  require('../../assets/search_ico/Gemini_Generated_Image_6b1xyb6b1xyb6b1x.png'),
+  require('../../assets/search_ico/Gemini_Generated_Image_jwomxqjwomxqjwom.png'),
+];
 
 const ACCENT = {
   abovyan: '#7C3AED',
@@ -68,6 +73,7 @@ function getDirectionLabel(bearing) {
 export default function CollectionScreen({ navigation }) {
   const insets = useSafeAreaInsets();
   const pulseAnim = useRef(new Animated.Value(0)).current;
+  const searchIconOpacity = useRef(new Animated.Value(1)).current;
   const radarAnims = useRef(
     Array.from({ length: 5 }, () => new Animated.Value(0))
   ).current;
@@ -75,8 +81,10 @@ export default function CollectionScreen({ navigation }) {
   const [isChecking, setIsChecking] = React.useState(false);
   const [guidance, setGuidance] = React.useState(null);
   const [mapVisible, setMapVisible] = React.useState(false);
+  const [searchIconIndex, setSearchIconIndex] = React.useState(0);
   const {
     figures,
+    figuresForGrid,
     unlockedCount,
     totalCount,
     storageLoaded,
@@ -129,6 +137,26 @@ export default function CollectionScreen({ navigation }) {
     };
   }, [isChecking, radarAnims]);
 
+  useEffect(() => {
+    if (!isChecking) return undefined;
+    const timer = setInterval(() => {
+      Animated.sequence([
+        Animated.timing(searchIconOpacity, {
+          toValue: 0.2,
+          duration: 260,
+          useNativeDriver: true,
+        }),
+        Animated.timing(searchIconOpacity, {
+          toValue: 1,
+          duration: 320,
+          useNativeDriver: true,
+        }),
+      ]).start();
+      setSearchIconIndex((prev) => (prev + 1) % SEARCH_ICONS.length);
+    }, 780);
+    return () => clearInterval(timer);
+  }, [isChecking, searchIconOpacity]);
+
   const handleCheckNearby = React.useCallback(async () => {
     if (isChecking) return;
     setIsChecking(true);
@@ -149,29 +177,53 @@ export default function CollectionScreen({ navigation }) {
           accuracy: Location.Accuracy.Balanced,
         });
 
+        const userLat = location.coords.latitude;
+        const userLon = location.coords.longitude;
+        const userLatRad = (userLat * Math.PI) / 180;
+        const latDeltaMax = UNLOCK_DISTANCE_METERS / 111000; // ~degrees per meter
+        const cosLat = Math.cos(userLatRad);
+        const lonDeltaMax = cosLat > 1e-6 ? latDeltaMax / cosLat : Infinity;
+
         const nearbyLockedStatues = figures.filter((figure) => {
           if (figure.unlocked) return false;
+          if (
+            !Number.isFinite(figure.latitude) ||
+            !Number.isFinite(figure.longitude)
+          ) {
+            return false;
+          }
+
+          // Fast bounding-box prefilter (limits heavy haversine calls).
+          if (Math.abs(figure.latitude - userLat) > latDeltaMax) return false;
+          if (Math.abs(figure.longitude - userLon) > lonDeltaMax) return false;
+
           const distance = haversineDistanceMeters(
-            { latitude: location.coords.latitude, longitude: location.coords.longitude },
+            { latitude: userLat, longitude: userLon },
             { latitude: figure.latitude, longitude: figure.longitude }
           );
           return distance < UNLOCK_DISTANCE_METERS;
         });
 
         if (nearbyLockedStatues.length === 0) {
-          const lockedWithDistance = figures
-            .filter((figure) => !figure.unlocked)
-            .map((figure) => {
-              const distance = haversineDistanceMeters(
-                { latitude: location.coords.latitude, longitude: location.coords.longitude },
-                { latitude: figure.latitude, longitude: figure.longitude }
-              );
-              return { figure, distance };
-            })
-            .filter((row) => Number.isFinite(row.distance))
-            .sort((a, b) => a.distance - b.distance);
+          let nearestFigure = null;
+          let nearestDistance = Number.POSITIVE_INFINITY;
 
-          if (lockedWithDistance.length === 0) {
+          for (const figure of figures) {
+            if (figure.unlocked) continue;
+            if (!Number.isFinite(figure.latitude) || !Number.isFinite(figure.longitude)) {
+              continue;
+            }
+            const distance = haversineDistanceMeters(
+              { latitude: userLat, longitude: userLon },
+              { latitude: figure.latitude, longitude: figure.longitude }
+            );
+            if (distance < nearestDistance) {
+              nearestDistance = distance;
+              nearestFigure = figure;
+            }
+          }
+
+          if (!nearestFigure || !Number.isFinite(nearestDistance)) {
             outcome = {
               type: 'empty',
               title: 'Արձան չգտնվեց',
@@ -179,16 +231,15 @@ export default function CollectionScreen({ navigation }) {
             };
             setGuidance(null);
           } else {
-            const nearest = lockedWithDistance[0];
             const metersLeft = Math.max(
               0,
-              Math.round(nearest.distance - UNLOCK_DISTANCE_METERS)
+              Math.round(nearestDistance - UNLOCK_DISTANCE_METERS)
             );
             const bearing = getBearingDegrees(
-              { latitude: location.coords.latitude, longitude: location.coords.longitude },
+              { latitude: userLat, longitude: userLon },
               {
-                latitude: nearest.figure.latitude,
-                longitude: nearest.figure.longitude,
+                latitude: nearestFigure.latitude,
+                longitude: nearestFigure.longitude,
               }
             );
             const direction = getDirectionLabel(bearing);
@@ -207,20 +258,24 @@ export default function CollectionScreen({ navigation }) {
             }
             const turnDelta = ((bearing - heading + 540) % 360) - 180;
             setGuidance({
-              targetName: nearest.figure.name,
+              targetId: nearestFigure.id,
+              targetName: nearestFigure.displayName,
+              targetLat: nearestFigure.latitude,
+              targetLon: nearestFigure.longitude,
               metersLeft,
               directionLabel: `${direction.arrow} ${direction.label}`,
               azimuthDeg: Math.round(bearing),
               rotationDeg: Math.round(turnDelta),
             });
-            setMapVisible(true);
             outcome = { type: 'modal' };
           }
         } else {
           const discovered = [];
           nearbyLockedStatues.forEach((figure) => {
             const result = unlockById(figure.id);
-            if (result.ok && !result.alreadyHad) discovered.push(figure.name);
+            if (result.ok && !result.alreadyHad) {
+              discovered.push(figure.displayName);
+            }
           });
 
           if (discovered.length === 0) {
@@ -246,7 +301,9 @@ export default function CollectionScreen({ navigation }) {
         await wait(MIN_SEARCH_MS - elapsed);
       }
 
-      if (outcome.type !== 'none' && outcome.type !== 'modal') {
+      if (outcome.type === 'modal') {
+        setMapVisible(true);
+      } else if (outcome.type !== 'none') {
         Alert.alert(outcome.title, outcome.message);
       }
     } catch {
@@ -274,8 +331,8 @@ export default function CollectionScreen({ navigation }) {
         {unlockedCount} / {totalCount} հավաքված
       </Text>
       <FlatList
-        data={figures}
-        keyExtractor={(item) => item.id}
+        data={figuresForGrid}
+        keyExtractor={(item) => String(item.id)}
         numColumns={3}
         columnWrapperStyle={styles.row}
         contentContainerStyle={styles.grid}
@@ -293,17 +350,17 @@ export default function CollectionScreen({ navigation }) {
             <Text
               style={[
                 styles.cardInitial,
-                item.unlocked && { color: ACCENT[item.id] ?? '#2563EB' },
+                item.unlocked && { color: ACCENT[String(item.id)] ?? '#2563EB' },
               ]}
               numberOfLines={1}
             >
-              {item.name.charAt(0)}
+              {item.displayName?.charAt(0) ?? '•'}
             </Text>
             <Text
               style={[styles.cardName, !item.unlocked && styles.cardNameLocked]}
               numberOfLines={2}
             >
-              {item.name}
+              {item.displayName}
             </Text>
           </Pressable>
         )}
@@ -392,176 +449,14 @@ export default function CollectionScreen({ navigation }) {
         )}
         <View style={styles.scanButtonCore}>
           {isChecking ? (
-            <>
-              <Animated.View
-                pointerEvents="none"
-                style={[
-                  styles.radarDot,
-                  styles.dotYellow,
-                  {
-                    opacity: pulseAnim.interpolate({
-                      inputRange: [0, 0.3, 1],
-                      outputRange: [0.2, 1, 0.15],
-                    }),
-                    transform: [
-                      {
-                        scale: pulseAnim.interpolate({
-                          inputRange: [0, 0.5, 1],
-                          outputRange: [0.8, 1.2, 0.9],
-                        }),
-                      },
-                    ],
-                  },
-                ]}
-              />
-              <Animated.View
-                pointerEvents="none"
-                style={[
-                  styles.radarDot,
-                  styles.dotWhite,
-                  {
-                    opacity: pulseAnim.interpolate({
-                      inputRange: [0, 0.5, 1],
-                      outputRange: [0.15, 0.95, 0.2],
-                    }),
-                    transform: [
-                      {
-                        scale: pulseAnim.interpolate({
-                          inputRange: [0, 0.4, 1],
-                          outputRange: [1.2, 0.8, 1.1],
-                        }),
-                      },
-                    ],
-                  },
-                ]}
-              />
-              <Animated.View
-                pointerEvents="none"
-                style={[
-                  styles.radarDot,
-                  styles.dotDarkGreen,
-                  {
-                    opacity: pulseAnim.interpolate({
-                      inputRange: [0, 0.2, 1],
-                      outputRange: [0.1, 0.9, 0.2],
-                    }),
-                    transform: [
-                      {
-                        scale: pulseAnim.interpolate({
-                          inputRange: [0, 0.6, 1],
-                          outputRange: [0.9, 1.25, 0.75],
-                        }),
-                      },
-                    ],
-                  },
-                ]}
-              />
-              <Animated.View
-                pointerEvents="none"
-                style={[
-                  styles.radarDot,
-                  styles.dotBlack,
-                  {
-                    opacity: pulseAnim.interpolate({
-                      inputRange: [0, 0.45, 1],
-                      outputRange: [0.05, 0.65, 0.1],
-                    }),
-                    transform: [
-                      {
-                        scale: pulseAnim.interpolate({
-                          inputRange: [0, 0.35, 1],
-                          outputRange: [1.15, 0.85, 1],
-                        }),
-                      },
-                    ],
-                  },
-                ]}
-              />
-              <Animated.View
-                pointerEvents="none"
-                style={[
-                  styles.radarDot,
-                  styles.dotSquareMint,
-                  {
-                    opacity: pulseAnim.interpolate({
-                      inputRange: [0, 0.35, 1],
-                      outputRange: [0.2, 0.95, 0.2],
-                    }),
-                    transform: [
-                      {
-                        rotate: pulseAnim.interpolate({
-                          inputRange: [0, 1],
-                          outputRange: ['0deg', '24deg'],
-                        }),
-                      },
-                    ],
-                  },
-                ]}
-              />
-              <Animated.View
-                pointerEvents="none"
-                style={[
-                  styles.radarDot,
-                  styles.dotSquareWhite,
-                  {
-                    opacity: pulseAnim.interpolate({
-                      inputRange: [0, 0.5, 1],
-                      outputRange: [0.1, 0.85, 0.15],
-                    }),
-                    transform: [
-                      {
-                        rotate: pulseAnim.interpolate({
-                          inputRange: [0, 1],
-                          outputRange: ['-10deg', '18deg'],
-                        }),
-                      },
-                    ],
-                  },
-                ]}
-              />
-              <Animated.View
-                pointerEvents="none"
-                style={[
-                  styles.triangleDot,
-                  styles.dotTriangleYellow,
-                  {
-                    opacity: pulseAnim.interpolate({
-                      inputRange: [0, 0.4, 1],
-                      outputRange: [0.05, 0.9, 0.1],
-                    }),
-                  },
-                ]}
-              />
-              <Animated.View
-                pointerEvents="none"
-                style={[
-                  styles.triangleDot,
-                  styles.dotTriangleGreen,
-                  {
-                    opacity: pulseAnim.interpolate({
-                      inputRange: [0, 0.55, 1],
-                      outputRange: [0.1, 0.85, 0.1],
-                    }),
-                  },
-                ]}
-              />
-              <Animated.View
-                pointerEvents="none"
-                style={[
-                  styles.radarDot,
-                  styles.dotCircleSoftGreen,
-                  {
-                    opacity: pulseAnim.interpolate({
-                      inputRange: [0, 0.5, 1],
-                      outputRange: [0.1, 0.8, 0.15],
-                    }),
-                  },
-                ]}
-              />
-            </>
-          ) : null}
-          <Text style={styles.scanButtonIcon}>⌕</Text>
-          <Text style={styles.scanButtonText}>{isChecking ? 'Որոնում...' : 'Փնտրել'}</Text>
+            <Animated.Image
+              source={SEARCH_ICONS[searchIconIndex]}
+              style={[styles.searchCycleIcon, { opacity: searchIconOpacity }]}
+            />
+          ) : (
+            <Text style={styles.scanButtonIcon}>⌕</Text>
+          )}
+          {!isChecking ? <Text style={styles.scanButtonText}>Փնտրել</Text> : null}
         </View>
       </Pressable>
       <Text style={styles.scanHint}>
@@ -591,17 +486,29 @@ export default function CollectionScreen({ navigation }) {
             <Text style={styles.modalStatSub}>AZIMUTH {guidance?.azimuthDeg ?? 0}°</Text>
             <View style={styles.modalButtonsRow}>
               <Pressable
+                style={({ pressed }) => [styles.modalGoButton, pressed && { opacity: 0.85 }]}
+                onPress={() => {
+                  const targetId = guidance?.targetId;
+                  const targetLat = guidance?.targetLat;
+                  const targetLon = guidance?.targetLon;
+                  const targetName = guidance?.targetName;
+                  setMapVisible(false);
+                  navigation.navigate('Navigate', {
+                    targetId,
+                    targetLat,
+                    targetLon,
+                    targetName,
+                  });
+                }}
+              >
+                <Text style={styles.modalGoButtonText}>GO</Text>
+                <Image source={FOOTPRINT_ICON} style={styles.modalGoIcon} />
+              </Pressable>
+              <Pressable
                 style={({ pressed }) => [styles.okButton, pressed && { opacity: 0.85 }]}
                 onPress={() => setMapVisible(false)}
               >
                 <Text style={styles.okButtonText}>OK</Text>
-              </Pressable>
-              <Pressable
-                style={({ pressed }) => [styles.modalGoButton, pressed && { opacity: 0.85 }]}
-                onPress={() => setMapVisible(false)}
-              >
-                <Image source={FOOTPRINT_ICON} style={styles.modalGoIcon} />
-                <Text style={styles.modalGoButtonText}>GO</Text>
               </Pressable>
             </View>
           </View>
@@ -727,85 +634,16 @@ const styles = StyleSheet.create({
     elevation: 8,
     overflow: 'hidden',
   },
-  radarDot: {
-    position: 'absolute',
-    borderRadius: 99,
-  },
-  dotYellow: {
-    width: 16,
-    height: 16,
-    backgroundColor: '#FACC15',
-    top: 20,
-    left: 24,
-  },
-  dotWhite: {
-    width: 12,
-    height: 12,
-    backgroundColor: '#FFFFFF',
-    top: 48,
-    right: 22,
-  },
-  dotDarkGreen: {
-    width: 14,
-    height: 14,
-    backgroundColor: '#166534',
-    bottom: 20,
-    left: 34,
-  },
-  dotBlack: {
-    width: 10,
-    height: 10,
-    backgroundColor: '#0B0F0C',
-    bottom: 30,
-    right: 30,
-  },
-  dotSquareMint: {
-    width: 13,
-    height: 13,
-    borderRadius: 2,
-    backgroundColor: '#34D399',
-    top: 26,
-    right: 40,
-  },
-  dotSquareWhite: {
-    width: 9,
-    height: 9,
-    borderRadius: 2,
-    backgroundColor: '#ECFEFF',
-    bottom: 43,
-    left: 20,
-  },
-  dotCircleSoftGreen: {
-    width: 11,
-    height: 11,
-    backgroundColor: '#86EFAC',
-    top: 58,
-    left: 50,
-  },
-  triangleDot: {
-    position: 'absolute',
-    width: 0,
-    height: 0,
-    borderLeftWidth: 7,
-    borderRightWidth: 7,
-    borderBottomWidth: 13,
-    borderLeftColor: 'transparent',
-    borderRightColor: 'transparent',
-  },
-  dotTriangleYellow: {
-    borderBottomColor: '#FDE047',
-    top: 22,
-    left: 62,
-  },
-  dotTriangleGreen: {
-    borderBottomColor: '#14532D',
-    bottom: 18,
-    right: 44,
-  },
   scanButtonIcon: {
     color: '#FFFFFF',
     fontSize: 34,
     marginBottom: 4,
+  },
+  searchCycleIcon: {
+    width: 78,
+    height: 78,
+    marginBottom: 2,
+    resizeMode: 'contain',
   },
   scanButtonText: {
     color: '#FFFFFF',
