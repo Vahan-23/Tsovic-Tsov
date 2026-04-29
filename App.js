@@ -36,7 +36,7 @@ export default function App() {
               <Stack.Screen
                 name="StatueDetail"
                 component={StatueDetailScreen}
-                options={{ title: 'Statue' }}
+                options={{ title: 'Արձան' }}
               />
               <Stack.Screen
                 name="Scan"

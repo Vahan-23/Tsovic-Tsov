@@ -1,103 +1,172 @@
-import React, { useCallback, useRef, useState } from 'react';
-import {
-  Alert,
-  Pressable,
-  StyleSheet,
-  Text,
-  View,
-} from 'react-native';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { Alert, Animated, Pressable, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { CameraView, useCameraPermissions } from 'expo-camera';
+import * as Location from 'expo-location';
 import { useFigures } from '../context/FiguresContext';
+import { haversineDistanceMeters } from '../utils/haversine';
 
-const SCAN_DEBOUNCE_MS = 1200;
+const UNLOCK_DISTANCE_METERS = 50;
 
 export default function ScanScreen({ navigation }) {
   const insets = useSafeAreaInsets();
-  const [permission, requestPermission] = useCameraPermissions();
-  const { unlockById, isUnlockableId } = useFigures();
-  const lastHandledRef = useRef(0);
-  const [hint, setHint] = useState('');
+  const { figures, unlockById } = useFigures();
+  const [isChecking, setIsChecking] = useState(false);
+  const [statusText, setStatusText] = useState('');
+  const pulseAnim = useRef(new Animated.Value(0)).current;
 
-  const handleBarcode = useCallback(
-    ({ data }) => {
-      const now = Date.now();
-      if (now - lastHandledRef.current < SCAN_DEBOUNCE_MS) return;
-      const trimmed = typeof data === 'string' ? data.trim() : '';
-      if (!trimmed) return;
+  useEffect(() => {
+    const loop = Animated.loop(
+      Animated.sequence([
+        Animated.timing(pulseAnim, {
+          toValue: 1,
+          duration: 1200,
+          useNativeDriver: true,
+        }),
+        Animated.timing(pulseAnim, {
+          toValue: 0,
+          duration: 1200,
+          useNativeDriver: true,
+        }),
+      ])
+    );
+    loop.start();
+    return () => loop.stop();
+  }, [pulseAnim]);
 
-      lastHandledRef.current = now;
+  const handleCheckNearby = useCallback(async () => {
+    if (isChecking) return;
 
-      if (!isUnlockableId(trimmed)) {
-        setHint('Unknown QR — not a statue id from your current catalog.');
+    setIsChecking(true);
+    setStatusText('Ստուգվում է քո տեղադրությունը...');
+
+    try {
+      const { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== 'granted') {
+        setStatusText('Պետք է թույլ տաս տեղադրության հասանելիությունը։');
         return;
       }
 
-      const result = unlockById(trimmed);
-      if (!result.ok) {
-        setHint('Unknown statue ID.');
+      const location = await Location.getCurrentPositionAsync({
+        accuracy: Location.Accuracy.Balanced,
+      });
+
+      const nearbyLockedStatues = figures.filter((figure) => {
+        if (figure.unlocked) return false;
+        const distance = haversineDistanceMeters(
+          {
+            latitude: location.coords.latitude,
+            longitude: location.coords.longitude,
+          },
+          {
+            latitude: figure.latitude,
+            longitude: figure.longitude,
+          }
+        );
+        return distance < UNLOCK_DISTANCE_METERS;
+      });
+
+      if (nearbyLockedStatues.length === 0) {
+        setStatusText('Մոտակայքում արձան չկա։ Մոտեցիր ու նորից փորձիր։');
         return;
       }
 
-      if (result.alreadyHad) {
-        setHint('You already unlocked this statue.');
+      const discoveredNames = [];
+      nearbyLockedStatues.forEach((figure) => {
+        const result = unlockById(figure.id);
+        if (result.ok && !result.alreadyHad) {
+          discoveredNames.push(figure.name);
+        }
+      });
+
+      if (discoveredNames.length === 0) {
+        setStatusText('Նոր արձան չբացվեց։');
         return;
       }
 
-      setHint('');
-      Alert.alert('Unlocked', 'New statue added to your collection.', [
-        { text: 'OK', onPress: () => navigation.goBack() },
+      const message =
+        discoveredNames.length === 1
+          ? `Դու հայտնաբերեցիր ${discoveredNames[0]}-ը։`
+          : discoveredNames.map((name) => `Դու հայտնաբերեցիր ${name}-ը։`).join('\n');
+      Alert.alert('Բացվեց', message, [
+        { text: 'Լավ', onPress: () => navigation.goBack() },
       ]);
-    },
-    [navigation, unlockById, isUnlockableId]
-  );
-
-  if (!permission) {
-    return (
-      <View style={styles.centered}>
-        <Text style={styles.muted}>Checking camera permission…</Text>
-      </View>
-    );
-  }
-
-  if (!permission.granted) {
-    return (
-      <View style={styles.centered}>
-        <Text style={styles.body}>
-          Camera access is needed to scan statue QR codes.
-        </Text>
-        <Pressable style={styles.primaryBtn} onPress={requestPermission}>
-          <Text style={styles.primaryBtnText}>Allow camera</Text>
-        </Pressable>
-        <Pressable style={styles.secondaryBtn} onPress={() => navigation.goBack()}>
-          <Text style={styles.secondaryBtnText}>Go back</Text>
-        </Pressable>
-      </View>
-    );
-  }
+    } catch {
+      setStatusText('Չհաջողվեց ստանալ տեղադրությունը։ Փորձիր կրկին։');
+    } finally {
+      setIsChecking(false);
+    }
+  }, [figures, isChecking, navigation, unlockById]);
 
   return (
-    <View style={styles.root}>
-      <CameraView
-        style={StyleSheet.absoluteFill}
-        facing="back"
-        barcodeScannerSettings={{ barcodeTypes: ['qr'] }}
-        onBarcodeScanned={handleBarcode}
-      />
-      <View style={styles.overlay} pointerEvents="none">
-        <View style={styles.frame} />
-        <Text style={styles.overlayHint}>Point at a statue QR code</Text>
+    <View style={[styles.root, { paddingTop: insets.top + 24 }]}>
+      <View style={styles.content}>
+        <Text style={styles.title}>Մոտակայքի արձաններ</Text>
+        <Text style={styles.body}>
+          Սեղմիր կլոր կոճակը, որ բացվեն այն արձանները, որոնք քո ներկայիս
+          տեղադրությունից 50 մետր շառավղում են։
+        </Text>
+
+        <Pressable
+          style={({ pressed }) => [
+            styles.primaryBtn,
+            (pressed || isChecking) && styles.primaryBtnPressed,
+          ]}
+          onPress={handleCheckNearby}
+          disabled={isChecking}
+        >
+          <Animated.View
+            pointerEvents="none"
+            style={[
+              styles.pulseRingOuter,
+              {
+                opacity: pulseAnim.interpolate({
+                  inputRange: [0, 1],
+                  outputRange: [0.45, 0.15],
+                }),
+                transform: [
+                  {
+                    scale: pulseAnim.interpolate({
+                      inputRange: [0, 1],
+                      outputRange: [1, 1.12],
+                    }),
+                  },
+                ],
+              },
+            ]}
+          />
+          <Animated.View
+            pointerEvents="none"
+            style={[
+              styles.pulseRingInner,
+              {
+                opacity: pulseAnim.interpolate({
+                  inputRange: [0, 1],
+                  outputRange: [0.55, 0.22],
+                }),
+                transform: [
+                  {
+                    scale: pulseAnim.interpolate({
+                      inputRange: [0, 1],
+                      outputRange: [1, 1.08],
+                    }),
+                  },
+                ],
+              },
+            ]}
+          />
+          <View style={styles.primaryBtnCore}>
+            <Text style={styles.primaryBtnIcon}>⌕</Text>
+            <Text style={styles.primaryBtnText}>
+              {isChecking ? 'Ստուգում...' : 'Փնտրել'}
+            </Text>
+          </View>
+        </Pressable>
+
+        {statusText ? <Text style={styles.hintText}>{statusText}</Text> : null}
       </View>
-      {hint ? (
-        <View style={styles.hintBox}>
-          <Text style={styles.hintText}>{hint}</Text>
-        </View>
-      ) : null}
-      <Pressable
-        style={[styles.closeBtn, { top: insets.top + 8 }]}
-        onPress={() => navigation.goBack()}
-      >
-        <Text style={styles.closeBtnText}>Close</Text>
+
+      <Pressable style={styles.secondaryBtn} onPress={() => navigation.goBack()}>
+        <Text style={styles.secondaryBtnText}>Փակել</Text>
       </Pressable>
     </View>
   );
@@ -106,87 +175,91 @@ export default function ScanScreen({ navigation }) {
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-    backgroundColor: '#000',
-  },
-  centered: {
-    flex: 1,
     backgroundColor: '#F9FAFB',
-    padding: 24,
+    paddingHorizontal: 20,
+    paddingBottom: 24,
+  },
+  content: {
+    flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    gap: 16,
   },
-  muted: {
-    fontSize: 16,
-    color: '#6B7280',
+  title: {
+    fontSize: 24,
+    fontWeight: '700',
+    color: '#111827',
+    marginBottom: 10,
+    textAlign: 'center',
   },
   body: {
     fontSize: 16,
     textAlign: 'center',
     color: '#374151',
-    marginBottom: 8,
+    marginBottom: 20,
+    lineHeight: 24,
   },
   primaryBtn: {
+    width: 168,
+    height: 168,
+    borderRadius: 84,
+    alignItems: 'center',
+    justifyContent: 'center',
+    position: 'relative',
+  },
+  primaryBtnPressed: {
+    transform: [{ scale: 0.97 }],
+  },
+  pulseRingOuter: {
+    position: 'absolute',
+    width: 168,
+    height: 168,
+    borderRadius: 84,
+    borderWidth: 2,
+    borderColor: '#4F46E5',
+  },
+  pulseRingInner: {
+    position: 'absolute',
+    width: 146,
+    height: 146,
+    borderRadius: 73,
+    borderWidth: 2,
+    borderColor: '#818CF8',
+  },
+  primaryBtnCore: {
+    width: 132,
+    height: 132,
+    borderRadius: 66,
     backgroundColor: '#111827',
-    paddingVertical: 12,
-    paddingHorizontal: 24,
-    borderRadius: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.24,
+    shadowRadius: 10,
+    elevation: 8,
+  },
+  primaryBtnIcon: {
+    color: '#FFF',
+    fontSize: 34,
+    marginBottom: 4,
   },
   primaryBtnText: {
     color: '#FFF',
     fontWeight: '600',
-    fontSize: 16,
+    fontSize: 15,
   },
   secondaryBtn: {
+    alignSelf: 'center',
     paddingVertical: 10,
   },
   secondaryBtnText: {
     color: '#4B5563',
     fontSize: 16,
   },
-  overlay: {
-    ...StyleSheet.absoluteFillObject,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0,0,0,0.35)',
-  },
-  frame: {
-    width: 240,
-    height: 240,
-    borderRadius: 16,
-    borderWidth: 2,
-    borderColor: 'rgba(255,255,255,0.9)',
-  },
-  overlayHint: {
-    marginTop: 20,
-    color: '#F9FAFB',
-    fontSize: 15,
-    fontWeight: '500',
-  },
-  hintBox: {
-    position: 'absolute',
-    left: 16,
-    right: 16,
-    bottom: 100,
-    backgroundColor: 'rgba(17,24,39,0.92)',
-    padding: 12,
-    borderRadius: 10,
-  },
   hintText: {
-    color: '#F9FAFB',
+    marginTop: 14,
+    color: '#4B5563',
     fontSize: 14,
     textAlign: 'center',
-  },
-  closeBtn: {
-    position: 'absolute',
-    right: 16,
-    backgroundColor: 'rgba(255,255,255,0.2)',
-    paddingVertical: 8,
-    paddingHorizontal: 14,
-    borderRadius: 8,
-  },
-  closeBtnText: {
-    color: '#FFF',
-    fontWeight: '600',
   },
 });

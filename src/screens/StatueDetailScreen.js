@@ -12,13 +12,13 @@ export default function StatueDetailScreen({ route, navigation }) {
   );
 
   useLayoutEffect(() => {
-    navigation.setOptions({ title: figure ? figure.name : 'Statue' });
+    navigation.setOptions({ title: figure ? figure.name : 'Արձան' });
   }, [navigation, figure]);
 
   if (!figure) {
     return (
       <View style={styles.centered}>
-        <Text style={styles.body}>Statue not found.</Text>
+        <Text style={styles.body}>Արձանը չի գտնվել։</Text>
       </View>
     );
   }
@@ -27,9 +27,7 @@ export default function StatueDetailScreen({ route, navigation }) {
     return (
       <ScrollView contentContainerStyle={styles.scroll}>
         <Text style={styles.title}>{figure.name}</Text>
-        <Text style={styles.hint}>
-          Find this statue in real life and scan the QR code
-        </Text>
+        <Text style={styles.hint}>Մոտեցիր այս արձանին՝ այն բացելու համար</Text>
       </ScrollView>
     );
   }
@@ -48,7 +46,7 @@ export default function StatueDetailScreen({ route, navigation }) {
           resizeMode="cover"
         />
       ) : null}
-      <Text style={styles.discovered}>You discovered this statue</Text>
+      <Text style={styles.discovered}>Դու հայտնաբերել ես այս արձանը</Text>
       <Text style={styles.body}>{figure.description}</Text>
     </ScrollView>
   );

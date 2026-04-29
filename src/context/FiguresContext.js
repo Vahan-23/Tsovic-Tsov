@@ -8,11 +8,7 @@ import React, {
 } from 'react';
 import { LayoutAnimation, Platform, UIManager } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {
-  FALLBACK_FIGURES,
-  sortFiguresList,
-} from '../data/figures';
-import { getFiguresApiBaseUrl } from '../config';
+import { FALLBACK_FIGURES, sortFiguresList } from '../data/figures';
 
 const STORAGE_KEY = '@tsovic_tsov/unlocked_figure_ids';
 
@@ -25,28 +21,9 @@ if (
   UIManager.setLayoutAnimationEnabledExperimental(true);
 }
 
-function normalizeRemoteFigure(row) {
-  return {
-    id: String(row.id || '').trim(),
-    name: String(row.name || '').trim(),
-    description: String(row.description || '').trim(),
-    image:
-      row.image == null || row.image === ''
-        ? null
-        : String(row.image).trim(),
-    sortOrder:
-      typeof row.sortOrder === 'number' && Number.isFinite(row.sortOrder)
-        ? row.sortOrder
-        : 0,
-  };
-}
-
 export function FiguresProvider({ children }) {
   const [unlockedIds, setUnlockedIds] = useState(() => new Set());
   const [storageLoaded, setStorageLoaded] = useState(false);
-  const [catalog, setCatalog] = useState(null);
-  const [catalogError, setCatalogError] = useState(null);
-  const [catalogRefreshing, setCatalogRefreshing] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -71,47 +48,19 @@ export function FiguresProvider({ children }) {
     };
   }, []);
 
-  const refreshCatalog = useCallback(async () => {
-    const base = getFiguresApiBaseUrl();
-    if (!base) {
-      setCatalog(null);
-      setCatalogError(null);
-      return;
-    }
-    setCatalogRefreshing(true);
-    setCatalogError(null);
-    try {
-      const res = await fetch(`${base}/api/figures?t=${Date.now()}`, {
-        headers: { Accept: 'application/json' },
-      });
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      const data = await res.json();
-      if (!Array.isArray(data.figures)) throw new Error('Invalid payload');
-      const normalized = data.figures.map(normalizeRemoteFigure).filter((f) => f.id);
-      setCatalog(sortFiguresList(normalized));
-    } catch (e) {
-      setCatalog(null);
-      setCatalogError(e?.message || 'fetch failed');
-    } finally {
-      setCatalogRefreshing(false);
-    }
-  }, []);
-
   useEffect(() => {
     if (!storageLoaded) return;
     const ids = [...unlockedIds];
     AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(ids)).catch(() => {});
   }, [unlockedIds, storageLoaded]);
 
-  const baseList = catalog && catalog.length > 0 ? catalog : FALLBACK_FIGURES;
-
   const figures = useMemo(
     () =>
-      sortFiguresList(baseList).map((f) => ({
+      sortFiguresList(FALLBACK_FIGURES).map((f) => ({
         ...f,
         unlocked: unlockedIds.has(f.id),
       })),
-    [baseList, unlockedIds]
+    [unlockedIds]
   );
 
   const unlockedCount = useMemo(
@@ -163,10 +112,6 @@ export function FiguresProvider({ children }) {
       unlockById,
       isUnlockableId,
       storageLoaded,
-      catalogFromRemote: Boolean(catalog && catalog.length > 0),
-      catalogError,
-      catalogRefreshing,
-      refreshCatalog,
     }),
     [
       figures,
@@ -175,10 +120,6 @@ export function FiguresProvider({ children }) {
       unlockById,
       isUnlockableId,
       storageLoaded,
-      catalog,
-      catalogError,
-      catalogRefreshing,
-      refreshCatalog,
     ]
   );
 

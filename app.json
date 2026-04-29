@@ -15,7 +15,7 @@
     "ios": {
       "supportsTablet": true,
       "infoPlist": {
-        "NSCameraUsageDescription": "Tsovic-Tsov uses the camera to scan QR codes on statues and unlock your collection."
+        "NSLocationWhenInUseUsageDescription": "Tsovic-Tsov uses your location to detect nearby statues and unlock your collection."
       }
     },
     "android": {
@@ -24,7 +24,7 @@
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true,
-      "permissions": ["CAMERA"],
+      "permissions": ["ACCESS_FINE_LOCATION"],
       "usesCleartextTraffic": true
     },
     "web": {

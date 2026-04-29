@@ -1,5 +1,6 @@
 /**
- * Fallback figures when the API is unavailable or EXPO_PUBLIC_FIGURES_API_URL is unset.
+ * Local-only statue catalog used by the Expo app.
+ * Replace latitude/longitude with the real statue coordinates you need.
  */
 export const FALLBACK_FIGURES = [
   {
@@ -7,6 +8,8 @@ export const FALLBACK_FIGURES = [
     name: 'Khachatur Abovyan',
     description: 'Armenian writer and public figure',
     image: null,
+    latitude: 40.18106,
+    longitude: 44.51308,
     sortOrder: 0,
   },
   {
@@ -14,6 +17,8 @@ export const FALLBACK_FIGURES = [
     name: 'Komitas',
     description: 'Armenian composer and ethnomusicologist',
     image: null,
+    latitude: 40.18647,
+    longitude: 44.51512,
     sortOrder: 1,
   },
   {
@@ -21,7 +26,27 @@ export const FALLBACK_FIGURES = [
     name: 'Hovhannes Tumanyan',
     description: 'Armenian poet and writer',
     image: null,
+    latitude: 40.17928,
+    longitude: 44.50994,
     sortOrder: 2,
+  },
+  {
+    id: 'sayat-nova',
+    name: 'Sayat-Nova',
+    description: 'Armenian poet, musician, and ashugh',
+    image: null,
+    latitude: 40.18331,
+    longitude: 44.5204,
+    sortOrder: 3,
+  },
+  {
+    id: 'charents',
+    name: 'Yeghishe Charents',
+    description: 'Armenian poet and public intellectual',
+    image: null,
+    latitude: 40.17812,
+    longitude: 44.51695,
+    sortOrder: 4,
   },
 ];
 
