@@ -9,9 +9,9 @@ import {
 } from 'react-native';
 import * as Location from 'expo-location';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import MapView, { Marker, Polyline } from 'react-native-maps';
 import { useFigures } from '../context/FiguresContext';
 import { haversineDistanceMeters } from '../utils/haversine';
-import MiniMap from '../components/MiniMap';
 
 function toRadians(value) {
   return (value * Math.PI) / 180;
@@ -45,15 +45,20 @@ export default function NavigationScreen({ route, navigation }) {
   const insets = useSafeAreaInsets();
   const { targetId, targetLat, targetLon, targetName } = route.params || {};
   const { unlockById } = useFigures();
+  const mapRef = useRef(null);
+  const hasTargetCoords =
+    typeof targetLat === 'number' && typeof targetLon === 'number';
 
   const [distanceMeters, setDistanceMeters] = useState(null);
   const [azimuthDeg, setAzimuthDeg] = useState(0);
   const [headingDeg, setHeadingDeg] = useState(0);
   const [isRunning, setIsRunning] = useState(false);
+  const [userCoords, setUserCoords] = useState(null);
 
   const rotationAnim = useRef(new Animated.Value(0)).current;
   const headingDegRef = useRef(0);
   const didUnlockRef = useRef(false);
+  const didFitRef = useRef(false);
 
   const turnHint = useMemo(() => {
     if (distanceMeters == null) return { title: 'Սկսում ենք…', arrow: '↑' };
@@ -69,6 +74,11 @@ export default function NavigationScreen({ route, navigation }) {
 
     (async () => {
       try {
+        if (!hasTargetCoords) {
+          Alert.alert('Սխալ', 'Թիրախի կոորդինատները բացակայում են։');
+          navigation.goBack();
+          return;
+        }
         setIsRunning(true);
         const { status } =
           await Location.requestForegroundPermissionsAsync();
@@ -88,6 +98,7 @@ export default function NavigationScreen({ route, navigation }) {
             if (cancelled) return;
             const lat = loc.coords.latitude;
             const lon = loc.coords.longitude;
+            setUserCoords({ latitude: lat, longitude: lon });
             const dist = haversineDistanceMeters(
               { latitude: lat, longitude: lon },
               { latitude: targetLat, longitude: targetLon }
@@ -104,6 +115,20 @@ export default function NavigationScreen({ route, navigation }) {
               ((bearing - headingDegRef.current + 540) % 360) - 180;
             const nextRotation = Math.round(turnDelta);
             rotationAnim.setValue(nextRotation);
+
+            if (mapRef.current && !didFitRef.current) {
+              didFitRef.current = true;
+              mapRef.current.fitToCoordinates(
+                [
+                  { latitude: lat, longitude: lon },
+                  { latitude: targetLat, longitude: targetLon },
+                ],
+                {
+                  edgePadding: { top: 110, right: 70, bottom: 130, left: 70 },
+                  animated: true,
+                }
+              );
+            }
 
             if (!didUnlockRef.current && dist < 50) {
               didUnlockRef.current = true;
@@ -146,6 +171,7 @@ export default function NavigationScreen({ route, navigation }) {
       if (headingSub && typeof headingSub.remove === 'function') headingSub.remove();
     };
   }, [
+    hasTargetCoords,
     navigation,
     targetId,
     targetLat,
@@ -170,7 +196,21 @@ export default function NavigationScreen({ route, navigation }) {
       </View>
 
       <View style={styles.center}>
-        <Animated.View style={[styles.arrowWrap, { transform: [{ rotate: rotationAnim.interpolate({ inputRange: [-180, 180], outputRange: ['-180deg', '180deg'] }) }] }]}>
+        <Animated.View
+          style={[
+            styles.arrowWrap,
+            {
+              transform: [
+                {
+                  rotate: rotationAnim.interpolate({
+                    inputRange: [-180, 180],
+                    outputRange: ['-180deg', '180deg'],
+                  }),
+                },
+              ],
+            },
+          ]}
+        >
           <Text style={styles.arrow}>▲</Text>
         </Animated.View>
         <Text style={styles.turnText}>
@@ -179,11 +219,50 @@ export default function NavigationScreen({ route, navigation }) {
       </View>
 
       <View style={styles.mapWrap}>
-        <MiniMap
-          districtName="KENTRON"
-          distanceMeters={distanceMeters == null ? 0 : Math.max(0, Math.round(distanceMeters))}
-          azimuthDeg={azimuthDeg}
-        />
+        <MapView
+          ref={mapRef}
+          style={styles.map}
+          customMapStyle={DARK_MAP_STYLE}
+          showsCompass
+          showsScale
+          showsMyLocationButton={false}
+          showsUserLocation
+          followsUserLocation={false}
+          initialRegion={{
+            latitude: targetLat || 40.18,
+            longitude: targetLon || 44.51,
+            latitudeDelta: 0.02,
+            longitudeDelta: 0.02,
+          }}
+        >
+          {userCoords ? (
+            <Marker
+              coordinate={userCoords}
+              title="Դու"
+              pinColor="#2dd4bf"
+            />
+          ) : null}
+          {typeof targetLat === 'number' && typeof targetLon === 'number' ? (
+            <Marker
+              coordinate={{ latitude: targetLat, longitude: targetLon }}
+              title={targetName || 'Target'}
+              pinColor="#22c55e"
+            />
+          ) : null}
+          {userCoords &&
+          typeof targetLat === 'number' &&
+          typeof targetLon === 'number' ? (
+            <Polyline
+              coordinates={[
+                userCoords,
+                { latitude: targetLat, longitude: targetLon },
+              ]}
+              strokeColor="#22c55e"
+              strokeWidth={4}
+              lineDashPattern={[8, 8]}
+            />
+          ) : null}
+        </MapView>
       </View>
 
       <View style={styles.bottomBar}>
@@ -252,6 +331,13 @@ const styles = StyleSheet.create({
   mapWrap: {
     paddingHorizontal: 12,
     paddingBottom: 10,
+    minHeight: 260,
+  },
+  map: {
+    width: '100%',
+    height: 260,
+    borderRadius: 16,
+    overflow: 'hidden',
   },
   bottomBar: {
     paddingHorizontal: 16,
@@ -269,4 +355,30 @@ const styles = StyleSheet.create({
     fontWeight: '900',
   },
 });
+
+const DARK_MAP_STYLE = [
+  { elementType: 'geometry', stylers: [{ color: '#0a0a0a' }] },
+  { elementType: 'labels.text.fill', stylers: [{ color: '#b8b8b8' }] },
+  { elementType: 'labels.text.stroke', stylers: [{ color: '#0a0a0a' }] },
+  {
+    featureType: 'road',
+    elementType: 'geometry',
+    stylers: [{ color: '#2b2b2b' }],
+  },
+  {
+    featureType: 'road',
+    elementType: 'geometry.stroke',
+    stylers: [{ color: '#3a3a3a' }],
+  },
+  {
+    featureType: 'water',
+    elementType: 'geometry',
+    stylers: [{ color: '#111827' }],
+  },
+  {
+    featureType: 'poi',
+    elementType: 'labels',
+    stylers: [{ visibility: 'off' }],
+  },
+];
 

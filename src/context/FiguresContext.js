@@ -101,12 +101,15 @@ export function FiguresProvider({ children }) {
   }, [unlockedIds, unlockedLoaded]);
 
   const normalizeStatueForDisplay = useCallback((s) => {
+    // Never fall back to raw numeric id; those are not meaningful to users.
     const displayName =
+      s?.displayName ||
       s?.name_hy ||
-      s?.name_en ||
-      s?.name_ru ||
       s?.name ||
-      (s?.id != null ? String(s.id) : '');
+      s?.name_official ||
+      s?.name_loc ||
+      s?.name_ref ||
+      '';
     return { ...s, displayName };
   }, []);
 

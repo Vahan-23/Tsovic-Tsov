@@ -231,10 +231,7 @@ export default function CollectionScreen({ navigation }) {
             };
             setGuidance(null);
           } else {
-            const metersLeft = Math.max(
-              0,
-              Math.round(nearestDistance - UNLOCK_DISTANCE_METERS)
-            );
+            const distanceMeters = Math.round(nearestDistance);
             const bearing = getBearingDegrees(
               { latitude: userLat, longitude: userLon },
               {
@@ -262,7 +259,8 @@ export default function CollectionScreen({ navigation }) {
               targetName: nearestFigure.displayName,
               targetLat: nearestFigure.latitude,
               targetLon: nearestFigure.longitude,
-              metersLeft,
+              distanceMeters,
+              targetImage: nearestFigure.image || '',
               directionLabel: `${direction.arrow} ${direction.label}`,
               azimuthDeg: Math.round(bearing),
               rotationDeg: Math.round(turnDelta),
@@ -476,13 +474,20 @@ export default function CollectionScreen({ navigation }) {
             <Text style={styles.modalTitle}>TACTICAL MINIMAP</Text>
             <MiniMap
               districtName="KENTRON"
-              distanceMeters={guidance?.metersLeft ?? 0}
+              distanceMeters={guidance?.distanceMeters ?? 0}
               azimuthDeg={guidance?.azimuthDeg ?? 0}
             />
+            {guidance?.targetImage ? (
+              <Image
+                source={{ uri: guidance.targetImage }}
+                style={styles.modalTargetImage}
+                resizeMode="cover"
+              />
+            ) : null}
             <Text style={styles.modalHint}>
               TARGET: {guidance?.targetName ?? '-'} • {guidance?.directionLabel ?? '-'}
             </Text>
-            <Text style={styles.modalStatMain}>{guidance?.metersLeft ?? 0} m</Text>
+            <Text style={styles.modalStatMain}>{guidance?.distanceMeters ?? 0} m</Text>
             <Text style={styles.modalStatSub}>AZIMUTH {guidance?.azimuthDeg ?? 0}°</Text>
             <View style={styles.modalButtonsRow}>
               <Pressable
@@ -684,6 +689,13 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     marginTop: 10,
     marginBottom: 8,
+  },
+  modalTargetImage: {
+    width: '100%',
+    height: 160,
+    borderRadius: 12,
+    marginTop: 10,
+    backgroundColor: '#111',
   },
   modalStatMain: {
     color: '#FFFFFF',
