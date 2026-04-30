@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useMemo, useRef } from 'react';
 import {
   ActivityIndicator,
   Alert,
@@ -13,9 +13,11 @@ import {
 } from 'react-native';
 import * as Location from 'expo-location';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import MapView, { Marker, Polyline } from 'react-native-maps';
+import { POSITION_MAX_ACCURACY, WATCH_MODAL_MAP } from '../constants/gpsAccuracy';
+import { getDarkMapProps } from '../constants/mapAppearance';
 import { useFigures } from '../context/FiguresContext';
 import { haversineDistanceMeters } from '../utils/haversine';
-import MiniMap from '../components/MiniMap';
 
 const FOOTPRINT_ICON = require('../../assets/footprints_21766.png');
 const SEARCH_ICONS = [
@@ -82,6 +84,9 @@ export default function CollectionScreen({ navigation }) {
   const [guidance, setGuidance] = React.useState(null);
   const [mapVisible, setMapVisible] = React.useState(false);
   const [searchIconIndex, setSearchIconIndex] = React.useState(0);
+  const [liveUserCoords, setLiveUserCoords] = React.useState(null);
+  const [liveDistanceMeters, setLiveDistanceMeters] = React.useState(null);
+  const [liveAzimuthDeg, setLiveAzimuthDeg] = React.useState(null);
   const {
     figures,
     figuresForGrid,
@@ -157,6 +162,78 @@ export default function CollectionScreen({ navigation }) {
     return () => clearInterval(timer);
   }, [isChecking, searchIconOpacity]);
 
+  useEffect(() => {
+    let watcher = null;
+    let isActive = true;
+
+    async function startLiveTracking() {
+      if (!mapVisible || !guidance?.targetLat || !guidance?.targetLon) {
+        setLiveUserCoords(null);
+        setLiveDistanceMeters(null);
+        setLiveAzimuthDeg(null);
+        return;
+      }
+
+      try {
+        watcher = await Location.watchPositionAsync(
+          WATCH_MODAL_MAP,
+          (position) => {
+            if (!isActive) return;
+            const current = {
+              latitude: position.coords.latitude,
+              longitude: position.coords.longitude,
+            };
+            const target = {
+              latitude: guidance.targetLat,
+              longitude: guidance.targetLon,
+            };
+            setLiveUserCoords(current);
+            setLiveDistanceMeters(
+              Math.max(0, Math.round(haversineDistanceMeters(current, target)))
+            );
+            setLiveAzimuthDeg(Math.round(getBearingDegrees(current, target)));
+          }
+        );
+      } catch {
+        if (!isActive) return;
+        setLiveUserCoords(null);
+      }
+    }
+
+    startLiveTracking();
+
+    return () => {
+      isActive = false;
+      if (watcher) watcher.remove();
+    };
+  }, [guidance?.targetLat, guidance?.targetLon, mapVisible]);
+
+  const modalMapRegion = useMemo(() => {
+    const targetLat = guidance?.targetLat;
+    const targetLon = guidance?.targetLon;
+    if (!Number.isFinite(targetLat) || !Number.isFinite(targetLon)) return null;
+
+    const userLat = liveUserCoords?.latitude;
+    const userLon = liveUserCoords?.longitude;
+    if (!Number.isFinite(userLat) || !Number.isFinite(userLon)) {
+      return {
+        latitude: targetLat,
+        longitude: targetLon,
+        latitudeDelta: 0.006,
+        longitudeDelta: 0.006,
+      };
+    }
+
+    const latitude = (userLat + targetLat) / 2;
+    const longitude = (userLon + targetLon) / 2;
+    const latitudeDelta = Math.max(Math.abs(userLat - targetLat) * 2.6, 0.0045);
+    const longitudeDelta = Math.max(Math.abs(userLon - targetLon) * 2.6, 0.0045);
+    return { latitude, longitude, latitudeDelta, longitudeDelta };
+  }, [guidance?.targetLat, guidance?.targetLon, liveUserCoords?.latitude, liveUserCoords?.longitude]);
+
+  const shownDistanceMeters = liveDistanceMeters ?? guidance?.distanceMeters ?? 0;
+  const shownAzimuthDeg = liveAzimuthDeg ?? guidance?.azimuthDeg ?? 0;
+
   const handleCheckNearby = React.useCallback(async () => {
     if (isChecking) return;
     setIsChecking(true);
@@ -173,9 +250,9 @@ export default function CollectionScreen({ navigation }) {
           message: 'Խնդրում ենք թույլատրել տեղադրության հասանելիությունը։',
         };
       } else {
-        const location = await Location.getCurrentPositionAsync({
-          accuracy: Location.Accuracy.Balanced,
-        });
+        const location = await Location.getCurrentPositionAsync(
+          POSITION_MAX_ACCURACY
+        );
 
         const userLat = location.coords.latitude;
         const userLon = location.coords.longitude;
@@ -471,12 +548,46 @@ export default function CollectionScreen({ navigation }) {
       >
         <View style={styles.modalBackdrop}>
           <View style={styles.modalCard}>
-            <Text style={styles.modalTitle}>TACTICAL MINIMAP</Text>
-            <MiniMap
-              districtName="KENTRON"
-              distanceMeters={guidance?.distanceMeters ?? 0}
-              azimuthDeg={guidance?.azimuthDeg ?? 0}
-            />
+            <Text style={styles.modalTitle}>ՄՈՏԱԿԱ ՆՊԱՏԱԿ</Text>
+            {modalMapRegion ? (
+              <MapView
+                {...getDarkMapProps()}
+                style={styles.modalMap}
+                region={modalMapRegion}
+                pitchEnabled={false}
+                rotateEnabled={false}
+                toolbarEnabled={false}
+              >
+                {liveUserCoords ? (
+                  <Marker coordinate={liveUserCoords} title="Դու" pinColor="#22C55E" />
+                ) : null}
+                {Number.isFinite(guidance?.targetLat) && Number.isFinite(guidance?.targetLon) ? (
+                  <Marker
+                    coordinate={{
+                      latitude: guidance.targetLat,
+                      longitude: guidance.targetLon,
+                    }}
+                    title={guidance?.targetName ?? 'Նպատակ'}
+                    pinColor="#EF4444"
+                  />
+                ) : null}
+                {liveUserCoords &&
+                Number.isFinite(guidance?.targetLat) &&
+                Number.isFinite(guidance?.targetLon) ? (
+                  <Polyline
+                    coordinates={[
+                      liveUserCoords,
+                      {
+                        latitude: guidance.targetLat,
+                        longitude: guidance.targetLon,
+                      },
+                    ]}
+                    strokeColor="#60A5FA"
+                    strokeWidth={3}
+                  />
+                ) : null}
+              </MapView>
+            ) : null}
             {guidance?.targetImage ? (
               <Image
                 source={{ uri: guidance.targetImage }}
@@ -485,10 +596,10 @@ export default function CollectionScreen({ navigation }) {
               />
             ) : null}
             <Text style={styles.modalHint}>
-              TARGET: {guidance?.targetName ?? '-'} • {guidance?.directionLabel ?? '-'}
+              Թիրախ՝ {guidance?.targetName ?? '-'} • {guidance?.directionLabel ?? '-'}
             </Text>
-            <Text style={styles.modalStatMain}>{guidance?.distanceMeters ?? 0} m</Text>
-            <Text style={styles.modalStatSub}>AZIMUTH {guidance?.azimuthDeg ?? 0}°</Text>
+            <Text style={styles.modalStatMain}>{shownDistanceMeters} մ</Text>
+            <Text style={styles.modalStatSub}>Ազիմուտ՝ {shownAzimuthDeg}°</Text>
             <View style={styles.modalButtonsRow}>
               <Pressable
                 style={({ pressed }) => [styles.modalGoButton, pressed && { opacity: 0.85 }]}
@@ -500,20 +611,20 @@ export default function CollectionScreen({ navigation }) {
                   setMapVisible(false);
                   navigation.navigate('Navigate', {
                     targetId,
-                    targetLat,
-                    targetLon,
+                    targetLat: Number(targetLat),
+                    targetLon: Number(targetLon),
                     targetName,
                   });
                 }}
               >
-                <Text style={styles.modalGoButtonText}>GO</Text>
+                <Text style={styles.modalGoButtonText}>Գնալ</Text>
                 <Image source={FOOTPRINT_ICON} style={styles.modalGoIcon} />
               </Pressable>
               <Pressable
                 style={({ pressed }) => [styles.okButton, pressed && { opacity: 0.85 }]}
                 onPress={() => setMapVisible(false)}
               >
-                <Text style={styles.okButtonText}>OK</Text>
+                <Text style={styles.okButtonText}>Փակել</Text>
               </Pressable>
             </View>
           </View>
@@ -689,6 +800,13 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     marginTop: 10,
     marginBottom: 8,
+  },
+  modalMap: {
+    width: '100%',
+    height: 210,
+    borderRadius: 12,
+    overflow: 'hidden',
+    backgroundColor: '#000000',
   },
   modalTargetImage: {
     width: '100%',

@@ -2,6 +2,8 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Alert, Animated, Pressable, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import * as Location from 'expo-location';
+
+import { POSITION_MAX_ACCURACY } from '../constants/gpsAccuracy';
 import { useFigures } from '../context/FiguresContext';
 import { haversineDistanceMeters } from '../utils/haversine';
 
@@ -46,9 +48,9 @@ export default function ScanScreen({ navigation }) {
         return;
       }
 
-      const location = await Location.getCurrentPositionAsync({
-        accuracy: Location.Accuracy.Balanced,
-      });
+      const location = await Location.getCurrentPositionAsync(
+        POSITION_MAX_ACCURACY
+      );
 
       const nearbyLockedStatues = figures.filter((figure) => {
         if (figure.unlocked) return false;
