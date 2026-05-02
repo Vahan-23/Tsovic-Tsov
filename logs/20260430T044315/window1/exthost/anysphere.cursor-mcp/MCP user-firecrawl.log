@@ -1,0 +1,5 @@
+2026-04-30 04:43:49.722 [info] [V2] Handling CreateClient action
+2026-04-30 04:43:49.722 [info] [V2 FSM] connection:connect_start: conn=idle,auth=unknown -> conn=connecting,auth=unknown
+2026-04-30 04:43:51.802 [info] Successfully connected to stdio server
+2026-04-30 04:43:51.806 [info] [V2 FSM] connection:connect_success: conn=connecting,auth=unknown -> conn=connected,auth=unknown
+2026-04-30 04:43:51.808 [info] CreateClient completed, connected: true, statusType: connected

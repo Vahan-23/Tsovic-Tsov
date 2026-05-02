@@ -1,0 +1,22 @@
+2026-04-30 04:43:29.776 [info] MCP OAuth provider initialized
+2026-04-30 04:43:30.818 [info] MCP HTTP exchange completed
+2026-04-30 04:43:31.547 [info] MCP HTTP exchange completed
+2026-04-30 04:43:32.544 [warning] MCP HTTP exchange completed
+2026-04-30 04:43:32.546 [error] Client error for command Streamable HTTP error: Failed to open SSE stream: Bad Request
+2026-04-30 04:43:32.546 [warning] [V1] connected -> error: Streamable HTTP error: Failed to open SSE stream: Bad Request
+2026-04-30 04:43:32.547 [error] Client error for command Streamable HTTP error: Failed to open SSE stream: Bad Request
+2026-04-30 04:43:32.577 [info] MCP HTTP exchange completed
+2026-04-30 04:43:33.347 [info] MCP HTTP exchange completed
+2026-04-30 04:43:49.722 [info] [V2] Handling CreateClient action
+2026-04-30 04:43:49.722 [info] [V2 FSM] connection:connect_start: conn=idle,auth=unknown -> conn=connecting,auth=unknown
+2026-04-30 04:43:50.455 [info] MCP OAuth provider initialized
+2026-04-30 04:43:51.440 [info] MCP HTTP exchange completed
+2026-04-30 04:43:52.486 [info] MCP HTTP exchange completed
+2026-04-30 04:43:52.488 [info] Successfully connected to streamableHttp server
+2026-04-30 04:43:52.488 [info] [V2 FSM] connection:connect_success: conn=connecting,auth=unknown -> conn=connected,auth=unknown
+2026-04-30 04:43:52.489 [info] CreateClient completed, connected: true, statusType: connected
+2026-04-30 04:43:53.318 [warning] MCP HTTP exchange completed
+2026-04-30 04:43:53.330 [error] Client error: Streamable HTTP error: Failed to open SSE stream: Bad Request Streamable HTTP error: Failed to open SSE stream: Bad Request
+2026-04-30 04:43:53.330 [warning] [V2 FSM] connection:transport_error: conn=connected,auth=unknown -> conn=failed,auth=unknown
+2026-04-30 04:43:53.331 [error] Client error: Streamable HTTP error: Failed to open SSE stream: Bad Request Streamable HTTP error: Failed to open SSE stream: Bad Request
+2026-04-30 04:43:53.362 [info] MCP HTTP exchange completed

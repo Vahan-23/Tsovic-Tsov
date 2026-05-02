@@ -1,0 +1,5 @@
+2026/04/30-04:45:10.524 6624 Creating DB C:\Users\Vahan\Desktop\Tsovic-Tsov\Tsovic-Tsov\Partitions\cursor-browser\Local Storage\leveldb since it was missing.
+2026/04/30-04:45:10.531 6624 Reusing MANIFEST C:\Users\Vahan\Desktop\Tsovic-Tsov\Tsovic-Tsov\Partitions\cursor-browser\Local Storage\leveldb/MANIFEST-000001
+2026/04/30-04:46:10.534 28c8 Level-0 table #5: started
+2026/04/30-04:46:10.539 28c8 Level-0 table #5: 84994 bytes OK
+2026/04/30-04:46:10.542 28c8 Delete type=0 #3

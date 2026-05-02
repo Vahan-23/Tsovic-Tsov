@@ -150,5 +150,5 @@ export function convertOverpassJsonToStatues(overpassJson) {
   return Array.from(byId.values());
 }
 
-export const OVERPASS_CACHE_VERSION = 3;
+export const OVERPASS_CACHE_VERSION = 4;
 

@@ -1,0 +1,377 @@
+2026-04-30 04:43:23.415 [info] Extension host with pid 3648 started
+2026-04-30 04:43:23.415 [info] [ExtHostShellExec] Detecting sandbox support...
+2026-04-30 04:43:23.415 [info] [ExtHostShellExec] Platform: win32, Shell type: unknown
+2026-04-30 04:43:23.415 [info] [ExtHostShellExec] dirname: c:\Users\Vahan\AppData\Local\Programs\cursor\resources\app\out\vs\workbench\api\node
+2026-04-30 04:43:23.415 [info] [ExtHostShellExec] Sandbox helper path: c:\Users\Vahan\AppData\Local\Programs\cursor\resources\app\resources\helpers\cursorsandbox.exe
+2026-04-30 04:43:23.415 [info] [ExtHostShellExec] process.resourcesPath: c:\Users\Vahan\AppData\Local\Programs\cursor\resources
+2026-04-30 04:43:23.415 [info] [ExtHostShellExec] process.execPath: c:\Users\Vahan\AppData\Local\Programs\cursor\Cursor.exe
+2026-04-30 04:43:23.416 [info] [shell-exec:sandbox] [isSandboxHelperSupported] Starting sandbox support check...
+2026-04-30 04:43:23.416 [info] [shell-exec:sandbox] [checkBinaryAvailable] Resolved binary path: c:\Users\Vahan\AppData\Local\Programs\cursor\resources\app\resources\helpers\cursorsandbox.exe
+2026-04-30 04:43:23.416 [info] [shell-exec:sandbox] [checkBinaryAvailable] Binary path exists: true
+2026-04-30 04:43:23.416 [info] [shell-exec:sandbox] [isSandboxHelperSupported] win32: returning false (proxy-only, no filesystem sandbox)
+2026-04-30 04:43:23.416 [info] [ExtHostShellExec] Sandbox support detected: false, platform: win32, kernelVersion: N/A
+2026-04-30 04:43:23.416 [info] [ExtHostShellExec] Initializing terminal executor with userTerminalHint: C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe
+2026-04-30 04:43:23.442 [info] ExtensionService#_doActivateExtension anysphere.cursor-polyfills-remote, startup: true, activationEvent: '*'
+2026-04-30 04:43:23.473 [info] ExtensionService#_doActivateExtension vscode.git-base, startup: true, activationEvent: '*', root cause: vscode.git
+2026-04-30 04:43:23.480 [info] ExtensionService#_doActivateExtension xyz.local-history, startup: true, activationEvent: '*'
+2026-04-30 04:43:24.160 [info] Extension host with pid 52296 started
+2026-04-30 04:43:24.161 [info] [ExtHostShellExec] Detecting sandbox support...
+2026-04-30 04:43:24.161 [info] [ExtHostShellExec] Platform: win32, Shell type: unknown
+2026-04-30 04:43:24.161 [info] [ExtHostShellExec] dirname: c:\Users\Vahan\AppData\Local\Programs\cursor\resources\app\out\vs\workbench\api\node
+2026-04-30 04:43:24.161 [info] [ExtHostShellExec] Sandbox helper path: c:\Users\Vahan\AppData\Local\Programs\cursor\resources\app\resources\helpers\cursorsandbox.exe
+2026-04-30 04:43:24.161 [info] [ExtHostShellExec] process.resourcesPath: c:\Users\Vahan\AppData\Local\Programs\cursor\resources
+2026-04-30 04:43:24.161 [info] [ExtHostShellExec] process.execPath: c:\Users\Vahan\AppData\Local\Programs\cursor\Cursor.exe
+2026-04-30 04:43:24.161 [info] [shell-exec:sandbox] [isSandboxHelperSupported] Starting sandbox support check...
+2026-04-30 04:43:24.161 [info] [shell-exec:sandbox] [checkBinaryAvailable] Resolved binary path: c:\Users\Vahan\AppData\Local\Programs\cursor\resources\app\resources\helpers\cursorsandbox.exe
+2026-04-30 04:43:24.161 [info] [shell-exec:sandbox] [checkBinaryAvailable] Binary path exists: true
+2026-04-30 04:43:24.161 [info] [shell-exec:sandbox] [isSandboxHelperSupported] win32: returning false (proxy-only, no filesystem sandbox)
+2026-04-30 04:43:24.161 [info] [ExtHostShellExec] Sandbox support detected: false, platform: win32, kernelVersion: N/A
+2026-04-30 04:43:24.161 [info] [ExtHostShellExec] Initializing terminal executor with userTerminalHint: C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe
+2026-04-30 04:43:24.164 [info] Extension host with pid 34320 started
+2026-04-30 04:43:24.164 [info] [ExtHostShellExec] Detecting sandbox support...
+2026-04-30 04:43:24.164 [info] [ExtHostShellExec] Platform: win32, Shell type: unknown
+2026-04-30 04:43:24.164 [info] [ExtHostShellExec] dirname: c:\Users\Vahan\AppData\Local\Programs\cursor\resources\app\out\vs\workbench\api\node
+2026-04-30 04:43:24.164 [info] [ExtHostShellExec] Sandbox helper path: c:\Users\Vahan\AppData\Local\Programs\cursor\resources\app\resources\helpers\cursorsandbox.exe
+2026-04-30 04:43:24.164 [info] [ExtHostShellExec] process.resourcesPath: c:\Users\Vahan\AppData\Local\Programs\cursor\resources
+2026-04-30 04:43:24.164 [info] [ExtHostShellExec] process.execPath: c:\Users\Vahan\AppData\Local\Programs\cursor\Cursor.exe
+2026-04-30 04:43:24.164 [info] [shell-exec:sandbox] [isSandboxHelperSupported] Starting sandbox support check...
+2026-04-30 04:43:24.164 [info] [shell-exec:sandbox] [checkBinaryAvailable] Resolved binary path: c:\Users\Vahan\AppData\Local\Programs\cursor\resources\app\resources\helpers\cursorsandbox.exe
+2026-04-30 04:43:24.164 [info] [shell-exec:sandbox] [checkBinaryAvailable] Binary path exists: true
+2026-04-30 04:43:24.164 [info] [shell-exec:sandbox] [isSandboxHelperSupported] win32: returning false (proxy-only, no filesystem sandbox)
+2026-04-30 04:43:24.164 [info] [ExtHostShellExec] Sandbox support detected: false, platform: win32, kernelVersion: N/A
+2026-04-30 04:43:24.164 [info] [ExtHostShellExec] Initializing terminal executor with userTerminalHint: C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe
+2026-04-30 04:43:24.171 [info] Eager extensions activated
+2026-04-30 04:43:24.179 [info] ExtensionService#_doActivateExtension anysphere.cursor-retrieval, startup: false, activationEvent: 'onStartupFinished'
+2026-04-30 04:43:24.180 [info] ExtensionService#_doActivateExtension anysphere.cursor-agent-exec, startup: true, activationEvent: '*'
+2026-04-30 04:43:24.196 [info] Extension host with pid 56632 started
+2026-04-30 04:43:24.196 [info] [ExtHostShellExec] Detecting sandbox support...
+2026-04-30 04:43:24.196 [info] [ExtHostShellExec] Platform: win32, Shell type: unknown
+2026-04-30 04:43:24.196 [info] [ExtHostShellExec] dirname: c:\Users\Vahan\AppData\Local\Programs\cursor\resources\app\out\vs\workbench\api\node
+2026-04-30 04:43:24.196 [info] [ExtHostShellExec] Sandbox helper path: c:\Users\Vahan\AppData\Local\Programs\cursor\resources\app\resources\helpers\cursorsandbox.exe
+2026-04-30 04:43:24.196 [info] [ExtHostShellExec] process.resourcesPath: c:\Users\Vahan\AppData\Local\Programs\cursor\resources
+2026-04-30 04:43:24.196 [info] [ExtHostShellExec] process.execPath: c:\Users\Vahan\AppData\Local\Programs\cursor\Cursor.exe
+2026-04-30 04:43:24.196 [info] [shell-exec:sandbox] [isSandboxHelperSupported] Starting sandbox support check...
+2026-04-30 04:43:24.196 [info] [shell-exec:sandbox] [checkBinaryAvailable] Resolved binary path: c:\Users\Vahan\AppData\Local\Programs\cursor\resources\app\resources\helpers\cursorsandbox.exe
+2026-04-30 04:43:24.196 [info] [shell-exec:sandbox] [checkBinaryAvailable] Binary path exists: true
+2026-04-30 04:43:24.196 [info] [shell-exec:sandbox] [isSandboxHelperSupported] win32: returning false (proxy-only, no filesystem sandbox)
+2026-04-30 04:43:24.196 [info] [ExtHostShellExec] Sandbox support detected: false, platform: win32, kernelVersion: N/A
+2026-04-30 04:43:24.196 [info] [ExtHostShellExec] Initializing terminal executor with userTerminalHint: C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe
+2026-04-30 04:43:24.207 [info] Eager extensions activated
+2026-04-30 04:43:24.209 [info] ExtensionService#_doActivateExtension anysphere.cursor-always-local, startup: false, activationEvent: 'onStartupFinished'
+2026-04-30 04:43:24.330 [info] Extension activated success: anysphere.cursor-polyfills-remote — 31ms (code loading: 31ms, activate call: 0ms, activate resolved: 0ms)
+2026-04-30 04:43:24.331 [info] Extension activated success: vscode.git-base — 7ms (code loading: 7ms, activate call: 0ms, activate resolved: 0ms)
+2026-04-30 04:43:24.334 [info] Extension activated success: xyz.local-history — 852ms (code loading: 849ms, activate call: 3ms, activate resolved: 0ms)
+2026-04-30 04:43:24.339 [info] ExtensionService#_doActivateExtension vscode.git, startup: true, activationEvent: '*'
+2026-04-30 04:43:24.403 [info] ExtensionService#_doActivateExtension vscode.github, startup: true, activationEvent: '*'
+2026-04-30 04:43:24.486 [info] Extension activated success: vscode.github — 40ms (code loading: 31ms, activate call: 3ms, activate resolved: 6ms)
+2026-04-30 04:43:24.489 [info] ExtensionService#_doActivateExtension anysphere.cursor-socket, startup: false, activationEvent: 'onStartupFinished'
+2026-04-30 04:43:24.539 [info] Extension activated success: anysphere.cursor-retrieval — 358ms (code loading: 302ms, activate call: 3ms, activate resolved: 53ms)
+2026-04-30 04:43:24.539 [info] Extension activated success: anysphere.cursor-always-local — 288ms (code loading: 280ms, activate call: 6ms, activate resolved: 2ms)
+2026-04-30 04:43:24.543 [info] Extension activated success: anysphere.cursor-socket — 5ms (code loading: 5ms, activate call: 0ms, activate resolved: 0ms)
+2026-04-30 04:43:24.575 [info] Extension activated success: vscode.git — 199ms (code loading: 63ms, activate call: 4ms, activate resolved: 132ms)
+2026-04-30 04:43:24.578 [info] Eager extensions activated
+2026-04-30 04:43:24.590 [info] ExtensionService#_doActivateExtension cursor.cursor-browser-automation, startup: false, activationEvent: 'onStartupFinished'
+2026-04-30 04:43:24.616 [info] ExtensionService#_doActivateExtension anysphere.cursor-checkout, startup: true, activationEvent: '*'
+2026-04-30 04:43:24.641 [info] Extension activated success: anysphere.cursor-checkout — 5ms (code loading: 4ms, activate call: 1ms, activate resolved: 0ms)
+2026-04-30 04:43:24.676 [info] Extension activated success: anysphere.cursor-agent-exec — 490ms (code loading: 435ms, activate call: 17ms, activate resolved: 38ms)
+2026-04-30 04:43:24.676 [info] Eager extensions activated
+2026-04-30 04:43:24.702 [info] ExtensionService#_doActivateExtension anysphere.cursor-commits, startup: false, activationEvent: 'onStartupFinished'
+2026-04-30 04:43:24.858 [info] ExtensionService#_doActivateExtension anysphere.cursor-deeplink, startup: false, activationEvent: 'onStartupFinished'
+2026-04-30 04:43:24.919 [info] ExtensionService#_doActivateExtension anysphere.cursor-explorer, startup: false, activationEvent: 'onStartupFinished'
+2026-04-30 04:43:24.923 [info] ExtensionService#_doActivateExtension anysphere.cursor-mcp, startup: false, activationEvent: 'onStartupFinished'
+2026-04-30 04:43:25.211 [info] ExtensionService#_doActivateExtension anysphere.cursor-resolver-helper, startup: false, activationEvent: 'onStartupFinished'
+2026-04-30 04:43:25.374 [info] ExtensionService#_doActivateExtension anysphere.cursor-shadow-workspace, startup: false, activationEvent: 'onStartupFinished'
+2026-04-30 04:43:25.450 [info] ExtensionService#_doActivateExtension vscode.debug-auto-launch, startup: false, activationEvent: 'onStartupFinished'
+2026-04-30 04:43:25.454 [info] ExtensionService#_doActivateExtension vscode.merge-conflict, startup: false, activationEvent: 'onStartupFinished'
+2026-04-30 04:43:25.498 [info] Extension activated success: cursor.cursor-browser-automation — 114ms (code loading: 112ms, activate call: 1ms, activate resolved: 1ms)
+2026-04-30 04:43:25.501 [info] Extension activated success: anysphere.cursor-commits — 159ms (code loading: 156ms, activate call: 1ms, activate resolved: 2ms)
+2026-04-30 04:43:25.502 [info] Extension activated success: anysphere.cursor-deeplink — 61ms (code loading: 61ms, activate call: 0ms, activate resolved: 0ms)
+2026-04-30 04:43:25.503 [info] [ExtHostCursorExplorerProviderService] ExplorerProvider registered in ext host
+2026-04-30 04:43:25.503 [info] Extension activated success: anysphere.cursor-explorer — 5ms (code loading: 4ms, activate call: 1ms, activate resolved: 0ms)
+2026-04-30 04:43:25.506 [info] Extension activated success: anysphere.cursor-resolver-helper — 163ms (code loading: 162ms, activate call: 1ms, activate resolved: 0ms)
+2026-04-30 04:43:25.507 [info] Extension activated success: anysphere.cursor-shadow-workspace — 76ms (code loading: 76ms, activate call: 0ms, activate resolved: 0ms)
+2026-04-30 04:43:25.508 [info] Extension activated success: vscode.debug-auto-launch — 5ms (code loading: 4ms, activate call: 1ms, activate resolved: 0ms)
+2026-04-30 04:43:25.529 [info] Extension activated success: vscode.merge-conflict — 48ms (code loading: 41ms, activate call: 3ms, activate resolved: 4ms)
+2026-04-30 04:43:25.532 [info] [ExtHostCursorExplorerProviderService] Main thread provider registration acknowledged
+2026-04-30 04:43:25.549 [info] Extension activated success: anysphere.cursor-mcp — 334ms (code loading: 288ms, activate call: 1ms, activate resolved: 45ms)
+2026-04-30 04:43:28.740 [error] Error: CursorCreds is undefined
+	at iwt.createTransports (c:\Users\Vahan\AppData\Local\Programs\cursor\resources\app\extensions\cursor-always-local\dist\main.js:2:3361792)
+	at iwt.setup (c:\Users\Vahan\AppData\Local\Programs\cursor\resources\app\extensions\cursor-always-local\dist\main.js:2:3360568)
+	at SFe.value (c:\Users\Vahan\AppData\Local\Programs\cursor\resources\app\extensions\cursor-always-local\dist\main.js:2:3354809)
+	at L._deliver (file:///c:/Users/Vahan/AppData/Local/Programs/cursor/resources/app/out/vs/workbench/api/node/extensionHostProcess.js:46:2961)
+	at L._deliverQueue (file:///c:/Users/Vahan/AppData/Local/Programs/cursor/resources/app/out/vs/workbench/api/node/extensionHostProcess.js:46:3052)
+	at L.fire (file:///c:/Users/Vahan/AppData/Local/Programs/cursor/resources/app/out/vs/workbench/api/node/extensionHostProcess.js:46:3389)
+	at SDe.$changeCursorAuthToken (file:///c:/Users/Vahan/AppData/Local/Programs/cursor/resources/app/out/vs/workbench/api/node/extensionHostProcess.js:177:2818597)
+	at Su._doInvokeHandler (file:///c:/Users/Vahan/AppData/Local/Programs/cursor/resources/app/out/vs/workbench/api/node/extensionHostProcess.js:48:127137)
+	at Su._invokeHandler (file:///c:/Users/Vahan/AppData/Local/Programs/cursor/resources/app/out/vs/workbench/api/node/extensionHostProcess.js:48:126881)
+	at Su._receiveRequest (file:///c:/Users/Vahan/AppData/Local/Programs/cursor/resources/app/out/vs/workbench/api/node/extensionHostProcess.js:48:125407)
+	at Su._receiveOneMessage (file:///c:/Users/Vahan/AppData/Local/Programs/cursor/resources/app/out/vs/workbench/api/node/extensionHostProcess.js:48:123874)
+	at SFe.value (file:///c:/Users/Vahan/AppData/Local/Programs/cursor/resources/app/out/vs/workbench/api/node/extensionHostProcess.js:48:121812)
+	at L._deliver (file:///c:/Users/Vahan/AppData/Local/Programs/cursor/resources/app/out/vs/workbench/api/node/extensionHostProcess.js:46:2961)
+	at L.fire (file:///c:/Users/Vahan/AppData/Local/Programs/cursor/resources/app/out/vs/workbench/api/node/extensionHostProcess.js:46:3282)
+	at Ic.fire (file:///c:/Users/Vahan/AppData/Local/Programs/cursor/resources/app/out/vs/workbench/api/node/extensionHostProcess.js:48:11479)
+	at SFe.value (file:///c:/Users/Vahan/AppData/Local/Programs/cursor/resources/app/out/vs/workbench/api/node/extensionHostProcess.js:680:6190)
+	at L._deliver (file:///c:/Users/Vahan/AppData/Local/Programs/cursor/resources/app/out/vs/workbench/api/node/extensionHostProcess.js:46:2961)
+	at L.fire (file:///c:/Users/Vahan/AppData/Local/Programs/cursor/resources/app/out/vs/workbench/api/node/extensionHostProcess.js:46:3282)
+	at Ic.fire (file:///c:/Users/Vahan/AppData/Local/Programs/cursor/resources/app/out/vs/workbench/api/node/extensionHostProcess.js:48:11479)
+	at MessagePortMain.<anonymous> (file:///c:/Users/Vahan/AppData/Local/Programs/cursor/resources/app/out/vs/workbench/api/node/extensionHostProcess.js:680:4389)
+	at MessagePortMain.emit (node:events:519:28)
+	at MessagePortMain._internalPort.emit (node:electron/js2c/utility_init:2:2959)
+2026-04-30 04:43:28.741 [error] Error: CursorCreds is undefined
+	at iwt.createTransports (c:\Users\Vahan\AppData\Local\Programs\cursor\resources\app\extensions\cursor-always-local\dist\main.js:2:3361792)
+	at iwt.setup (c:\Users\Vahan\AppData\Local\Programs\cursor\resources\app\extensions\cursor-always-local\dist\main.js:2:3360568)
+	at SFe.value (c:\Users\Vahan\AppData\Local\Programs\cursor\resources\app\extensions\cursor-always-local\dist\main.js:2:3354809)
+	at L._deliver (file:///c:/Users/Vahan/AppData/Local/Programs/cursor/resources/app/out/vs/workbench/api/node/extensionHostProcess.js:46:2961)
+	at L._deliverQueue (file:///c:/Users/Vahan/AppData/Local/Programs/cursor/resources/app/out/vs/workbench/api/node/extensionHostProcess.js:46:3052)
+	at L.fire (file:///c:/Users/Vahan/AppData/Local/Programs/cursor/resources/app/out/vs/workbench/api/node/extensionHostProcess.js:46:3389)
+	at Timeout.<anonymous> (file:///c:/Users/Vahan/AppData/Local/Programs/cursor/resources/app/out/vs/workbench/api/node/extensionHostProcess.js:177:2812652)
+2026-04-30 04:43:28.741 [error] Error: CursorCreds is undefined
+	at iwt.createTransports (c:\Users\Vahan\AppData\Local\Programs\cursor\resources\app\extensions\cursor-always-local\dist\main.js:2:3361792)
+	at iwt.setup (c:\Users\Vahan\AppData\Local\Programs\cursor\resources\app\extensions\cursor-always-local\dist\main.js:2:3360568)
+	at SFe.value (c:\Users\Vahan\AppData\Local\Programs\cursor\resources\app\extensions\cursor-always-local\dist\main.js:2:3354809)
+	at L._deliver (file:///c:/Users/Vahan/AppData/Local/Programs/cursor/resources/app/out/vs/workbench/api/node/extensionHostProcess.js:46:2961)
+	at L._deliverQueue (file:///c:/Users/Vahan/AppData/Local/Programs/cursor/resources/app/out/vs/workbench/api/node/extensionHostProcess.js:46:3052)
+	at L.fire (file:///c:/Users/Vahan/AppData/Local/Programs/cursor/resources/app/out/vs/workbench/api/node/extensionHostProcess.js:46:3389)
+	at SDe.$changeCursorAuthToken (file:///c:/Users/Vahan/AppData/Local/Programs/cursor/resources/app/out/vs/workbench/api/node/extensionHostProcess.js:177:2818597)
+	at Su._doInvokeHandler (file:///c:/Users/Vahan/AppData/Local/Programs/cursor/resources/app/out/vs/workbench/api/node/extensionHostProcess.js:48:127137)
+	at Su._invokeHandler (file:///c:/Users/Vahan/AppData/Local/Programs/cursor/resources/app/out/vs/workbench/api/node/extensionHostProcess.js:48:126881)
+	at Su._receiveRequest (file:///c:/Users/Vahan/AppData/Local/Programs/cursor/resources/app/out/vs/workbench/api/node/extensionHostProcess.js:48:125407)
+	at Su._receiveOneMessage (file:///c:/Users/Vahan/AppData/Local/Programs/cursor/resources/app/out/vs/workbench/api/node/extensionHostProcess.js:48:123874)
+	at SFe.value (file:///c:/Users/Vahan/AppData/Local/Programs/cursor/resources/app/out/vs/workbench/api/node/extensionHostProcess.js:48:121812)
+	at L._deliver (file:///c:/Users/Vahan/AppData/Local/Programs/cursor/resources/app/out/vs/workbench/api/node/extensionHostProcess.js:46:2961)
+	at L.fire (file:///c:/Users/Vahan/AppData/Local/Programs/cursor/resources/app/out/vs/workbench/api/node/extensionHostProcess.js:46:3282)
+	at Ic.fire (file:///c:/Users/Vahan/AppData/Local/Programs/cursor/resources/app/out/vs/workbench/api/node/extensionHostProcess.js:48:11479)
+	at SFe.value (file:///c:/Users/Vahan/AppData/Local/Programs/cursor/resources/app/out/vs/workbench/api/node/extensionHostProcess.js:680:6190)
+	at L._deliver (file:///c:/Users/Vahan/AppData/Local/Programs/cursor/resources/app/out/vs/workbench/api/node/extensionHostProcess.js:46:2961)
+	at L.fire (file:///c:/Users/Vahan/AppData/Local/Programs/cursor/resources/app/out/vs/workbench/api/node/extensionHostProcess.js:46:3282)
+	at Ic.fire (file:///c:/Users/Vahan/AppData/Local/Programs/cursor/resources/app/out/vs/workbench/api/node/extensionHostProcess.js:48:11479)
+	at MessagePortMain.<anonymous> (file:///c:/Users/Vahan/AppData/Local/Programs/cursor/resources/app/out/vs/workbench/api/node/extensionHostProcess.js:680:4389)
+	at MessagePortMain.emit (node:events:519:28)
+	at MessagePortMain._internalPort.emit (node:electron/js2c/utility_init:2:2959)
+2026-04-30 04:43:38.801 [info] Extension host terminating: renderer closed the MessagePort
+2026-04-30 04:43:38.805 [info] Extension host with pid 34320 exiting with code 0
+2026-04-30 04:43:38.806 [info] Extension host terminating: renderer closed the MessagePort
+2026-04-30 04:43:38.807 [info] Extension host terminating: renderer closed the MessagePort
+2026-04-30 04:43:38.808 [info] Extension host terminating: renderer closed the MessagePort
+2026-04-30 04:43:38.809 [info] Extension host with pid 52296 exiting with code 0
+2026-04-30 04:43:38.810 [info] [ExtHostCursorExplorerProviderService] ExplorerProvider unregistered in ext host
+2026-04-30 04:43:38.815 [info] Extension host with pid 56632 exiting with code 0
+2026-04-30 04:43:38.825 [error] [ExtHostCursorExplorerProviderService] Main thread provider unregistration failed Canceled
+2026-04-30 04:43:38.826 [info] Extension host with pid 3648 exiting with code 0
+2026-04-30 04:43:46.448 [info] Extension host with pid 11540 started
+2026-04-30 04:43:46.448 [info] Skipping acquiring lock for c:\Users\Vahan\Desktop\Tsovic-Tsov\Tsovic-Tsov\User\workspaceStorage\645a68fd1fc36f36afdf84f372a67e21.
+2026-04-30 04:43:46.448 [info] [ExtHostShellExec] Detecting sandbox support...
+2026-04-30 04:43:46.448 [info] [ExtHostShellExec] Platform: win32, Shell type: unknown
+2026-04-30 04:43:46.448 [info] [ExtHostShellExec] dirname: c:\Users\Vahan\AppData\Local\Programs\cursor\resources\app\out\vs\workbench\api\node
+2026-04-30 04:43:46.448 [info] [ExtHostShellExec] Sandbox helper path: c:\Users\Vahan\AppData\Local\Programs\cursor\resources\app\resources\helpers\cursorsandbox.exe
+2026-04-30 04:43:46.448 [info] [ExtHostShellExec] process.resourcesPath: c:\Users\Vahan\AppData\Local\Programs\cursor\resources
+2026-04-30 04:43:46.448 [info] [ExtHostShellExec] process.execPath: c:\Users\Vahan\AppData\Local\Programs\cursor\Cursor.exe
+2026-04-30 04:43:46.448 [info] [shell-exec:sandbox] [isSandboxHelperSupported] Starting sandbox support check...
+2026-04-30 04:43:46.448 [info] [shell-exec:sandbox] [checkBinaryAvailable] Resolved binary path: c:\Users\Vahan\AppData\Local\Programs\cursor\resources\app\resources\helpers\cursorsandbox.exe
+2026-04-30 04:43:46.448 [info] [shell-exec:sandbox] [checkBinaryAvailable] Binary path exists: true
+2026-04-30 04:43:46.448 [info] [shell-exec:sandbox] [isSandboxHelperSupported] win32: returning false (proxy-only, no filesystem sandbox)
+2026-04-30 04:43:46.448 [info] [ExtHostShellExec] Sandbox support detected: false, platform: win32, kernelVersion: N/A
+2026-04-30 04:43:46.448 [info] [ExtHostShellExec] Initializing terminal executor with userTerminalHint: C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe
+2026-04-30 04:43:46.484 [info] ExtensionService#_doActivateExtension anysphere.cursor-polyfills-remote, startup: true, activationEvent: '*'
+2026-04-30 04:43:46.513 [info] ExtensionService#_doActivateExtension vscode.git-base, startup: true, activationEvent: '*', root cause: vscode.git
+2026-04-30 04:43:46.519 [info] ExtensionService#_doActivateExtension xyz.local-history, startup: true, activationEvent: '*'
+2026-04-30 04:43:46.555 [info] ExtensionService#_doActivateExtension vscode.npm, startup: true, activationEvent: 'workspaceContains:package.json'
+2026-04-30 04:43:46.591 [info] Extension activated success: anysphere.cursor-polyfills-remote — 29ms (code loading: 28ms, activate call: 1ms, activate resolved: 0ms)
+2026-04-30 04:43:46.592 [info] Extension activated success: vscode.git-base — 7ms (code loading: 6ms, activate call: 1ms, activate resolved: 0ms)
+2026-04-30 04:43:46.596 [info] Extension activated success: xyz.local-history — 38ms (code loading: 35ms, activate call: 3ms, activate resolved: 0ms)
+2026-04-30 04:43:46.598 [info] ExtensionService#_doActivateExtension vscode.git, startup: true, activationEvent: '*'
+2026-04-30 04:43:46.664 [info] ExtensionService#_doActivateExtension vscode.github, startup: true, activationEvent: '*'
+2026-04-30 04:43:46.742 [info] Extension activated success: vscode.github — 38ms (code loading: 32ms, activate call: 2ms, activate resolved: 4ms)
+2026-04-30 04:43:46.798 [info] Extension activated success: vscode.npm — 236ms (code loading: 35ms, activate call: 0ms, activate resolved: 201ms)
+2026-04-30 04:43:46.826 [info] Extension activated success: vscode.git — 192ms (code loading: 65ms, activate call: 3ms, activate resolved: 124ms)
+2026-04-30 04:43:46.829 [info] Eager extensions activated
+2026-04-30 04:43:46.845 [info] ExtensionService#_doActivateExtension cursor.cursor-browser-automation, startup: false, activationEvent: 'onStartupFinished'
+2026-04-30 04:43:46.954 [info] ExtensionService#_doActivateExtension anysphere.cursor-commits, startup: false, activationEvent: 'onStartupFinished'
+2026-04-30 04:43:46.977 [info] Extension host with pid 23396 started
+2026-04-30 04:43:46.977 [info] Skipping acquiring lock for c:\Users\Vahan\Desktop\Tsovic-Tsov\Tsovic-Tsov\User\workspaceStorage\645a68fd1fc36f36afdf84f372a67e21.
+2026-04-30 04:43:46.977 [info] [ExtHostShellExec] Detecting sandbox support...
+2026-04-30 04:43:46.977 [info] [ExtHostShellExec] Platform: win32, Shell type: unknown
+2026-04-30 04:43:46.977 [info] [ExtHostShellExec] dirname: c:\Users\Vahan\AppData\Local\Programs\cursor\resources\app\out\vs\workbench\api\node
+2026-04-30 04:43:46.977 [info] [ExtHostShellExec] Sandbox helper path: c:\Users\Vahan\AppData\Local\Programs\cursor\resources\app\resources\helpers\cursorsandbox.exe
+2026-04-30 04:43:46.977 [info] [ExtHostShellExec] process.resourcesPath: c:\Users\Vahan\AppData\Local\Programs\cursor\resources
+2026-04-30 04:43:46.977 [info] [ExtHostShellExec] process.execPath: c:\Users\Vahan\AppData\Local\Programs\cursor\Cursor.exe
+2026-04-30 04:43:46.977 [info] [shell-exec:sandbox] [isSandboxHelperSupported] Starting sandbox support check...
+2026-04-30 04:43:46.977 [info] [shell-exec:sandbox] [checkBinaryAvailable] Resolved binary path: c:\Users\Vahan\AppData\Local\Programs\cursor\resources\app\resources\helpers\cursorsandbox.exe
+2026-04-30 04:43:46.977 [info] [shell-exec:sandbox] [checkBinaryAvailable] Binary path exists: true
+2026-04-30 04:43:46.977 [info] [shell-exec:sandbox] [isSandboxHelperSupported] win32: returning false (proxy-only, no filesystem sandbox)
+2026-04-30 04:43:46.977 [info] [ExtHostShellExec] Sandbox support detected: false, platform: win32, kernelVersion: N/A
+2026-04-30 04:43:46.977 [info] [ExtHostShellExec] Initializing terminal executor with userTerminalHint: C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe
+2026-04-30 04:43:46.997 [info] Extension host with pid 2160 started
+2026-04-30 04:43:46.997 [info] Skipping acquiring lock for c:\Users\Vahan\Desktop\Tsovic-Tsov\Tsovic-Tsov\User\workspaceStorage\645a68fd1fc36f36afdf84f372a67e21.
+2026-04-30 04:43:46.997 [info] [ExtHostShellExec] Detecting sandbox support...
+2026-04-30 04:43:46.997 [info] [ExtHostShellExec] Platform: win32, Shell type: unknown
+2026-04-30 04:43:46.997 [info] [ExtHostShellExec] dirname: c:\Users\Vahan\AppData\Local\Programs\cursor\resources\app\out\vs\workbench\api\node
+2026-04-30 04:43:46.997 [info] [ExtHostShellExec] Sandbox helper path: c:\Users\Vahan\AppData\Local\Programs\cursor\resources\app\resources\helpers\cursorsandbox.exe
+2026-04-30 04:43:46.997 [info] [ExtHostShellExec] process.resourcesPath: c:\Users\Vahan\AppData\Local\Programs\cursor\resources
+2026-04-30 04:43:46.997 [info] [ExtHostShellExec] process.execPath: c:\Users\Vahan\AppData\Local\Programs\cursor\Cursor.exe
+2026-04-30 04:43:46.997 [info] [shell-exec:sandbox] [isSandboxHelperSupported] Starting sandbox support check...
+2026-04-30 04:43:46.997 [info] [shell-exec:sandbox] [checkBinaryAvailable] Resolved binary path: c:\Users\Vahan\AppData\Local\Programs\cursor\resources\app\resources\helpers\cursorsandbox.exe
+2026-04-30 04:43:46.997 [info] [shell-exec:sandbox] [checkBinaryAvailable] Binary path exists: true
+2026-04-30 04:43:46.997 [info] [shell-exec:sandbox] [isSandboxHelperSupported] win32: returning false (proxy-only, no filesystem sandbox)
+2026-04-30 04:43:46.997 [info] [ExtHostShellExec] Sandbox support detected: false, platform: win32, kernelVersion: N/A
+2026-04-30 04:43:46.997 [info] [ExtHostShellExec] Initializing terminal executor with userTerminalHint: C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe
+2026-04-30 04:43:47.007 [info] Eager extensions activated
+2026-04-30 04:43:47.019 [info] ExtensionService#_doActivateExtension anysphere.cursor-agent-exec, startup: true, activationEvent: '*'
+2026-04-30 04:43:47.029 [info] ExtHostSearch [cursorIgnore] internal fileSearch start reason=cursorIgnoreCheck roots=1 include=**/.cursorignore maxResults=0 numThreads=(default) folderQueries=[{"cwd":"c:\\Users\\Vahan\\Desktop\\Tsovic-Tsov\\Tsovic-Tsov","disregardIgnoreFiles":false,"disregardParentIgnoreFiles":true,"disregardGlobalIgnoreFiles":true,"ignoreSymlinks":false,"rgNoIgnore":false,"rgNoIgnoreParent":true,"rgNoIgnoreGlobal":true,"rgFollow":true}]
+2026-04-30 04:43:47.032 [info] Extension host with pid 45976 started
+2026-04-30 04:43:47.033 [info] Skipping acquiring lock for c:\Users\Vahan\Desktop\Tsovic-Tsov\Tsovic-Tsov\User\workspaceStorage\645a68fd1fc36f36afdf84f372a67e21.
+2026-04-30 04:43:47.033 [info] [ExtHostShellExec] Detecting sandbox support...
+2026-04-30 04:43:47.033 [info] [ExtHostShellExec] Platform: win32, Shell type: unknown
+2026-04-30 04:43:47.033 [info] [ExtHostShellExec] dirname: c:\Users\Vahan\AppData\Local\Programs\cursor\resources\app\out\vs\workbench\api\node
+2026-04-30 04:43:47.033 [info] [ExtHostShellExec] Sandbox helper path: c:\Users\Vahan\AppData\Local\Programs\cursor\resources\app\resources\helpers\cursorsandbox.exe
+2026-04-30 04:43:47.033 [info] [ExtHostShellExec] process.resourcesPath: c:\Users\Vahan\AppData\Local\Programs\cursor\resources
+2026-04-30 04:43:47.033 [info] [ExtHostShellExec] process.execPath: c:\Users\Vahan\AppData\Local\Programs\cursor\Cursor.exe
+2026-04-30 04:43:47.033 [info] [shell-exec:sandbox] [isSandboxHelperSupported] Starting sandbox support check...
+2026-04-30 04:43:47.033 [info] [shell-exec:sandbox] [checkBinaryAvailable] Resolved binary path: c:\Users\Vahan\AppData\Local\Programs\cursor\resources\app\resources\helpers\cursorsandbox.exe
+2026-04-30 04:43:47.033 [info] [shell-exec:sandbox] [checkBinaryAvailable] Binary path exists: true
+2026-04-30 04:43:47.033 [info] [shell-exec:sandbox] [isSandboxHelperSupported] win32: returning false (proxy-only, no filesystem sandbox)
+2026-04-30 04:43:47.033 [info] [ExtHostShellExec] Sandbox support detected: false, platform: win32, kernelVersion: N/A
+2026-04-30 04:43:47.033 [info] [ExtHostShellExec] Initializing terminal executor with userTerminalHint: C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe
+2026-04-30 04:43:47.034 [info] ExtHostSearch c:\Users\Vahan\AppData\Local\Programs\cursor\resources\app\node_modules\@vscode\ripgrep\bin\rg.exe --files --hidden --case-sensitive --no-require-git -g '**/.cursorignore' -g '!**/.git' -g '!**/.svn' -g '!**/.hg' -g '!**/.DS_Store' -g '!**/Thumbs.db' -g '!**/node_modules' -g '!**/bower_components' -g '!**/*.code-search' --no-ignore-parent --follow --no-config --no-ignore-global
+ - cwd: c:\Users\Vahan\Desktop\Tsovic-Tsov\Tsovic-Tsov
+ - Sibling clauses: {}
+2026-04-30 04:43:47.035 [info] ExtensionService#_doActivateExtension anysphere.cursor-retrieval, startup: false, activationEvent: 'onStartupFinished'
+2026-04-30 04:43:47.044 [info] Eager extensions activated
+2026-04-30 04:43:47.046 [info] ExtensionService#_doActivateExtension anysphere.cursor-always-local, startup: false, activationEvent: 'onStartupFinished'
+2026-04-30 04:43:47.110 [info] ExtensionService#_doActivateExtension anysphere.cursor-deeplink, startup: false, activationEvent: 'onStartupFinished'
+2026-04-30 04:43:47.171 [info] ExtensionService#_doActivateExtension anysphere.cursor-explorer, startup: false, activationEvent: 'onStartupFinished'
+2026-04-30 04:43:47.175 [info] ExtensionService#_doActivateExtension anysphere.cursor-mcp, startup: false, activationEvent: 'onStartupFinished'
+2026-04-30 04:43:47.327 [info] ExtensionService#_doActivateExtension anysphere.cursor-socket, startup: false, activationEvent: 'onStartupFinished'
+2026-04-30 04:43:47.350 [info] ExtHostSearch Search finished. Stats: {"cmdTime":321,"fileWalkTime":321,"directoriesWalked":0,"filesWalked":0,"cmdResultCount":0}
+2026-04-30 04:43:47.351 [info] ExtHostSearch [cursorIgnore] internal fileSearch done in 322ms limitHit=false failed=false resultCount=0 cmdTime=321 fileWalkTime=321 providerTime=(unknown)
+2026-04-30 04:43:47.371 [info] Extension activated success: anysphere.cursor-always-local — 288ms (code loading: 280ms, activate call: 6ms, activate resolved: 2ms)
+2026-04-30 04:43:47.372 [info] Extension activated success: anysphere.cursor-socket — 6ms (code loading: 5ms, activate call: 1ms, activate resolved: 0ms)
+2026-04-30 04:43:47.382 [info] Extension activated success: anysphere.cursor-retrieval — 340ms (code loading: 311ms, activate call: 2ms, activate resolved: 27ms)
+2026-04-30 04:43:47.449 [info] ExtensionService#_doActivateExtension anysphere.cursor-checkout, startup: true, activationEvent: '*'
+2026-04-30 04:43:47.468 [info] Extension activated success: anysphere.cursor-checkout — 5ms (code loading: 4ms, activate call: 1ms, activate resolved: 0ms)
+2026-04-30 04:43:47.492 [info] ExtensionService#_doActivateExtension anysphere.cursor-resolver-helper, startup: false, activationEvent: 'onStartupFinished'
+2026-04-30 04:43:47.521 [info] Extension activated success: anysphere.cursor-agent-exec — 496ms (code loading: 430ms, activate call: 12ms, activate resolved: 54ms)
+2026-04-30 04:43:47.521 [info] Eager extensions activated
+2026-04-30 04:43:47.769 [info] ExtensionService#_doActivateExtension anysphere.cursor-shadow-workspace, startup: false, activationEvent: 'onStartupFinished'
+2026-04-30 04:43:47.850 [info] ExtensionService#_doActivateExtension vscode.debug-auto-launch, startup: false, activationEvent: 'onStartupFinished'
+2026-04-30 04:43:47.854 [info] ExtensionService#_doActivateExtension vscode.merge-conflict, startup: false, activationEvent: 'onStartupFinished'
+2026-04-30 04:43:47.885 [info] Extension activated success: cursor.cursor-browser-automation — 111ms (code loading: 108ms, activate call: 2ms, activate resolved: 1ms)
+2026-04-30 04:43:47.889 [info] Extension activated success: anysphere.cursor-commits — 158ms (code loading: 156ms, activate call: 0ms, activate resolved: 2ms)
+2026-04-30 04:43:47.890 [info] Extension activated success: anysphere.cursor-deeplink — 60ms (code loading: 60ms, activate call: 0ms, activate resolved: 0ms)
+2026-04-30 04:43:47.891 [info] [ExtHostCursorExplorerProviderService] ExplorerProvider registered in ext host
+2026-04-30 04:43:47.891 [info] Extension activated success: anysphere.cursor-explorer — 4ms (code loading: 4ms, activate call: 0ms, activate resolved: 0ms)
+2026-04-30 04:43:47.894 [info] Extension activated success: anysphere.cursor-resolver-helper — 278ms (code loading: 277ms, activate call: 1ms, activate resolved: 0ms)
+2026-04-30 04:43:47.895 [info] Extension activated success: anysphere.cursor-shadow-workspace — 82ms (code loading: 81ms, activate call: 1ms, activate resolved: 0ms)
+2026-04-30 04:43:47.896 [info] Extension activated success: vscode.debug-auto-launch — 4ms (code loading: 4ms, activate call: 0ms, activate resolved: 0ms)
+2026-04-30 04:43:47.917 [info] Extension activated success: vscode.merge-conflict — 34ms (code loading: 26ms, activate call: 4ms, activate resolved: 4ms)
+2026-04-30 04:43:47.940 [info] [ExtHostCursorExplorerProviderService] Main thread provider registration acknowledged
+2026-04-30 04:43:47.958 [info] Extension activated success: anysphere.cursor-mcp — 383ms (code loading: 316ms, activate call: 1ms, activate resolved: 66ms)
+2026-04-30 04:43:48.085 [info] ExtensionService#_doActivateExtension vscode.emmet, startup: false, activationEvent: 'onLanguage'
+2026-04-30 04:43:48.136 [info] Extension activated success: vscode.emmet — 46ms (code loading: 30ms, activate call: 16ms, activate resolved: 0ms)
+2026-04-30 04:43:48.260 [info] ExtensionService#_doActivateExtension vscode.github-authentication, startup: false, activationEvent: 'onAuthenticationRequest:github'
+2026-04-30 04:43:48.314 [info] Extension activated success: vscode.github-authentication — 38ms (code loading: 31ms, activate call: 3ms, activate resolved: 4ms)
+2026-04-30 04:43:51.887 [info] ExtensionService#_doActivateExtension vscode.configuration-editing, startup: false, activationEvent: 'onLanguage:json'
+2026-04-30 04:43:51.897 [info] ExtensionService#_doActivateExtension vscode.extension-editing, startup: false, activationEvent: 'onLanguage:json'
+2026-04-30 04:43:51.912 [info] ExtensionService#_doActivateExtension vscode.json-language-features, startup: false, activationEvent: 'onLanguage:json'
+2026-04-30 04:43:51.986 [info] Extension activated success: vscode.configuration-editing — 10ms (code loading: 10ms, activate call: 0ms, activate resolved: 0ms)
+2026-04-30 04:43:51.988 [info] Extension activated success: vscode.extension-editing — 15ms (code loading: 15ms, activate call: 0ms, activate resolved: 0ms)
+2026-04-30 04:43:52.247 [info] Extension activated success: vscode.json-language-features — 332ms (code loading: 73ms, activate call: 0ms, activate resolved: 259ms)
+2026-04-30 04:45:16.549 [warning] [Decorations] CAPPING events from decorations provider vscode.git 349
+2026-04-30 04:45:21.861 [warning] [Decorations] CAPPING events from decorations provider vscode.git 351
+2026-04-30 04:45:27.986 [warning] [Decorations] CAPPING events from decorations provider vscode.git 351
+2026-04-30 04:45:33.266 [warning] [Decorations] CAPPING events from decorations provider vscode.git 393
+2026-04-30 04:45:41.094 [warning] [Decorations] CAPPING events from decorations provider vscode.git 402
+2026-04-30 04:45:46.265 [warning] [Decorations] CAPPING events from decorations provider vscode.git 402
+2026-04-30 04:45:51.451 [warning] [Decorations] CAPPING events from decorations provider vscode.git 402
+2026-04-30 04:45:56.620 [warning] [Decorations] CAPPING events from decorations provider vscode.git 402
+2026-04-30 04:46:01.782 [warning] [Decorations] CAPPING events from decorations provider vscode.git 402
+2026-04-30 04:46:11.798 [warning] [Decorations] CAPPING events from decorations provider vscode.git 404
+2026-04-30 04:46:16.964 [warning] [Decorations] CAPPING events from decorations provider vscode.git 403
+2026-04-30 04:46:22.858 [warning] [Decorations] CAPPING events from decorations provider vscode.git 403
+2026-04-30 04:46:28.037 [warning] [Decorations] CAPPING events from decorations provider vscode.git 408
+2026-04-30 04:46:30.634 [info] Extension host terminating: renderer closed the MessagePort
+2026-04-30 04:46:30.638 [info] Extension host with pid 23396 exiting with code 0
+2026-04-30 04:46:30.642 [info] Extension host terminating: renderer closed the MessagePort
+2026-04-30 04:46:30.644 [info] Extension host terminating: renderer closed the MessagePort
+2026-04-30 04:46:30.645 [info] Extension host terminating: renderer closed the MessagePort
+2026-04-30 04:46:30.648 [info] [ExtHostCursorExplorerProviderService] ExplorerProvider unregistered in ext host
+2026-04-30 04:46:30.649 [info] Extension host with pid 45976 exiting with code 0
+2026-04-30 04:46:30.650 [info] Extension host with pid 2160 exiting with code 0
+2026-04-30 04:46:30.672 [error] [ExtHostCursorExplorerProviderService] Main thread provider unregistration failed Canceled
+2026-04-30 04:46:30.673 [error] Canceled: Canceled
+	at new vNt (file:///c:/Users/Vahan/AppData/Local/Programs/cursor/resources/app/out/vs/workbench/api/node/extensionHostProcess.js:48:119702)
+	at Su._remoteCall (file:///c:/Users/Vahan/AppData/Local/Programs/cursor/resources/app/out/vs/workbench/api/node/extensionHostProcess.js:48:127194)
+	at r.<computed>.a.charCodeAt.r.<computed> (file:///c:/Users/Vahan/AppData/Local/Programs/cursor/resources/app/out/vs/workbench/api/node/extensionHostProcess.js:48:123328)
+	at aHe._doExecuteCommand (file:///c:/Users/Vahan/AppData/Local/Programs/cursor/resources/app/out/vs/workbench/api/node/extensionHostProcess.js:142:49898)
+	at aHe.executeCommand (file:///c:/Users/Vahan/AppData/Local/Programs/cursor/resources/app/out/vs/workbench/api/node/extensionHostProcess.js:142:49334)
+	at t.registerCommand.description (file:///c:/Users/Vahan/AppData/Local/Programs/cursor/resources/app/out/vs/workbench/api/node/extensionHostProcess.js:142:48598)
+	at aHe._executeContributedCommand (file:///c:/Users/Vahan/AppData/Local/Programs/cursor/resources/app/out/vs/workbench/api/node/extensionHostProcess.js:142:50468)
+	at aHe._doExecuteCommand (file:///c:/Users/Vahan/AppData/Local/Programs/cursor/resources/app/out/vs/workbench/api/node/extensionHostProcess.js:142:49467)
+	at aHe.executeCommand (file:///c:/Users/Vahan/AppData/Local/Programs/cursor/resources/app/out/vs/workbench/api/node/extensionHostProcess.js:142:49334)
+	at Object.executeCommand (file:///c:/Users/Vahan/AppData/Local/Programs/cursor/resources/app/out/vs/workbench/api/node/extensionHostProcess.js:214:142358)
+	at SFe.N [as value] (c:\Users\Vahan\AppData\Local\Programs\cursor\resources\app\extensions\git\dist\main.js:2:111491)
+	at L._deliver (file:///c:/Users/Vahan/AppData/Local/Programs/cursor/resources/app/out/vs/workbench/api/node/extensionHostProcess.js:46:2961)
+	at L._deliverQueue (file:///c:/Users/Vahan/AppData/Local/Programs/cursor/resources/app/out/vs/workbench/api/node/extensionHostProcess.js:46:3052)
+	at L.fire (file:///c:/Users/Vahan/AppData/Local/Programs/cursor/resources/app/out/vs/workbench/api/node/extensionHostProcess.js:46:3389)
+	at Object.v [as dispose] (c:\Users\Vahan\AppData\Local\Programs\cursor\resources\app\extensions\git\dist\main.js:2:181128)
+	at c:\Users\Vahan\AppData\Local\Programs\cursor\resources\app\extensions\git\dist\main.js:2:187493
+	at Array.forEach (<anonymous>)
+	at k.dispose (c:\Users\Vahan\AppData\Local\Programs\cursor\resources\app\extensions\git\dist\main.js:2:187480)
+	at uGe.<anonymous> (file:///c:/Users/Vahan/AppData/Local/Programs/cursor/resources/app/out/vs/workbench/api/node/extensionHostProcess.js:137:10091)
+	at uGe.dispose (file:///c:/Users/Vahan/AppData/Local/Programs/cursor/resources/app/out/vs/workbench/api/node/extensionHostProcess.js:137:10187)
+	at uGe.<anonymous> (c:\Users\Vahan\AppData\Local\Programs\cursor\resources\app\extensions\git\dist\main.js:2:113968)
+	at uGe.dispose (file:///c:/Users/Vahan/AppData/Local/Programs/cursor/resources/app/out/vs/workbench/api/node/extensionHostProcess.js:137:10187)
+	at hi (file:///c:/Users/Vahan/AppData/Local/Programs/cursor/resources/app/out/vs/workbench/api/node/extensionHostProcess.js:44:706)
+	at file:///c:/Users/Vahan/AppData/Local/Programs/cursor/resources/app/out/vs/workbench/api/node/extensionHostProcess.js:146:20707
+	at file:///c:/Users/Vahan/AppData/Local/Programs/cursor/resources/app/out/vs/workbench/api/node/extensionHostProcess.js:44:1019
+	at Object.dispose (file:///c:/Users/Vahan/AppData/Local/Programs/cursor/resources/app/out/vs/workbench/api/node/extensionHostProcess.js:27:1256)
+	at KHs._deactivate (file:///c:/Users/Vahan/AppData/Local/Programs/cursor/resources/app/out/vs/workbench/api/node/extensionHostProcess.js:146:15497)
+	at file:///c:/Users/Vahan/AppData/Local/Programs/cursor/resources/app/out/vs/workbench/api/node/extensionHostProcess.js:146:12768
+	at Array.map (<anonymous>)
+	at KHs._deactivateAll (file:///c:/Users/Vahan/AppData/Local/Programs/cursor/resources/app/out/vs/workbench/api/node/extensionHostProcess.js:146:12756)
+	at KHs.terminate (file:///c:/Users/Vahan/AppData/Local/Programs/cursor/resources/app/out/vs/workbench/api/node/extensionHostProcess.js:146:13110)
+	at ekt.terminate (file:///c:/Users/Vahan/AppData/Local/Programs/cursor/resources/app/out/vs/workbench/api/node/extensionHostProcess.js:148:1617)
+	at xr (file:///c:/Users/Vahan/AppData/Local/Programs/cursor/resources/app/out/vs/workbench/api/node/extensionHostProcess.js:680:8000)
+	at MessagePortMain.<anonymous> (file:///c:/Users/Vahan/AppData/Local/Programs/cursor/resources/app/out/vs/workbench/api/node/extensionHostProcess.js:680:4430)
+	at MessagePortMain.emit (node:events:519:28)
+	at MessagePortMain._internalPort.emit (node:electron/js2c/utility_init:2:2959) setContext undefined
+2026-04-30 04:46:30.674 [error] Canceled: Canceled
+	at new vNt (file:///c:/Users/Vahan/AppData/Local/Programs/cursor/resources/app/out/vs/workbench/api/node/extensionHostProcess.js:48:119702)
+	at Su._remoteCall (file:///c:/Users/Vahan/AppData/Local/Programs/cursor/resources/app/out/vs/workbench/api/node/extensionHostProcess.js:48:127194)
+	at r.<computed>.a.charCodeAt.r.<computed> (file:///c:/Users/Vahan/AppData/Local/Programs/cursor/resources/app/out/vs/workbench/api/node/extensionHostProcess.js:48:123328)
+	at aHe._doExecuteCommand (file:///c:/Users/Vahan/AppData/Local/Programs/cursor/resources/app/out/vs/workbench/api/node/extensionHostProcess.js:142:49898)
+	at aHe.executeCommand (file:///c:/Users/Vahan/AppData/Local/Programs/cursor/resources/app/out/vs/workbench/api/node/extensionHostProcess.js:142:49334)
+	at t.registerCommand.description (file:///c:/Users/Vahan/AppData/Local/Programs/cursor/resources/app/out/vs/workbench/api/node/extensionHostProcess.js:142:48598)
+	at aHe._executeContributedCommand (file:///c:/Users/Vahan/AppData/Local/Programs/cursor/resources/app/out/vs/workbench/api/node/extensionHostProcess.js:142:50468)
+	at aHe._doExecuteCommand (file:///c:/Users/Vahan/AppData/Local/Programs/cursor/resources/app/out/vs/workbench/api/node/extensionHostProcess.js:142:49467)
+	at aHe.executeCommand (file:///c:/Users/Vahan/AppData/Local/Programs/cursor/resources/app/out/vs/workbench/api/node/extensionHostProcess.js:142:49334)
+	at Object.executeCommand (file:///c:/Users/Vahan/AppData/Local/Programs/cursor/resources/app/out/vs/workbench/api/node/extensionHostProcess.js:214:142358)
+	at set hasGitHubRepositories (c:\Users\Vahan\AppData\Local\Programs\cursor\resources\app\extensions\github\dist\extension.js:2:270497)
+	at c:\Users\Vahan\AppData\Local\Programs\cursor\resources\app\extensions\github\dist\extension.js:2:271447
+	at SFe.value (c:\Users\Vahan\AppData\Local\Programs\cursor\resources\app\extensions\git\dist\main.js:2:596551)
+	at L._deliver (file:///c:/Users/Vahan/AppData/Local/Programs/cursor/resources/app/out/vs/workbench/api/node/extensionHostProcess.js:46:2961)
+	at L._deliverQueue (file:///c:/Users/Vahan/AppData/Local/Programs/cursor/resources/app/out/vs/workbench/api/node/extensionHostProcess.js:46:3052)
+	at L.fire (file:///c:/Users/Vahan/AppData/Local/Programs/cursor/resources/app/out/vs/workbench/api/node/extensionHostProcess.js:46:3389)
+	at Object.v [as dispose] (c:\Users\Vahan\AppData\Local\Programs\cursor\resources\app\extensions\git\dist\main.js:2:181128)
+	at c:\Users\Vahan\AppData\Local\Programs\cursor\resources\app\extensions\git\dist\main.js:2:187493
+	at Array.forEach (<anonymous>)
+	at k.dispose (c:\Users\Vahan\AppData\Local\Programs\cursor\resources\app\extensions\git\dist\main.js:2:187480)
+	at uGe.<anonymous> (file:///c:/Users/Vahan/AppData/Local/Programs/cursor/resources/app/out/vs/workbench/api/node/extensionHostProcess.js:137:10091)
+	at uGe.dispose (file:///c:/Users/Vahan/AppData/Local/Programs/cursor/resources/app/out/vs/workbench/api/node/extensionHostProcess.js:137:10187)
+	at uGe.<anonymous> (c:\Users\Vahan\AppData\Local\Programs\cursor\resources\app\extensions\git\dist\main.js:2:113968)
+	at uGe.dispose (file:///c:/Users/Vahan/AppData/Local/Programs/cursor/resources/app/out/vs/workbench/api/node/extensionHostProcess.js:137:10187)
+	at hi (file:///c:/Users/Vahan/AppData/Local/Programs/cursor/resources/app/out/vs/workbench/api/node/extensionHostProcess.js:44:706)
+	at file:///c:/Users/Vahan/AppData/Local/Programs/cursor/resources/app/out/vs/workbench/api/node/extensionHostProcess.js:146:20707
+	at file:///c:/Users/Vahan/AppData/Local/Programs/cursor/resources/app/out/vs/workbench/api/node/extensionHostProcess.js:44:1019
+	at Object.dispose (file:///c:/Users/Vahan/AppData/Local/Programs/cursor/resources/app/out/vs/workbench/api/node/extensionHostProcess.js:27:1256)
+	at KHs._deactivate (file:///c:/Users/Vahan/AppData/Local/Programs/cursor/resources/app/out/vs/workbench/api/node/extensionHostProcess.js:146:15497)
+	at file:///c:/Users/Vahan/AppData/Local/Programs/cursor/resources/app/out/vs/workbench/api/node/extensionHostProcess.js:146:12768
+	at Array.map (<anonymous>)
+	at KHs._deactivateAll (file:///c:/Users/Vahan/AppData/Local/Programs/cursor/resources/app/out/vs/workbench/api/node/extensionHostProcess.js:146:12756)
+	at KHs.terminate (file:///c:/Users/Vahan/AppData/Local/Programs/cursor/resources/app/out/vs/workbench/api/node/extensionHostProcess.js:146:13110)
+	at ekt.terminate (file:///c:/Users/Vahan/AppData/Local/Programs/cursor/resources/app/out/vs/workbench/api/node/extensionHostProcess.js:148:1617)
+	at xr (file:///c:/Users/Vahan/AppData/Local/Programs/cursor/resources/app/out/vs/workbench/api/node/extensionHostProcess.js:680:8000)
+	at MessagePortMain.<anonymous> (file:///c:/Users/Vahan/AppData/Local/Programs/cursor/resources/app/out/vs/workbench/api/node/extensionHostProcess.js:680:4430)
+	at MessagePortMain.emit (node:events:519:28)
+	at MessagePortMain._internalPort.emit (node:electron/js2c/utility_init:2:2959) setContext undefined
+2026-04-30 04:46:30.675 [info] Extension host with pid 11540 exiting with code 0

@@ -1,0 +1,39 @@
+2026-04-30 04:43:24.696 [info] [2026-04-30T00:43:24.651Z] [info] marketplace listEnabledPlugins completed in 3.9ms (0 plugins)
+2026-04-30 04:43:24.696 [info] [2026-04-30T00:43:24.652Z] [info] loadFromMarketplaceSource completed in 4.3ms (0 plugins loaded, 0 failures)
+2026-04-30 04:43:24.696 [info] [2026-04-30T00:43:24.677Z] [info] loadAllEnabledPlugins: no installed plugins metadata found (30.7ms)
+2026-04-30 04:43:24.696 [info] [2026-04-30T00:43:24.677Z] [info] loadUserLocalPlugins completed in 29.2ms (0 plugins loaded)
+2026-04-30 04:43:29.304 [info] [2026-04-30T00:43:29.304Z] [info] marketplace listEnabledPlugins completed in 4657.0ms (0 plugins)
+2026-04-30 04:43:29.304 [info] [2026-04-30T00:43:29.304Z] [info] loadFromMarketplaceSource completed in 4657.0ms (0 plugins loaded, 0 failures)
+2026-04-30 04:43:29.304 [info] [2026-04-30T00:43:29.304Z] [info] loadAllPlugins completed in 4658.2ms (claude=true, userLocal=true, marketplace=2 sources, total=0 plugins, failures=0)
+2026-04-30 04:43:29.305 [info] [2026-04-30T00:43:29.304Z] [info] Plugins loaded in 4658.7ms
+2026-04-30 04:43:29.305 [info] [2026-04-30T00:43:29.304Z] [info] Plugins reload completed: 0 plugins loaded (0 extension), 0 failures
+2026-04-30 04:43:29.316 [info] [2026-04-30T00:43:29.315Z] [info] marketplace listEnabledPlugins completed in 0.2ms (0 plugins)
+2026-04-30 04:43:29.316 [info] [2026-04-30T00:43:29.315Z] [info] loadFromMarketplaceSource completed in 0.2ms (0 plugins loaded, 0 failures)
+2026-04-30 04:43:29.317 [info] [2026-04-30T00:43:29.316Z] [info] loadAllEnabledPlugins: no installed plugins metadata found (1.3ms)
+2026-04-30 04:43:29.317 [info] [2026-04-30T00:43:29.316Z] [info] loadUserLocalPlugins completed in 1.2ms (0 plugins loaded)
+2026-04-30 04:43:30.164 [info] [2026-04-30T00:43:30.163Z] [info] marketplace listEnabledPlugins completed in 848.2ms (0 plugins)
+2026-04-30 04:43:30.164 [info] [2026-04-30T00:43:30.163Z] [info] loadFromMarketplaceSource completed in 848.2ms (0 plugins loaded, 0 failures)
+2026-04-30 04:43:30.164 [info] [2026-04-30T00:43:30.163Z] [info] loadAllPlugins completed in 848.4ms (claude=true, userLocal=true, marketplace=2 sources, total=0 plugins, failures=0)
+2026-04-30 04:43:30.164 [info] [2026-04-30T00:43:30.164Z] [info] Plugins loaded in 848.5ms
+2026-04-30 04:43:30.164 [info] [2026-04-30T00:43:30.164Z] [info] Plugins reload completed: 0 plugins loaded (0 extension), 0 failures
+2026-04-30 04:43:38.805 [info] [2026-04-30T00:43:38.805Z] [info] marketplace listEnabledPlugins completed in 0.1ms (0 plugins)
+2026-04-30 04:43:38.805 [info] [2026-04-30T00:43:38.805Z] [info] loadFromMarketplaceSource completed in 0.1ms (0 plugins loaded, 0 failures)
+2026-04-30 04:43:38.805 [info] [2026-04-30T00:43:38.805Z] [error] Failed to get effective user plugins
+2026-04-30 04:43:47.546 [info] [2026-04-30T00:43:47.523Z] [info] loadAllEnabledPlugins: no installed plugins metadata found (48.0ms)
+2026-04-30 04:43:47.546 [info] [2026-04-30T00:43:47.523Z] [info] marketplace listEnabledPlugins completed in 47.6ms (0 plugins)
+2026-04-30 04:43:47.547 [info] [2026-04-30T00:43:47.524Z] [info] loadFromMarketplaceSource completed in 47.8ms (0 plugins loaded, 0 failures)
+2026-04-30 04:43:47.547 [info] [2026-04-30T00:43:47.524Z] [info] loadUserLocalPlugins completed in 47.8ms (0 plugins loaded)
+2026-04-30 04:43:49.663 [info] [2026-04-30T00:43:49.663Z] [info] marketplace listEnabledPlugins completed in 2187.7ms (0 plugins)
+2026-04-30 04:43:49.663 [info] [2026-04-30T00:43:49.663Z] [info] loadFromMarketplaceSource completed in 2187.9ms (0 plugins loaded, 0 failures)
+2026-04-30 04:43:49.663 [info] [2026-04-30T00:43:49.663Z] [info] loadAllPlugins completed in 2189.0ms (claude=true, userLocal=true, marketplace=2 sources, total=0 plugins, failures=0)
+2026-04-30 04:43:49.664 [info] [2026-04-30T00:43:49.663Z] [info] Plugins loaded in 2189.7ms
+2026-04-30 04:43:49.664 [info] [2026-04-30T00:43:49.664Z] [info] Plugins reload completed: 0 plugins loaded (0 extension), 0 failures
+2026-04-30 04:43:49.743 [info] [2026-04-30T00:43:49.743Z] [info] loadAllEnabledPlugins: no installed plugins metadata found (0.5ms)
+2026-04-30 04:43:49.744 [info] [2026-04-30T00:43:49.744Z] [info] marketplace listEnabledPlugins completed in 0.7ms (0 plugins)
+2026-04-30 04:43:49.744 [info] [2026-04-30T00:43:49.744Z] [info] loadFromMarketplaceSource completed in 0.8ms (0 plugins loaded, 0 failures)
+2026-04-30 04:43:49.744 [info] [2026-04-30T00:43:49.744Z] [info] loadUserLocalPlugins completed in 0.9ms (0 plugins loaded)
+2026-04-30 04:43:50.392 [info] [2026-04-30T00:43:50.392Z] [info] marketplace listEnabledPlugins completed in 649.2ms (0 plugins)
+2026-04-30 04:43:50.392 [info] [2026-04-30T00:43:50.392Z] [info] loadFromMarketplaceSource completed in 649.3ms (0 plugins loaded, 0 failures)
+2026-04-30 04:43:50.392 [info] [2026-04-30T00:43:50.392Z] [info] loadAllPlugins completed in 649.6ms (claude=true, userLocal=true, marketplace=2 sources, total=0 plugins, failures=0)
+2026-04-30 04:43:50.393 [info] [2026-04-30T00:43:50.392Z] [info] Plugins loaded in 649.8ms
+2026-04-30 04:43:50.393 [info] [2026-04-30T00:43:50.393Z] [info] Plugins reload completed: 0 plugins loaded (0 extension), 0 failures

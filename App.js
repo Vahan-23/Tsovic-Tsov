@@ -6,7 +6,10 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import { FiguresProvider } from './src/context/FiguresContext';
-import CollectionScreen from './src/screens/CollectionScreen';
+import { LanguageProvider } from './src/context/LanguageContext';
+import { SettingsProvider } from './src/context/SettingsContext';
+import { SearchTargetProvider } from './src/context/SearchTargetContext';
+import MainTabNavigator from './src/navigation/MainTabNavigator';
 import StatueDetailScreen from './src/screens/StatueDetailScreen';
 import ScanScreen from './src/screens/ScanScreen';
 import NavigationScreen from './src/screens/NavigationScreen';
@@ -17,46 +20,52 @@ export default function App() {
   return (
     <GestureHandlerRootView style={styles.root}>
       <SafeAreaProvider>
-        <FiguresProvider>
-          <NavigationContainer>
-            <StatusBar style="dark" />
-            <Stack.Navigator
-              initialRouteName="Collection"
-              screenOptions={{
-                headerStyle: { backgroundColor: '#F9FAFB' },
-                headerTintColor: '#111827',
-                headerTitleStyle: { fontWeight: '700' },
-                contentStyle: { backgroundColor: '#F9FAFB' },
-              }}
-            >
-              <Stack.Screen
-                name="Collection"
-                component={CollectionScreen}
-                options={{ title: 'Tsovic-Tsov' }}
-              />
-              <Stack.Screen
-                name="StatueDetail"
-                component={StatueDetailScreen}
-                options={{ title: 'Արձան' }}
-              />
-              <Stack.Screen
-                name="Scan"
-                component={ScanScreen}
-                options={{
-                  headerShown: false,
-                  presentation: 'modal',
-                }}
-              />
-              <Stack.Screen
-                name="Navigate"
-                component={NavigationScreen}
-                options={{
-                  headerShown: false,
-                }}
-              />
-            </Stack.Navigator>
-          </NavigationContainer>
-        </FiguresProvider>
+        <LanguageProvider>
+          <SettingsProvider>
+            <SearchTargetProvider>
+              <FiguresProvider>
+                <NavigationContainer>
+                  <StatusBar style="dark" />
+                  <Stack.Navigator
+                    initialRouteName="Main"
+                    screenOptions={{
+                      headerStyle: { backgroundColor: '#F9FAFB' },
+                      headerTintColor: '#111827',
+                      headerTitleStyle: { fontWeight: '700' },
+                      contentStyle: { backgroundColor: '#F9FAFB' },
+                    }}
+                  >
+                    <Stack.Screen
+                      name="Main"
+                      component={MainTabNavigator}
+                      options={{ headerShown: false }}
+                    />
+                    <Stack.Screen
+                      name="StatueDetail"
+                      component={StatueDetailScreen}
+                      options={{ title: 'Արձան' }}
+                    />
+                    <Stack.Screen
+                      name="Scan"
+                      component={ScanScreen}
+                      options={{
+                        headerShown: false,
+                        presentation: 'modal',
+                      }}
+                    />
+                    <Stack.Screen
+                      name="Navigate"
+                      component={NavigationScreen}
+                      options={{
+                        headerShown: false,
+                      }}
+                    />
+                  </Stack.Navigator>
+                </NavigationContainer>
+              </FiguresProvider>
+            </SearchTargetProvider>
+          </SettingsProvider>
+        </LanguageProvider>
       </SafeAreaProvider>
     </GestureHandlerRootView>
   );

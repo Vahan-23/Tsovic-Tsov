@@ -1,0 +1,105 @@
+2026-04-30 04:43:24.548 [info] 	crepectlPath: c:\Users\Vahan\AppData\Local\Programs\cursor\resources\app\resources\helpers\crepectl.exe
+2026-04-30 04:43:47.392 [info] 	crepectlPath: c:\Users\Vahan\AppData\Local\Programs\cursor\resources\app\resources\helpers\crepectl.exe
+2026-04-30 04:43:47.392 [info] Initializing GrepClient
+2026-04-30 04:43:47.453 [info] FileSystemWatcherService [workspace]: Creating filesystem watcher...
+2026-04-30 04:43:47.453 [info] FileSystemWatcherService [workspace]: Filesystem watcher created
+2026-04-30 04:43:47.453 [info] FileSystemWatcherService [workspace]: Registered client (total: 1)
+2026-04-30 04:43:47.453 [info] GrepClient initialized successfully
+2026-04-30 04:43:47.455 [info] using external crepectl binary at 'c:\Users\Vahan\AppData\Local\Programs\cursor\resources\app\resources\helpers\crepectl.exe'
+2026-04-30 04:43:47.456 [info] initialized head tracking (current branch = 'main', current commit = 3c4cb7f7c67a3be544c0699ad23cf9e377526ce3)
+2026-04-30 04:43:47.456 [info] bootstrapping repository index at 'c:\Users\Vahan\Desktop\Tsovic-Tsov\Tsovic-Tsov' (cache_path=c:\Users\Vahan\Desktop\Tsovic-Tsov\Tsovic-Tsov\.git\cursor/crepe)
+2026-04-30 04:43:47.456 [info] getTrackedState in 3.6348000000002685ms
+2026-04-30 04:43:47.456 [info] 	c:\Users\Vahan\Desktop\Tsovic-Tsov\Tsovic-Tsov: git_status: false, git_branch_name: true
+2026-04-30 04:43:47.482 [info] looking for best possible index (current_sha=3c4cb7f7c67a3be544c0699ad23cf9e377526ce3)
+2026-04-30 04:43:47.482 [info] candidate index c:\Users\Vahan\Desktop\Tsovic-Tsov\Tsovic-Tsov\.git\cursor/crepe\045d6415cf71ce33c0b62f2499ca7cfbe4292dd5 is 5 commits away
+2026-04-30 04:43:47.482 [info] loading index for commit 045d6415cf71ce33c0b62f2499ca7cfbe4292dd5
+2026-04-30 04:43:47.712 [info] reset index to head in 252.4628ms: 49 documents in commit, 35 in worktree
+2026-04-30 04:43:47.712 [info] index OK in 260.9258ms
+2026-04-30 04:43:47.856 [info] FileSystemWatcherService [workspace]: Registered client (total: 2)
+2026-04-30 04:43:47.856 [info] FileSystemWatcherService [external:C:\Users\Vahan\.cursor]: Creating filesystem watcher...
+2026-04-30 04:43:47.856 [info] FileSystemWatcherService [external:C:\Users\Vahan\.cursor]: Filesystem watcher created
+2026-04-30 04:43:47.856 [info] FileSystemWatcherService [external:C:\Users\Vahan\.cursor]: Registered client (total: 1)
+2026-04-30 04:43:49.814 [info] getTrackedState in 0.20349999999962165ms
+2026-04-30 04:43:49.814 [info] 	c:\Users\Vahan\Desktop\Tsovic-Tsov\Tsovic-Tsov: git_status: true, git_branch_name: true
+2026-04-30 04:43:53.435 [info] getTrackedState in 0.22700000000077125ms
+2026-04-30 04:43:53.435 [info] 	c:\Users\Vahan\Desktop\Tsovic-Tsov\Tsovic-Tsov: git_status: true, git_branch_name: true
+2026-04-30 04:43:55.387 [info] getTrackedState in 0.2944999999999709ms
+2026-04-30 04:43:55.387 [info] 	c:\Users\Vahan\Desktop\Tsovic-Tsov\Tsovic-Tsov: git_status: true, git_branch_name: true
+2026-04-30 04:43:59.008 [info] getTrackedState in 0.3438000000005559ms
+2026-04-30 04:43:59.008 [info] 	c:\Users\Vahan\Desktop\Tsovic-Tsov\Tsovic-Tsov: git_status: true, git_branch_name: true
+2026-04-30 04:44:02.902 [info] getTrackedState in 0.17560000000230502ms
+2026-04-30 04:44:02.902 [info] 	c:\Users\Vahan\Desktop\Tsovic-Tsov\Tsovic-Tsov: git_status: true, git_branch_name: true
+2026-04-30 04:44:06.061 [info] getTrackedState in 0.18140000000130385ms
+2026-04-30 04:44:06.061 [info] 	c:\Users\Vahan\Desktop\Tsovic-Tsov\Tsovic-Tsov: git_status: true, git_branch_name: true
+2026-04-30 04:44:10.686 [info] getTrackedState in 0.19059999999808497ms
+2026-04-30 04:44:10.686 [info] 	c:\Users\Vahan\Desktop\Tsovic-Tsov\Tsovic-Tsov: git_status: true, git_branch_name: true
+2026-04-30 04:44:13.144 [info] getTrackedState in 0.1837999999988824ms
+2026-04-30 04:44:13.144 [info] 	c:\Users\Vahan\Desktop\Tsovic-Tsov\Tsovic-Tsov: git_status: true, git_branch_name: true
+2026-04-30 04:44:14.743 [info] getTrackedState in 0.17889999999897555ms
+2026-04-30 04:44:14.743 [info] 	c:\Users\Vahan\Desktop\Tsovic-Tsov\Tsovic-Tsov: git_status: true, git_branch_name: true
+2026-04-30 04:44:16.375 [info] getTrackedState in 0.1753000000026077ms
+2026-04-30 04:44:16.375 [info] 	c:\Users\Vahan\Desktop\Tsovic-Tsov\Tsovic-Tsov: git_status: true, git_branch_name: true
+2026-04-30 04:44:18.987 [info] getTrackedState in 0.21830000000045402ms
+2026-04-30 04:44:18.987 [info] 	c:\Users\Vahan\Desktop\Tsovic-Tsov\Tsovic-Tsov: git_status: true, git_branch_name: true
+2026-04-30 04:44:22.700 [info] expanded 21 directories into 67 file events
+2026-04-30 04:44:22.703 [info] dropped 0 file events from ignored files in 3.0942ms (67 -> 67)
+2026-04-30 04:44:22.703 [info] refreshing index (67 stale documents detected)
+2026-04-30 04:44:22.733 [info] refreshed 28 new documents in 30.4697ms
+2026-04-30 04:44:24.195 [info] getTrackedState in 0.3227000000042608ms
+2026-04-30 04:44:24.195 [info] 	c:\Users\Vahan\Desktop\Tsovic-Tsov\Tsovic-Tsov: git_status: true, git_branch_name: true
+2026-04-30 04:44:32.396 [info] getTrackedState in 0.20610000000306172ms
+2026-04-30 04:44:32.396 [info] 	c:\Users\Vahan\Desktop\Tsovic-Tsov\Tsovic-Tsov: git_status: true, git_branch_name: true
+2026-04-30 04:44:44.733 [info] getTrackedState in 0.533900000002177ms
+2026-04-30 04:44:44.733 [info] 	c:\Users\Vahan\Desktop\Tsovic-Tsov\Tsovic-Tsov: git_status: true, git_branch_name: true
+2026-04-30 04:44:46.563 [info] dropped 0 file events from ignored files in 2.9901ms (6 -> 6)
+2026-04-30 04:44:46.563 [info] refreshing index (6 stale documents detected)
+2026-04-30 04:44:46.577 [info] refreshed 3 new documents in 14.386ms
+2026-04-30 04:44:48.524 [info] getTrackedState in 0.48690000000351574ms
+2026-04-30 04:44:48.524 [info] 	c:\Users\Vahan\Desktop\Tsovic-Tsov\Tsovic-Tsov: git_status: true, git_branch_name: true
+2026-04-30 04:45:06.235 [info] getTrackedState in 0.3145000000076834ms
+2026-04-30 04:45:06.235 [info] 	c:\Users\Vahan\Desktop\Tsovic-Tsov\Tsovic-Tsov: git_status: true, git_branch_name: true
+2026-04-30 04:45:16.682 [info] getTrackedState in 0.31660000000556465ms
+2026-04-30 04:45:16.682 [info] 	c:\Users\Vahan\Desktop\Tsovic-Tsov\Tsovic-Tsov: git_status: true, git_branch_name: true
+2026-04-30 04:45:22.000 [info] getTrackedState in 0.17079999999259599ms
+2026-04-30 04:45:22.000 [info] 	c:\Users\Vahan\Desktop\Tsovic-Tsov\Tsovic-Tsov: git_status: true, git_branch_name: true
+2026-04-30 04:45:25.720 [info] expanded 25 directories into 707 file events
+2026-04-30 04:45:25.723 [info] dropped 0 file events from ignored files in 3.0922ms (218 -> 218)
+2026-04-30 04:45:25.723 [info] refreshing index (218 stale documents detected)
+2026-04-30 04:45:25.758 [info] refreshed 10 new documents in 34.8911ms
+2026-04-30 04:45:28.128 [info] getTrackedState in 0.2286000000021886ms
+2026-04-30 04:45:28.128 [info] 	c:\Users\Vahan\Desktop\Tsovic-Tsov\Tsovic-Tsov: git_status: true, git_branch_name: true
+2026-04-30 04:45:33.415 [info] getTrackedState in 0.23750000000291038ms
+2026-04-30 04:45:33.415 [info] 	c:\Users\Vahan\Desktop\Tsovic-Tsov\Tsovic-Tsov: git_status: true, git_branch_name: true
+2026-04-30 04:45:41.232 [info] getTrackedState in 0.24340000000665896ms
+2026-04-30 04:45:41.232 [info] 	c:\Users\Vahan\Desktop\Tsovic-Tsov\Tsovic-Tsov: git_status: true, git_branch_name: true
+2026-04-30 04:45:42.787 [info] getTrackedState in 0.23589999999967404ms
+2026-04-30 04:45:42.787 [info] 	c:\Users\Vahan\Desktop\Tsovic-Tsov\Tsovic-Tsov: git_status: true, git_branch_name: true
+2026-04-30 04:45:44.725 [info] getTrackedState in 0.23690000000351574ms
+2026-04-30 04:45:44.725 [info] 	c:\Users\Vahan\Desktop\Tsovic-Tsov\Tsovic-Tsov: git_status: true, git_branch_name: true
+2026-04-30 04:45:46.527 [info] getTrackedState in 0.24120000000402797ms
+2026-04-30 04:45:46.527 [info] 	c:\Users\Vahan\Desktop\Tsovic-Tsov\Tsovic-Tsov: git_status: true, git_branch_name: true
+2026-04-30 04:45:48.464 [info] getTrackedState in 0.4469000000099186ms
+2026-04-30 04:45:48.464 [info] 	c:\Users\Vahan\Desktop\Tsovic-Tsov\Tsovic-Tsov: git_status: true, git_branch_name: true
+2026-04-30 04:45:51.583 [info] getTrackedState in 0.23470000000088476ms
+2026-04-30 04:45:51.583 [info] 	c:\Users\Vahan\Desktop\Tsovic-Tsov\Tsovic-Tsov: git_status: true, git_branch_name: true
+2026-04-30 04:45:55.286 [info] dropped 0 file events from ignored files in 3.3661ms (72 -> 72)
+2026-04-30 04:45:55.286 [info] refreshing index (72 stale documents detected)
+2026-04-30 04:45:55.301 [info] refreshed 3 new documents in 15.3539ms
+2026-04-30 04:45:56.669 [info] getTrackedState in 0.4753999999957159ms
+2026-04-30 04:45:56.669 [info] 	c:\Users\Vahan\Desktop\Tsovic-Tsov\Tsovic-Tsov: git_status: true, git_branch_name: true
+2026-04-30 04:46:01.320 [info] getTrackedState in 0.3619999999937136ms
+2026-04-30 04:46:01.320 [info] 	c:\Users\Vahan\Desktop\Tsovic-Tsov\Tsovic-Tsov: git_status: true, git_branch_name: true
+2026-04-30 04:46:11.927 [info] getTrackedState in 0.3812000000034459ms
+2026-04-30 04:46:11.927 [info] 	c:\Users\Vahan\Desktop\Tsovic-Tsov\Tsovic-Tsov: git_status: true, git_branch_name: true
+2026-04-30 04:46:14.731 [info] getTrackedState in 0.33370000001741573ms
+2026-04-30 04:46:14.731 [info] 	c:\Users\Vahan\Desktop\Tsovic-Tsov\Tsovic-Tsov: git_status: true, git_branch_name: true
+2026-04-30 04:46:16.389 [info] getTrackedState in 0.33679999999003485ms
+2026-04-30 04:46:16.389 [info] 	c:\Users\Vahan\Desktop\Tsovic-Tsov\Tsovic-Tsov: git_status: true, git_branch_name: true
+2026-04-30 04:46:22.995 [info] getTrackedState in 0.28570000000763685ms
+2026-04-30 04:46:22.995 [info] 	c:\Users\Vahan\Desktop\Tsovic-Tsov\Tsovic-Tsov: git_status: true, git_branch_name: true
+2026-04-30 04:46:24.418 [info] getTrackedState in 0.4182999999902677ms
+2026-04-30 04:46:24.418 [info] 	c:\Users\Vahan\Desktop\Tsovic-Tsov\Tsovic-Tsov: git_status: true, git_branch_name: true
+2026-04-30 04:46:30.649 [info] FileSystemWatcherService [workspace]: Disposing filesystem watcher...
+2026-04-30 04:46:30.649 [info] FileSystemWatcherService [workspace]: Filesystem watcher disposed
+2026-04-30 04:46:30.649 [info] FileSystemWatcherService [external:C:\Users\Vahan\.cursor]: Disposing filesystem watcher...
+2026-04-30 04:46:30.649 [info] FileSystemWatcherService [external:C:\Users\Vahan\.cursor]: Filesystem watcher disposed

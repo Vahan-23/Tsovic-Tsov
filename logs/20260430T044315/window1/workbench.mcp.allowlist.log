@@ -1,0 +1,9 @@
+2026-04-30 04:43:20.196 [info] [MCPService] MCP Allowlist logger initialized.
+2026-04-30 04:43:29.322 [info] [MCPService] createClient: identifier="user-medusa-docs", serverName="medusa-docs"
+2026-04-30 04:43:29.322 [info] [MCPService] createClient: identifier="user-firecrawl", serverName="firecrawl"
+2026-04-30 04:43:38.823 [info] [MCPService] createClient: identifier="user-medusa-docs", serverName="medusa-docs"
+2026-04-30 04:43:38.824 [info] [MCPService] createClient: identifier="user-firecrawl", serverName="firecrawl"
+2026-04-30 04:43:43.052 [info] [MCPService] MCP Allowlist logger initialized.
+2026-04-30 04:43:49.682 [info] [MCPService] createClient: identifier="user-medusa-docs", serverName="medusa-docs"
+2026-04-30 04:43:49.684 [info] [MCPService] createClient: identifier="user-firecrawl", serverName="firecrawl"
+2026-04-30 04:46:30.676 [info] [MCPService] createClient: identifier="user-firecrawl", serverName="firecrawl"

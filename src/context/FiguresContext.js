@@ -10,6 +10,8 @@ import { LayoutAnimation, Platform, UIManager } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as FileSystem from 'expo-file-system';
 import { FALLBACK_FIGURES, sortFiguresList } from '../data/figures';
+import { PULPULAK_POINTS } from '../data/pulpulaks';
+import { STATUES_3D_ENTRIES } from '../data/statues3d';
 import {
   convertOverpassJsonToStatues,
   fetchOverpassData,
@@ -18,13 +20,33 @@ import {
 } from '../services/overpassStatues';
 
 const STORAGE_KEY = '@tsovic_tsov/unlocked_figure_ids';
+const STORAGE_3D_KEY = '@tsovic_tsov/unlocked_statue_3d_ids';
+const STORAGE_PULP_KEY = '@tsovic_tsov/unlocked_pulpulak_ids';
 const STATUES_CACHE_VERSION_KEY = '@tsovic_tsov/statues_cache_version';
 const STATUES_LAST_UPDATED_KEY = '@tsovic_tsov/statues_last_updated_at';
 
 const STATUES_CACHE_FILE = `${FileSystem.documentDirectory}overpass_statues_cache.json`;
 const STATUES_MAX_AGE_MS = 7 * 24 * 60 * 60 * 1000; // 1 week
+const DISCOVERY_HISTORY_KEY = '@tsovic_tsov/discovery_history';
+const MAX_DISCOVERY_HISTORY = 80;
 
 const FiguresContext = createContext(null);
+
+/** Resolve statue row for a 3D entry (Overpass uses numeric ids; fallback uses slug ids). */
+function resolveLinkedStatue(statuesList, entry) {
+  if (entry?.linkedOsmId != null) {
+    const byOsm = statuesList.find(
+      (s) => String(s.id) === String(entry.linkedOsmId)
+    );
+    if (byOsm) return byOsm;
+  }
+  if (entry?.linkedStatueId != null) {
+    return statuesList.find(
+      (s) => String(s.id) === String(entry.linkedStatueId)
+    );
+  }
+  return null;
+}
 
 if (
   Platform.OS === 'android' &&
@@ -33,12 +55,34 @@ if (
   UIManager.setLayoutAnimationEnabledExperimental(true);
 }
 
+function parseIdSet(raw) {
+  if (!raw) return new Set();
+  try {
+    const parsed = JSON.parse(raw);
+    if (Array.isArray(parsed)) return new Set(parsed.map((x) => String(x)));
+  } catch {
+    /* ignore */
+  }
+  return new Set();
+}
+
+function cappedCollectionGrid(items) {
+  const MAX = 60;
+  const unlocked = items.filter((f) => f.unlocked);
+  if (unlocked.length >= MAX) return unlocked.slice(0, MAX);
+  const rest = items.filter((f) => !f.unlocked);
+  return unlocked.concat(rest.slice(0, MAX - unlocked.length));
+}
+
 export function FiguresProvider({ children }) {
   const [unlockedIds, setUnlockedIds] = useState(() => new Set());
+  const [unlocked3dIds, setUnlocked3dIds] = useState(() => new Set());
+  const [unlockedPulpulakIds, setUnlockedPulpulakIds] = useState(() => new Set());
   const [unlockedLoaded, setUnlockedLoaded] = useState(false);
   const [statues, setStatues] = useState([]);
   const [statuesLoaded, setStatuesLoaded] = useState(false);
   const [statuesRefreshing, setStatuesRefreshing] = useState(false);
+  const [discoveryHistory, setDiscoveryHistory] = useState([]);
 
   const refreshStatues = useCallback(async () => {
     setStatuesRefreshing(true);
@@ -75,16 +119,29 @@ export function FiguresProvider({ children }) {
     let cancelled = false;
     (async () => {
       try {
-        const raw = await AsyncStorage.getItem(STORAGE_KEY);
+        const rows = await AsyncStorage.multiGet([
+          STORAGE_KEY,
+          STORAGE_3D_KEY,
+          STORAGE_PULP_KEY,
+          DISCOVERY_HISTORY_KEY,
+        ]);
         if (cancelled) return;
-        if (raw) {
-          const parsed = JSON.parse(raw);
-          if (Array.isArray(parsed)) {
-            setUnlockedIds(new Set(parsed.map((x) => String(x))));
+        setUnlockedIds(parseIdSet(rows[0][1]));
+        setUnlocked3dIds(parseIdSet(rows[1][1]));
+        setUnlockedPulpulakIds(parseIdSet(rows[2][1]));
+        try {
+          const histRaw = rows[3][1];
+          if (histRaw) {
+            const parsed = JSON.parse(histRaw);
+            if (Array.isArray(parsed)) {
+              setDiscoveryHistory(parsed.filter((e) => e && e.id && e.mode));
+            }
           }
+        } catch {
+          /* ignore */
         }
       } catch {
-        /* ignore corrupt storage */
+        // ignore
       } finally {
         if (!cancelled) setUnlockedLoaded(true);
       }
@@ -96,12 +153,45 @@ export function FiguresProvider({ children }) {
 
   useEffect(() => {
     if (!unlockedLoaded) return;
-    const ids = [...unlockedIds];
-    AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(ids)).catch(() => {});
+    AsyncStorage.setItem(STORAGE_KEY, JSON.stringify([...unlockedIds])).catch(
+      () => {}
+    );
   }, [unlockedIds, unlockedLoaded]);
 
+  useEffect(() => {
+    if (!unlockedLoaded) return;
+    AsyncStorage.setItem(STORAGE_3D_KEY, JSON.stringify([...unlocked3dIds])).catch(
+      () => {}
+    );
+  }, [unlocked3dIds, unlockedLoaded]);
+
+  useEffect(() => {
+    if (!unlockedLoaded) return;
+    AsyncStorage.setItem(
+      STORAGE_PULP_KEY,
+      JSON.stringify([...unlockedPulpulakIds])
+    ).catch(() => {});
+  }, [unlockedPulpulakIds, unlockedLoaded]);
+
+  useEffect(() => {
+    if (!unlockedLoaded) return;
+    AsyncStorage.setItem(
+      DISCOVERY_HISTORY_KEY,
+      JSON.stringify(discoveryHistory)
+    ).catch(() => {});
+  }, [discoveryHistory, unlockedLoaded]);
+
+  const appendDiscovery = useCallback((mode, rawId, displayName) => {
+    const id = String(rawId);
+    const name = displayName || id;
+    setDiscoveryHistory((prev) => {
+      const entry = { mode, id, name, ts: Date.now() };
+      const filtered = prev.filter((e) => !(e.mode === mode && e.id === id));
+      return [entry, ...filtered].slice(0, MAX_DISCOVERY_HISTORY);
+    });
+  }, []);
+
   const normalizeStatueForDisplay = useCallback((s) => {
-    // Never fall back to raw numeric id; those are not meaningful to users.
     const displayName =
       s?.displayName ||
       s?.name_hy ||
@@ -117,11 +207,9 @@ export function FiguresProvider({ children }) {
     let cancelled = false;
 
     (async () => {
-      // Wait for unlockedIds first, so unlocked markers are correct.
       if (!unlockedLoaded) return;
 
       try {
-        // Check cache freshness.
         const [versionRaw, lastUpdatedRaw] = await Promise.all([
           AsyncStorage.getItem(STATUES_CACHE_VERSION_KEY),
           AsyncStorage.getItem(STATUES_LAST_UPDATED_KEY),
@@ -141,7 +229,6 @@ export function FiguresProvider({ children }) {
           // We'll still read the file to get the actual dataset.
         }
 
-        // Always try to read cache file first.
         let cachedFromFile = null;
         try {
           const info = await FileSystem.getInfoAsync(STATUES_CACHE_FILE);
@@ -153,7 +240,6 @@ export function FiguresProvider({ children }) {
           cachedFromFile = null;
         }
 
-        // Use cache if it is fresh.
         if (
           cachedFromFile &&
           cachedVersion === OVERPASS_CACHE_VERSION &&
@@ -167,12 +253,10 @@ export function FiguresProvider({ children }) {
           return;
         }
 
-        // Otherwise fetch from Overpass.
         if (!cancelled) {
           await refreshStatues();
         }
       } catch {
-        // Network failed -> fallback to bundled sample.
         if (!cancelled) {
           setStatues(FALLBACK_FIGURES);
           setStatuesLoaded(true);
@@ -192,16 +276,47 @@ export function FiguresProvider({ children }) {
     }));
   }, [statues, unlockedIds, normalizeStatueForDisplay]);
 
-  const figuresForGrid = useMemo(() => {
-    // Safety cap to keep FlatList fast with big datasets.
-    const MAX = 60;
-    const unlocked = figures.filter((f) => f.unlocked);
-    if (unlocked.length >= MAX) return unlocked.slice(0, MAX);
-    const rest = figures.filter((f) => !f.unlocked);
-    return unlocked.concat(rest.slice(0, MAX - unlocked.length));
-  }, [figures]);
+  const figures3d = useMemo(() => {
+    const sorted = sortFiguresList(statues);
+    return STATUES_3D_ENTRIES.map((entry) => {
+      const linked = resolveLinkedStatue(sorted, entry);
+      if (!linked) return null;
+      const norm = normalizeStatueForDisplay(linked);
+      return {
+        ...norm,
+        id: entry.id,
+        linkedStatueId: entry.linkedStatueId,
+        latitude: linked.latitude,
+        longitude: linked.longitude,
+        unlocked: unlocked3dIds.has(String(entry.id)),
+      };
+    }).filter(Boolean);
+  }, [statues, unlocked3dIds, normalizeStatueForDisplay]);
 
-  const unlockedCount = useMemo(() => figures.filter((f) => f.unlocked).length, [figures]);
+  const pulpulaks = useMemo(() => {
+    return PULPULAK_POINTS.map((p) => ({
+      ...p,
+      displayName: p.name,
+      unlocked: unlockedPulpulakIds.has(String(p.id)),
+    }));
+  }, [unlockedPulpulakIds]);
+
+  const figuresForGrid = useMemo(() => cappedCollectionGrid(figures), [figures]);
+
+  const figures3dForGrid = useMemo(
+    () => cappedCollectionGrid(figures3d),
+    [figures3d]
+  );
+
+  const pulpulaksForGrid = useMemo(
+    () => cappedCollectionGrid(pulpulaks),
+    [pulpulaks]
+  );
+
+  const unlockedCount = useMemo(
+    () => figures.filter((f) => f.unlocked).length,
+    [figures]
+  );
   const totalCount = figures.length;
 
   const isUnlockableId = useCallback(
@@ -231,32 +346,198 @@ export function FiguresProvider({ children }) {
 
       if (added) {
         LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+        const fig = figures.find((f) => String(f.id) === id);
+        appendDiscovery('statues', id, fig?.displayName ?? fig?.name ?? '');
       }
 
       return { ok: true, alreadyHad: !added };
     },
-    [figures]
+    [figures, appendDiscovery]
+  );
+
+  const unlockById3d = useCallback(
+    (rawId) => {
+      const id = rawId == null ? '' : String(rawId).trim();
+      const entry = STATUES_3D_ENTRIES.find((e) => String(e.id) === id);
+      if (!id || !entry) {
+        return { ok: false, reason: 'unknown' };
+      }
+
+      let added = false;
+      setUnlocked3dIds((prev) => {
+        if (prev.has(id)) return prev;
+        added = true;
+        const next = new Set(prev);
+        next.add(id);
+        return next;
+      });
+
+      if (added) {
+        LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+        const fig = resolveLinkedStatue(figures, entry);
+        const label = fig?.displayName ?? fig?.name ?? id;
+        appendDiscovery('statues3d', id, label);
+      }
+
+      return { ok: true, alreadyHad: !added };
+    },
+    [figures, appendDiscovery]
+  );
+
+  const unlockPulpulakById = useCallback((rawId) => {
+    const id = rawId == null ? '' : String(rawId).trim();
+    if (!id || !PULPULAK_POINTS.some((p) => String(p.id) === id)) {
+      return { ok: false, reason: 'unknown' };
+    }
+
+    let added = false;
+    setUnlockedPulpulakIds((prev) => {
+      if (prev.has(id)) return prev;
+      added = true;
+      const next = new Set(prev);
+      next.add(id);
+      return next;
+    });
+
+    if (added) {
+      LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+      const pt = PULPULAK_POINTS.find((p) => String(p.id) === id);
+      appendDiscovery('pulpulaks', id, pt?.name ?? '');
+    }
+
+    return { ok: true, alreadyHad: !added };
+  }, [appendDiscovery]);
+
+  const unlockForSearchMode = useCallback(
+    (mode, rawId) => {
+      if (mode === 'statues') return unlockById(rawId);
+      if (mode === 'statues3d') return unlockById3d(rawId);
+      if (mode === 'pulpulaks') return unlockPulpulakById(rawId);
+      return { ok: false, reason: 'unknown' };
+    },
+    [unlockById, unlockById3d, unlockPulpulakById]
+  );
+
+  const radarTargetsForMode = useCallback(
+    (mode) => {
+      if (mode === 'statues') return figures;
+      if (mode === 'statues3d') return figures3d;
+      if (mode === 'pulpulaks') return pulpulaks;
+      return figures;
+    },
+    [figures, figures3d, pulpulaks]
+  );
+
+  const collectionGridForMode = useCallback(
+    (mode) => {
+      if (mode === 'statues') return figuresForGrid;
+      if (mode === 'statues3d') return figures3dForGrid;
+      if (mode === 'pulpulaks') return pulpulaksForGrid;
+      return figuresForGrid;
+    },
+    [figuresForGrid, figures3dForGrid, pulpulaksForGrid]
+  );
+
+  const lockedOnlyGridForMode = useCallback(
+    (mode) => {
+      const source =
+        mode === 'statues'
+          ? figures
+          : mode === 'statues3d'
+            ? figures3d
+            : mode === 'pulpulaks'
+              ? pulpulaks
+              : figures;
+      const locked = source.filter((x) => !x.unlocked);
+      return cappedCollectionGrid(locked);
+    },
+    [figures, figures3d, pulpulaks]
+  );
+
+  const countsForSearchMode = useCallback(
+    (mode) => {
+      if (mode === 'statues') {
+        return {
+          unlockedCount: figures.filter((f) => f.unlocked).length,
+          totalCount: figures.length,
+        };
+      }
+      if (mode === 'statues3d') {
+        return {
+          unlockedCount: figures3d.filter((f) => f.unlocked).length,
+          totalCount: figures3d.length,
+        };
+      }
+      if (mode === 'pulpulaks') {
+        return {
+          unlockedCount: pulpulaks.filter((p) => p.unlocked).length,
+          totalCount: pulpulaks.length,
+        };
+      }
+      return { unlockedCount: 0, totalCount: 0 };
+    },
+    [figures, figures3d, pulpulaks]
+  );
+
+  const resolveCollectionItem = useCallback(
+    (kind, rawId) => {
+      const id = String(rawId);
+      if (kind === 'pulpulaks') {
+        return pulpulaks.find((p) => String(p.id) === id) ?? null;
+      }
+      if (kind === 'statues3d') {
+        return figures3d.find((f) => String(f.id) === id) ?? null;
+      }
+      return figures.find((f) => String(f.id) === id) ?? null;
+    },
+    [figures, figures3d, pulpulaks]
   );
 
   const value = useMemo(
     () => ({
       figures,
+      figures3d,
+      pulpulaks,
       figuresForGrid,
+      figuresForGrid3d: figures3dForGrid,
+      pulpulaksForGrid,
       unlockedCount,
       totalCount,
       unlockById,
+      unlockById3d,
+      unlockPulpulakById,
+      unlockForSearchMode,
+      radarTargetsForMode,
+      collectionGridForMode,
+      countsForSearchMode,
+      resolveCollectionItem,
       isUnlockableId,
+      discoveryHistory,
+      lockedOnlyGridForMode,
       storageLoaded: unlockedLoaded && statuesLoaded,
       statuesRefreshing,
       refreshStatues,
     }),
     [
       figures,
+      figures3d,
+      pulpulaks,
       figuresForGrid,
+      figures3dForGrid,
+      pulpulaksForGrid,
       unlockedCount,
       totalCount,
       unlockById,
+      unlockById3d,
+      unlockPulpulakById,
+      unlockForSearchMode,
+      radarTargetsForMode,
+      collectionGridForMode,
+      lockedOnlyGridForMode,
+      countsForSearchMode,
+      resolveCollectionItem,
       isUnlockableId,
+      discoveryHistory,
       unlockedLoaded,
       statuesLoaded,
       statuesRefreshing,

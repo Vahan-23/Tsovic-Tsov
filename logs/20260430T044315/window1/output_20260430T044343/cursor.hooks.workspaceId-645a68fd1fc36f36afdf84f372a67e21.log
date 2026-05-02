@@ -1,0 +1,21 @@
+[2026-04-30T00:43:43.825Z] Initializing Cursor Hooks Service...
+[2026-04-30T00:43:43.825Z] Claude user config path: c:\Users\Vahan\.claude\settings.json
+[2026-04-30T00:43:43.825Z] Project config path (Tsovic-Tsov): c:\Users\Vahan\Desktop\Tsovic-Tsov\Tsovic-Tsov\.cursor\hooks.json
+[2026-04-30T00:43:43.825Z] Claude project config path (Tsovic-Tsov): c:\Users\Vahan\Desktop\Tsovic-Tsov\Tsovic-Tsov\.claude\settings.json
+[2026-04-30T00:43:43.825Z] Claude project local config path (Tsovic-Tsov): c:\Users\Vahan\Desktop\Tsovic-Tsov\Tsovic-Tsov\.claude\settings.local.json
+[2026-04-30T00:43:43.825Z] User config path: c:\Users\Vahan\.cursor\hooks.json
+[2026-04-30T00:43:43.825Z] Enterprise config path: file:///c%3A/ProgramData/Cursor/hooks.json
+[2026-04-30T00:43:43.825Z] Reloading hooks configuration...
+[2026-04-30T00:43:43.827Z] No Claude user settings found
+[2026-04-30T00:43:49.679Z] No enterprise hooks configuration found
+[2026-04-30T00:43:49.683Z] No user hooks configuration found
+[2026-04-30T00:43:49.685Z] ERROR: Failed to parse project hooks configuration
+[2026-04-30T00:43:49.685Z] No project hooks configuration found
+[2026-04-30T00:43:49.685Z] Reloading hooks configuration...
+[2026-04-30T00:43:49.685Z] Refreshing team hooks...
+[2026-04-30T00:43:49.685Z] Cursor Hooks Service initialized successfully
+[2026-04-30T00:43:49.720Z] No Claude user settings found
+[2026-04-30T00:43:50.431Z] No enterprise hooks configuration found
+[2026-04-30T00:43:50.433Z] No user hooks configuration found
+[2026-04-30T00:43:50.435Z] ERROR: Failed to parse project hooks configuration
+[2026-04-30T00:43:50.435Z] No project hooks configuration found

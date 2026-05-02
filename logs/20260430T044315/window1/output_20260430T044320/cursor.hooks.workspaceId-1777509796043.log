@@ -1,0 +1,19 @@
+[2026-04-30T00:43:20.891Z] Initializing Cursor Hooks Service...
+[2026-04-30T00:43:20.891Z] Claude user config path: c:\Users\Vahan\.claude\settings.json
+[2026-04-30T00:43:20.891Z] No workspace folder found, project hooks will not be available
+[2026-04-30T00:43:20.891Z] User config path: c:\Users\Vahan\.cursor\hooks.json
+[2026-04-30T00:43:20.891Z] Enterprise config path: file:///c%3A/ProgramData/Cursor/hooks.json
+[2026-04-30T00:43:20.892Z] Reloading hooks configuration...
+[2026-04-30T00:43:20.898Z] No Claude user settings found
+[2026-04-30T00:43:20.900Z] No enterprise hooks configuration found
+[2026-04-30T00:43:20.905Z] No user hooks configuration found
+[2026-04-30T00:43:20.906Z] No workspace project hooks configuration paths found
+[2026-04-30T00:43:20.906Z] Refreshing team hooks...
+[2026-04-30T00:43:20.907Z] Cursor Hooks Service initialized successfully
+[2026-04-30T00:43:24.651Z] Reloading hooks configuration...
+[2026-04-30T00:43:24.653Z] No Claude user settings found
+[2026-04-30T00:43:24.655Z] No enterprise hooks configuration found
+[2026-04-30T00:43:24.656Z] No user hooks configuration found
+[2026-04-30T00:43:24.656Z] No workspace project hooks configuration paths found
+[2026-04-30T00:43:26.270Z] Refreshing team hooks...
+[2026-04-30T00:43:26.286Z] Refreshing team hooks...

@@ -1,0 +1,221 @@
+2026-04-30 04:43:19.298 [info] [CursorExtensionIsolationService] Extension isolation gate is enabled, effective isolation is enabled
+2026-04-30 04:43:19.300 [warning] Via 'product.json#extensionEnabledApiProposals' extension 'ms-toolsai.datawrangler' wants API proposal 'debugFocus' but that proposal DOES NOT EXIST. Likely, the proposal has been finalized (check 'vscode.d.ts') or was abandoned.
+2026-04-30 04:43:19.300 [warning] Via 'product.json#extensionEnabledApiProposals' extension 'ms-vscode.vscode-copilot-data-analysis' wants API proposal 'chatVariableResolver' but that proposal DOES NOT EXIST. Likely, the proposal has been finalized (check 'vscode.d.ts') or was abandoned.
+2026-04-30 04:43:19.301 [warning] Via 'product.json#extensionEnabledApiProposals' extension 'ms-python.python' wants API proposal 'terminalShellType' but that proposal DOES NOT EXIST. Likely, the proposal has been finalized (check 'vscode.d.ts') or was abandoned.
+2026-04-30 04:43:19.301 [warning] Via 'product.json#extensionEnabledApiProposals' extension 'ms-python.vscode-python-envs' wants API proposal 'terminalShellType' but that proposal DOES NOT EXIST. Likely, the proposal has been finalized (check 'vscode.d.ts') or was abandoned.
+2026-04-30 04:43:19.301 [warning] Via 'product.json#extensionEnabledApiProposals' extension 'github.copilot-chat' wants API proposal 'chatReadonlyPromptReference' but that proposal DOES NOT EXIST. Likely, the proposal has been finalized (check 'vscode.d.ts') or was abandoned.
+2026-04-30 04:43:19.302 [warning] Via 'product.json#extensionEnabledApiProposals' extension 'ms-azuretools.vscode-azure-github-copilot' wants API proposal 'lmTools' but that proposal DOES NOT EXIST. Likely, the proposal has been finalized (check 'vscode.d.ts') or was abandoned.
+2026-04-30 04:43:19.302 [warning] Via 'product.json#extensionEnabledApiProposals' extension 'vscjava.vscode-java-pack' wants API proposal 'lmTools' but that proposal DOES NOT EXIST. Likely, the proposal has been finalized (check 'vscode.d.ts') or was abandoned.
+2026-04-30 04:43:19.303 [warning] Via 'product.json#extensionEnabledApiProposals' extension 'apidev.azure-api-center' wants API proposal 'chatParticipant' but that proposal DOES NOT EXIST. Likely, the proposal has been finalized (check 'vscode.d.ts') or was abandoned.
+2026-04-30 04:43:19.303 [warning] Via 'product.json#extensionEnabledApiProposals' extension 'apidev.azure-api-center' wants API proposal 'languageModels' but that proposal DOES NOT EXIST. Likely, the proposal has been finalized (check 'vscode.d.ts') or was abandoned.
+2026-04-30 04:43:19.369 [warning] Missing property "alwaysKeepComposerInBound" in oldValue. Filling with value from initValue. Please add a migration if necessary.
+2026-04-30 04:43:19.369 [warning] Missing property "defaultCapabilities" in oldValue. Filling with value from initValue. Please add a migration if necessary.
+2026-04-30 04:43:19.370 [warning] Missing property "autoApplyFilesOutsideContext" in oldValue. Filling with value from initValue. Please add a migration if necessary.
+2026-04-30 04:43:19.370 [warning] Missing property "yoloCommandAllowlist" in oldValue. Filling with value from initValue. Please add a migration if necessary.
+2026-04-30 04:43:19.370 [warning] Missing property "yoloCommandDenylist" in oldValue. Filling with value from initValue. Please add a migration if necessary.
+2026-04-30 04:43:19.370 [warning] Missing property "smartAllowlistDenylist" in oldValue. Filling with value from initValue. Please add a migration if necessary.
+2026-04-30 04:43:19.371 [warning] Missing property "yoloMcpToolsDisabled" in oldValue. Filling with value from initValue. Please add a migration if necessary.
+2026-04-30 04:43:19.371 [warning] Missing property "doNotShowYoloModeWarningAgain" in oldValue. Filling with value from initValue. Please add a migration if necessary.
+2026-04-30 04:43:19.371 [warning] Missing property "doNotShowFullYoloModeWarningAgain" in oldValue. Filling with value from initValue. Please add a migration if necessary.
+2026-04-30 04:43:19.372 [warning] Missing property "selectedFakeStreamerId" in oldValue. Filling with value from initValue. Please add a migration if necessary.
+2026-04-30 04:43:19.372 [warning] Missing property "yoloDeleteFileDisabled" in oldValue. Filling with value from initValue. Please add a migration if necessary.
+2026-04-30 04:43:19.373 [warning] Missing property "yoloOutsideWorkspaceDisabled" in oldValue. Filling with value from initValue. Please add a migration if necessary.
+2026-04-30 04:43:19.373 [warning] Missing property "yoloEnableRunEverything" in oldValue. Filling with value from initValue. Please add a migration if necessary.
+2026-04-30 04:43:19.373 [warning] Missing property "isWebSearchToolEnabled" in oldValue. Filling with value from initValue. Please add a migration if necessary.
+2026-04-30 04:43:19.373 [warning] Missing property "isWebSearchToolEnabled2" in oldValue. Filling with value from initValue. Please add a migration if necessary.
+2026-04-30 04:43:19.374 [warning] Missing property "isWebSearchToolEnabled3" in oldValue. Filling with value from initValue. Please add a migration if necessary.
+2026-04-30 04:43:19.374 [warning] Missing property "autoAcceptWebSearchTool" in oldValue. Filling with value from initValue. Please add a migration if necessary.
+2026-04-30 04:43:19.374 [warning] Missing property "autoAcceptGenerateImageTool" in oldValue. Filling with value from initValue. Please add a migration if necessary.
+2026-04-30 04:43:19.374 [warning] Missing property "isWebFetchToolEnabled" in oldValue. Filling with value from initValue. Please add a migration if necessary.
+2026-04-30 04:43:19.375 [warning] Missing property "webFetchDomainAllowlist" in oldValue. Filling with value from initValue. Please add a migration if necessary.
+2026-04-30 04:43:19.375 [warning] Missing property "autoApprovedModeTransitions" in oldValue. Filling with value from initValue. Please add a migration if necessary.
+2026-04-30 04:43:19.375 [warning] Missing property "autoRejectedModeTransitions" in oldValue. Filling with value from initValue. Please add a migration if necessary.
+2026-04-30 04:43:19.376 [warning] Missing property "backgroundComposerEnv" in oldValue. Filling with value from initValue. Please add a migration if necessary.
+2026-04-30 04:43:19.376 [warning] Missing property "useLegacyTerminalTool" in oldValue. Filling with value from initValue. Please add a migration if necessary.
+2026-04-30 04:43:19.376 [warning] Missing property "modes4" in oldValue. Filling with value from initValue. Please add a migration if necessary.
+2026-04-30 04:43:19.377 [warning] Missing property "codeBlockDisplayPreference" in oldValue. Filling with value from initValue. Please add a migration if necessary.
+2026-04-30 04:43:19.377 [warning] Missing property "thinkingLevel" in oldValue. Filling with value from initValue. Please add a migration if necessary.
+2026-04-30 04:43:19.377 [warning] Missing property "composerMigrationVersion" in oldValue. Filling with value from initValue. Please add a migration if necessary.
+2026-04-30 04:43:19.377 [warning] Missing property "mcpServers" in oldValue. Filling with value from initValue. Please add a migration if necessary.
+2026-04-30 04:43:19.378 [warning] Missing property "mcpDisabledTools" in oldValue. Filling with value from initValue. Please add a migration if necessary.
+2026-04-30 04:43:19.378 [warning] Missing property "availableDefaultModels2" in oldValue. Filling with value from initValue. Please add a migration if necessary.
+2026-04-30 04:43:19.379 [warning] Missing property "featureModelConfigs" in oldValue. Filling with value from initValue. Please add a migration if necessary.
+2026-04-30 04:43:19.379 [warning] Missing property "backgroundComposerState" in oldValue. Filling with value from initValue. Please add a migration if necessary.
+2026-04-30 04:43:19.379 [warning] Missing property "dialogDontAskAgainPreferences" in oldValue. Filling with value from initValue. Please add a migration if necessary.
+2026-04-30 04:43:19.380 [warning] Missing property "cursorIgnore" in oldValue. Filling with value from initValue. Please add a migration if necessary.
+2026-04-30 04:43:19.380 [warning] Missing property "teamAdminSettings" in oldValue. Filling with value from initValue. Please add a migration if necessary.
+2026-04-30 04:43:19.380 [warning] Missing property "shouldShowViewZoneWhenPreviewBoxIsClipped6" in oldValue. Filling with value from initValue. Please add a migration if necessary.
+2026-04-30 04:43:19.380 [warning] Missing property "cppModelsState" in oldValue. Filling with value from initValue. Please add a migration if necessary.
+2026-04-30 04:43:19.381 [warning] Missing property "aiSettings" in oldValue. Filling with value from initValue. Please add a migration if necessary.
+2026-04-30 04:43:19.381 [warning] Missing property "authenticationSettings" in oldValue. Filling with value from initValue. Please add a migration if necessary.
+2026-04-30 04:43:19.381 [warning] Missing property "websiteUrl" in oldValue. Filling with value from initValue. Please add a migration if necessary.
+2026-04-30 04:43:19.381 [warning] Missing property "backendUrl" in oldValue. Filling with value from initValue. Please add a migration if necessary.
+2026-04-30 04:43:19.382 [warning] Missing property "authClientId" in oldValue. Filling with value from initValue. Please add a migration if necessary.
+2026-04-30 04:43:19.382 [warning] Missing property "authDomain" in oldValue. Filling with value from initValue. Please add a migration if necessary.
+2026-04-30 04:43:19.382 [warning] Missing property "repoBackendUrl" in oldValue. Filling with value from initValue. Please add a migration if necessary.
+2026-04-30 04:43:19.382 [warning] Missing property "telemBackendUrl" in oldValue. Filling with value from initValue. Please add a migration if necessary.
+2026-04-30 04:43:19.383 [warning] Missing property "cmdkBackendUrl" in oldValue. Filling with value from initValue. Please add a migration if necessary.
+2026-04-30 04:43:19.383 [warning] Missing property "geoCppBackendUrl" in oldValue. Filling with value from initValue. Please add a migration if necessary.
+2026-04-30 04:43:19.383 [warning] Missing property "cppConfigBackendUrl" in oldValue. Filling with value from initValue. Please add a migration if necessary.
+2026-04-30 04:43:19.383 [warning] Missing property "bcProxyUrl" in oldValue. Filling with value from initValue. Please add a migration if necessary.
+2026-04-30 04:43:19.384 [warning] Missing property "agentBackendUrlPrivacy" in oldValue. Filling with value from initValue. Please add a migration if necessary.
+2026-04-30 04:43:19.384 [warning] Missing property "agentBackendUrlNonPrivacy" in oldValue. Filling with value from initValue. Please add a migration if necessary.
+2026-04-30 04:43:19.385 [warning] Missing property "credentialsDisplayName" in oldValue. Filling with value from initValue. Please add a migration if necessary.
+2026-04-30 04:43:19.385 [warning] Missing property "cmdLineHookState" in oldValue. Filling with value from initValue. Please add a migration if necessary.
+2026-04-30 04:43:19.385 [warning] Missing property "shouldOnlyImportOnAccept" in oldValue. Filling with value from initValue. Please add a migration if necessary.
+2026-04-30 04:43:19.385 [warning] Missing property "cppAutoImportDecorationStyle" in oldValue. Filling with value from initValue. Please add a migration if necessary.
+2026-04-30 04:43:19.386 [warning] Missing property "newUserData" in oldValue. Filling with value from initValue. Please add a migration if necessary.
+2026-04-30 04:43:19.386 [warning] Missing property "azureState" in oldValue. Filling with value from initValue. Please add a migration if necessary.
+2026-04-30 04:43:19.386 [warning] Missing property "personalDocs" in oldValue. Filling with value from initValue. Please add a migration if necessary.
+2026-04-30 04:43:19.386 [warning] Missing property "cppInCmdF" in oldValue. Filling with value from initValue. Please add a migration if necessary.
+2026-04-30 04:43:19.387 [warning] Missing property "cppTriggerInComments" in oldValue. Filling with value from initValue. Please add a migration if necessary.
+2026-04-30 04:43:19.387 [warning] Missing property "cppShowWhitespaceOnlyChanges" in oldValue. Filling with value from initValue. Please add a migration if necessary.
+2026-04-30 04:43:19.387 [warning] Missing property "cppConfig" in oldValue. Filling with value from initValue. Please add a migration if necessary.
+2026-04-30 04:43:19.387 [warning] Missing property "indexRepository" in oldValue. Filling with value from initValue. Please add a migration if necessary.
+2026-04-30 04:43:19.388 [warning] Missing property "haveNotImportedFromVSC" in oldValue. Filling with value from initValue. Please add a migration if necessary.
+2026-04-30 04:43:19.388 [warning] Missing property "shouldAutoParseCmdKLinks" in oldValue. Filling with value from initValue. Please add a migration if necessary.
+2026-04-30 04:43:19.389 [warning] Missing property "autoCreateNewChatAfterTimeout" in oldValue. Filling with value from initValue. Please add a migration if necessary.
+2026-04-30 04:43:19.389 [warning] Missing property "isFileSyncClientEnabled" in oldValue. Filling with value from initValue. Please add a migration if necessary.
+2026-04-30 04:43:19.389 [warning] Missing property "membershipType" in oldValue. Filling with value from initValue. Please add a migration if necessary.
+2026-04-30 04:43:19.389 [warning] Missing property "fastApplyModelType" in oldValue. Filling with value from initValue. Please add a migration if necessary.
+2026-04-30 04:43:19.390 [warning] Missing property "explicitlyEnableSemanticSearch" in oldValue. Filling with value from initValue. Please add a migration if necessary.
+2026-04-30 04:43:19.390 [warning] Missing property "backgroundComposerEnv" in oldValue. Filling with value from initValue. Please add a migration if necessary.
+2026-04-30 04:43:19.390 [warning] Missing property "preferredEmbeddingModel" in oldValue. Filling with value from initValue. Please add a migration if necessary.
+2026-04-30 04:43:19.390 [warning] Missing property "oneTimeSettings" in oldValue. Filling with value from initValue. Please add a migration if necessary.
+2026-04-30 04:43:19.391 [warning] Missing property "eligibleForSnippetLearning" in oldValue. Filling with value from initValue. Please add a migration if necessary.
+2026-04-30 04:43:19.391 [warning] Missing property "goneThroughCodeSnippetOnboarding" in oldValue. Filling with value from initValue. Please add a migration if necessary.
+2026-04-30 04:43:19.391 [warning] Missing property "goneThroughCodeSnippetChangeManagement" in oldValue. Filling with value from initValue. Please add a migration if necessary.
+2026-04-30 04:43:19.391 [warning] Missing property "hasResetModelOnce" in oldValue. Filling with value from initValue. Please add a migration if necessary.
+2026-04-30 04:43:19.392 [warning] Missing property "rpcFileLoggerEnabled" in oldValue. Filling with value from initValue. Please add a migration if necessary.
+2026-04-30 04:43:19.392 [warning] Missing property "rpcFileLoggerFolder" in oldValue. Filling with value from initValue. Please add a migration if necessary.
+2026-04-30 04:43:19.405 [info] [PushRequestContextService] push request context is disabled (killswitchActive=false, instantGrepEnabled=false, indexingGrepEnabled=true)
+2026-04-30 04:43:20.174 [info] Started local extension host with pid 3648.
+2026-04-30 04:43:20.506 [info] Placing extension(s) anysphere.cursor-retrieval on a separate extension host.
+2026-04-30 04:43:20.506 [info] Placing extension(s) anysphere.cursor-always-local, anysphere.cursor-resolver, anysphere.cursor-socket on a separate extension host.
+2026-04-30 04:43:20.506 [info] Placing extension(s) anysphere.cursor-agent-exec, anysphere.cursor-checkout on a separate extension host.
+2026-04-30 04:43:20.571 [warning] [ms-python.python]: Cannot register 'python.venvPath'. This property is already registered.
+2026-04-30 04:43:20.805 [info] Started local extension host with pid 52296.
+2026-04-30 04:43:20.806 [info] Started local extension host with pid 56632.
+2026-04-30 04:43:20.806 [info] Started local extension host with pid 34320.
+2026-04-30 04:43:21.002 [info] [WorktreeCleanupCron] Registering cleanup task with interval of 6 hours
+2026-04-30 04:43:21.003 [info] [WorktreeCleanupCron] Cleanup task registered with interval of 6 hours (21600000ms)
+2026-04-30 04:43:21.003 [info] LocalAutomationsCronContribution: local_automations feature flag is disabled, skipping startup
+2026-04-30 04:43:22.345 [info] [Debug] Registered command palette action: debug.classifyRecentConversations
+2026-04-30 04:43:22.345 [info] [Debug] Registered command palette action: debug.logComposer
+2026-04-30 04:43:22.345 [info] [Debug] Registered command palette action: debug.getContextKeyValue
+2026-04-30 04:43:22.345 [info] [Debug] Registered command palette action: debug.getApplicationProperty
+2026-04-30 04:43:22.345 [info] [Debug] Registered command palette action: debug.setApplicationProperty
+2026-04-30 04:43:22.346 [info] [Debug] Registered command palette action: debug.testLinearIssues
+2026-04-30 04:43:22.364 [info] OpenInBrowserWatcher: Initializing terminal log watcher
+2026-04-30 04:43:22.379 [info] [GC Trace Polling] Disabled by config
+2026-04-30 04:43:23.289 [info] [LocalProcessExtensionHost] getDefaultShell result: C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe
+2026-04-30 04:43:23.290 [info] [LocalProcessExtensionHost] Final userTerminalHint: C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe
+2026-04-30 04:43:23.362 [info] [MainThreadCursor] mcp_snapshot_synchronization gate (session-sticky): false
+2026-04-30 04:43:23.362 [info] [MainThreadCursor] mcp_commands_v2 gate (session-sticky): false
+2026-04-30 04:43:23.388 [info] [MainThreadShellExec] $updateShellExecCapabilities: hostKind=1, expectedHost=1, isRemote=false, sandboxSupported=false, linuxKernelVersion=none
+2026-04-30 04:43:23.389 [info] [MainThreadShellExec] AppArmor suggestion skipped: sandboxSupported=false, linuxKernelVersion=none
+2026-04-30 04:43:24.046 [info] [LocalProcessExtensionHost] getDefaultShell result: C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe
+2026-04-30 04:43:24.046 [info] [LocalProcessExtensionHost] getDefaultShell result: C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe
+2026-04-30 04:43:24.047 [info] [LocalProcessExtensionHost] Final userTerminalHint: C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe
+2026-04-30 04:43:24.069 [info] [LocalProcessExtensionHost] Final userTerminalHint: C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe
+2026-04-30 04:43:24.096 [info] [MainThreadCursor] mcp_snapshot_synchronization gate (session-sticky): false
+2026-04-30 04:43:24.097 [info] [MainThreadCursor] mcp_commands_v2 gate (session-sticky): false
+2026-04-30 04:43:24.102 [info] [LocalProcessExtensionHost] getDefaultShell result: C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe
+2026-04-30 04:43:24.103 [info] [LocalProcessExtensionHost] Final userTerminalHint: C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe
+2026-04-30 04:43:24.131 [info] [MainThreadCursor] mcp_snapshot_synchronization gate (session-sticky): false
+2026-04-30 04:43:24.131 [info] [MainThreadCursor] mcp_commands_v2 gate (session-sticky): false
+2026-04-30 04:43:24.140 [info] [MainThreadShellExec] $updateShellExecCapabilities: hostKind=1, expectedHost=1, isRemote=false, sandboxSupported=false, linuxKernelVersion=none
+2026-04-30 04:43:24.140 [info] [MainThreadShellExec] AppArmor suggestion skipped: sandboxSupported=false, linuxKernelVersion=none
+2026-04-30 04:43:24.147 [info] [MainThreadShellExec] $updateShellExecCapabilities: hostKind=1, expectedHost=1, isRemote=false, sandboxSupported=false, linuxKernelVersion=none
+2026-04-30 04:43:24.147 [info] [MainThreadShellExec] AppArmor suggestion skipped: sandboxSupported=false, linuxKernelVersion=none
+2026-04-30 04:43:24.158 [info] [MainThreadCursor] mcp_snapshot_synchronization gate (session-sticky): false
+2026-04-30 04:43:24.158 [info] [MainThreadCursor] mcp_commands_v2 gate (session-sticky): false
+2026-04-30 04:43:24.173 [info] [MainThreadShellExec] $updateShellExecCapabilities: hostKind=1, expectedHost=1, isRemote=false, sandboxSupported=false, linuxKernelVersion=none
+2026-04-30 04:43:24.174 [info] [MainThreadShellExec] AppArmor suggestion skipped: sandboxSupported=false, linuxKernelVersion=none
+2026-04-30 04:43:24.346 [info] [ShellExec] Created session f3cca717-43fb-4909-8e5e-5d4d0a93d437 on LocalProcess host
+2026-04-30 04:43:24.346 [error] [MainThreadShellExec.execute] Session not found: f3cca717-43fb-4909-8e5e-5d4d0a93d437
+2026-04-30 04:43:24.513 [error] [Extension Host] (node:52296) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `Cursor --trace-deprecation ...` to show where the warning was created)
+2026-04-30 04:43:24.589 [info] [ShellExec] Created session 41fe98ec-4cf0-4b4b-8c9f-dc43e27a1b6f on LocalProcess host
+2026-04-30 04:43:24.683 [info] [PushRequestContextService] Updated sandbox network file entries (0 entries)
+2026-04-30 04:43:24.920 [info] [WorktreeManager] Using worktrees root c:\Users\Vahan\.cursor\worktrees
+2026-04-30 04:43:25.511 [info] [MainThreadCursorExplorerProviderService] Explorer provider registered
+2026-04-30 04:43:28.741 [error] An unknown error occurred. Please consult the log for more details. {}
+2026-04-30 04:43:29.903 [warning] Missing property "firstCompetingCliDetectedAt" in oldValue. Filling with value from initValue. Please add a migration if necessary.
+2026-04-30 04:43:29.904 [warning] Missing property "cppConfig" in oldValue. Filling with value from initValue. Please add a migration if necessary.
+2026-04-30 04:43:30.107 [warning] Missing property "firstCompetingCliDetectedAt" in oldValue. Filling with value from initValue. Please add a migration if necessary.
+2026-04-30 04:43:32.396 [info] [Cursor Proclist Polling] Started polling (every 5 min)
+2026-04-30 04:43:42.440 [info] [CursorExtensionIsolationService] Extension isolation gate is enabled, effective isolation is enabled
+2026-04-30 04:43:42.440 [warning] Via 'product.json#extensionEnabledApiProposals' extension 'ms-toolsai.datawrangler' wants API proposal 'debugFocus' but that proposal DOES NOT EXIST. Likely, the proposal has been finalized (check 'vscode.d.ts') or was abandoned.
+2026-04-30 04:43:42.441 [warning] Via 'product.json#extensionEnabledApiProposals' extension 'ms-vscode.vscode-copilot-data-analysis' wants API proposal 'chatVariableResolver' but that proposal DOES NOT EXIST. Likely, the proposal has been finalized (check 'vscode.d.ts') or was abandoned.
+2026-04-30 04:43:42.441 [warning] Via 'product.json#extensionEnabledApiProposals' extension 'ms-python.python' wants API proposal 'terminalShellType' but that proposal DOES NOT EXIST. Likely, the proposal has been finalized (check 'vscode.d.ts') or was abandoned.
+2026-04-30 04:43:42.441 [warning] Via 'product.json#extensionEnabledApiProposals' extension 'ms-python.vscode-python-envs' wants API proposal 'terminalShellType' but that proposal DOES NOT EXIST. Likely, the proposal has been finalized (check 'vscode.d.ts') or was abandoned.
+2026-04-30 04:43:42.441 [warning] Via 'product.json#extensionEnabledApiProposals' extension 'github.copilot-chat' wants API proposal 'chatReadonlyPromptReference' but that proposal DOES NOT EXIST. Likely, the proposal has been finalized (check 'vscode.d.ts') or was abandoned.
+2026-04-30 04:43:42.442 [warning] Via 'product.json#extensionEnabledApiProposals' extension 'ms-azuretools.vscode-azure-github-copilot' wants API proposal 'lmTools' but that proposal DOES NOT EXIST. Likely, the proposal has been finalized (check 'vscode.d.ts') or was abandoned.
+2026-04-30 04:43:42.442 [warning] Via 'product.json#extensionEnabledApiProposals' extension 'vscjava.vscode-java-pack' wants API proposal 'lmTools' but that proposal DOES NOT EXIST. Likely, the proposal has been finalized (check 'vscode.d.ts') or was abandoned.
+2026-04-30 04:43:42.442 [warning] Via 'product.json#extensionEnabledApiProposals' extension 'apidev.azure-api-center' wants API proposal 'chatParticipant' but that proposal DOES NOT EXIST. Likely, the proposal has been finalized (check 'vscode.d.ts') or was abandoned.
+2026-04-30 04:43:42.442 [warning] Via 'product.json#extensionEnabledApiProposals' extension 'apidev.azure-api-center' wants API proposal 'languageModels' but that proposal DOES NOT EXIST. Likely, the proposal has been finalized (check 'vscode.d.ts') or was abandoned.
+2026-04-30 04:43:42.479 [warning] Missing property "rpcFileLoggerFolder" in oldValue. Filling with value from initValue. Please add a migration if necessary.
+2026-04-30 04:43:42.498 [info] [PushRequestContextService] push request context is enabled (killswitchActive=false, instantGrepEnabled=true, indexingGrepEnabled=true)
+2026-04-30 04:43:43.078 [info] Started local extension host with pid 11540.
+2026-04-30 04:43:43.393 [info] Placing extension(s) anysphere.cursor-retrieval on a separate extension host.
+2026-04-30 04:43:43.393 [info] Placing extension(s) anysphere.cursor-always-local, anysphere.cursor-resolver, anysphere.cursor-socket on a separate extension host.
+2026-04-30 04:43:43.393 [info] Placing extension(s) anysphere.cursor-agent-exec, anysphere.cursor-checkout on a separate extension host.
+2026-04-30 04:43:43.420 [warning] [ms-python.python]: Cannot register 'python.venvPath'. This property is already registered.
+2026-04-30 04:43:43.763 [info] Started local extension host with pid 2160.
+2026-04-30 04:43:43.769 [info] Started local extension host with pid 45976.
+2026-04-30 04:43:43.770 [info] Started local extension host with pid 23396.
+2026-04-30 04:43:43.902 [info] [WorktreeCleanupCron] Registering cleanup task with interval of 6 hours
+2026-04-30 04:43:43.902 [info] [WorktreeCleanupCron] Cleanup task registered with interval of 6 hours (21600000ms)
+2026-04-30 04:43:43.902 [info] LocalAutomationsCronContribution: local_automations feature flag is disabled, skipping startup
+2026-04-30 04:43:45.267 [info] [Debug] Registered command palette action: debug.classifyRecentConversations
+2026-04-30 04:43:45.268 [info] [Debug] Registered command palette action: debug.logComposer
+2026-04-30 04:43:45.268 [info] [Debug] Registered command palette action: debug.getContextKeyValue
+2026-04-30 04:43:45.268 [info] [Debug] Registered command palette action: debug.getApplicationProperty
+2026-04-30 04:43:45.268 [info] [Debug] Registered command palette action: debug.setApplicationProperty
+2026-04-30 04:43:45.268 [info] [Debug] Registered command palette action: debug.testLinearIssues
+2026-04-30 04:43:45.341 [info] OpenInBrowserWatcher: Initializing terminal log watcher
+2026-04-30 04:43:45.356 [info] [GC Trace Polling] Disabled by config
+2026-04-30 04:43:46.342 [info] [LocalProcessExtensionHost] getDefaultShell result: C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe
+2026-04-30 04:43:46.343 [info] [LocalProcessExtensionHost] Final userTerminalHint: C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe
+2026-04-30 04:43:46.400 [info] [MainThreadCursor] mcp_snapshot_synchronization gate (session-sticky): true
+2026-04-30 04:43:46.400 [info] [MainThreadCursor] mcp_commands_v2 gate (session-sticky): true
+2026-04-30 04:43:46.420 [info] [MainThreadShellExec] $updateShellExecCapabilities: hostKind=1, expectedHost=1, isRemote=false, sandboxSupported=false, linuxKernelVersion=none
+2026-04-30 04:43:46.420 [info] [MainThreadShellExec] AppArmor suggestion skipped: sandboxSupported=false, linuxKernelVersion=none
+2026-04-30 04:43:46.874 [info] [LocalProcessExtensionHost] getDefaultShell result: C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe
+2026-04-30 04:43:46.875 [info] [LocalProcessExtensionHost] getDefaultShell result: C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe
+2026-04-30 04:43:46.879 [info] [LocalProcessExtensionHost] Final userTerminalHint: C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe
+2026-04-30 04:43:46.905 [info] [LocalProcessExtensionHost] Final userTerminalHint: C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe
+2026-04-30 04:43:46.927 [info] [LocalProcessExtensionHost] getDefaultShell result: C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe
+2026-04-30 04:43:46.933 [info] [MainThreadCursor] mcp_snapshot_synchronization gate (session-sticky): true
+2026-04-30 04:43:46.933 [info] [MainThreadCursor] mcp_commands_v2 gate (session-sticky): true
+2026-04-30 04:43:46.941 [info] [LocalProcessExtensionHost] Final userTerminalHint: C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe
+2026-04-30 04:43:46.973 [info] [MainThreadCursor] mcp_snapshot_synchronization gate (session-sticky): true
+2026-04-30 04:43:46.973 [info] [MainThreadCursor] mcp_commands_v2 gate (session-sticky): true
+2026-04-30 04:43:46.980 [info] [MainThreadShellExec] $updateShellExecCapabilities: hostKind=1, expectedHost=1, isRemote=false, sandboxSupported=false, linuxKernelVersion=none
+2026-04-30 04:43:46.980 [info] [MainThreadShellExec] AppArmor suggestion skipped: sandboxSupported=false, linuxKernelVersion=none
+2026-04-30 04:43:46.991 [info] [MainThreadShellExec] $updateShellExecCapabilities: hostKind=1, expectedHost=1, isRemote=false, sandboxSupported=false, linuxKernelVersion=none
+2026-04-30 04:43:46.991 [info] [MainThreadShellExec] AppArmor suggestion skipped: sandboxSupported=false, linuxKernelVersion=none
+2026-04-30 04:43:46.996 [info] [MainThreadCursor] mcp_snapshot_synchronization gate (session-sticky): true
+2026-04-30 04:43:46.996 [info] [MainThreadCursor] mcp_commands_v2 gate (session-sticky): true
+2026-04-30 04:43:47.015 [info] [MainThreadShellExec] $updateShellExecCapabilities: hostKind=1, expectedHost=1, isRemote=false, sandboxSupported=false, linuxKernelVersion=none
+2026-04-30 04:43:47.015 [info] [MainThreadShellExec] AppArmor suggestion skipped: sandboxSupported=false, linuxKernelVersion=none
+2026-04-30 04:43:47.305 [info] [perf] Render performance baseline is 34ms
+2026-04-30 04:43:47.347 [error] [Extension Host] (node:2160) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `Cursor --trace-deprecation ...` to show where the warning was created)
+2026-04-30 04:43:47.411 [info] [ShellExec] Created session d3180142-fce4-4e7e-b6f2-aaf391486e02 on LocalProcess host
+2026-04-30 04:43:47.442 [info] [WorktreeManager] Using worktrees root c:\Users\Vahan\.cursor\worktrees
+2026-04-30 04:43:47.578 [info] [PushRequestContextService] Updated sandbox network file entries (0 entries)
+2026-04-30 04:43:47.760 [info] [PushRequestContextService] Updated git workspace caches (1 entries)
+2026-04-30 04:43:47.897 [info] [MainThreadCursorExplorerProviderService] Explorer provider registered
+2026-04-30 04:43:55.374 [info] [Cursor Proclist Polling] Started polling (every 5 min)
+2026-04-30 04:44:46.702 [info] [buildRequestedModel] composerId=d2aed327-b3f3-42d3-b949-a56092cbec59 catalogModelId=default idSource=selectedModels[0] composerModelName=default selectedModelIds=default matchingSelectedModel=true maxMode=false resolvedParams=0
+2026-04-30 04:44:46.739 [info] [ComposerWakelockManager] Acquired wakelock id=0 reason="agent-loop" composerId=d2aed327-b3f3-42d3-b949-a56092cbec59
+2026-04-30 04:45:04.854 [info] [ComposerWakelockManager] Released wakelock id=0 reason="generation-ended" composerId=d2aed327-b3f3-42d3-b949-a56092cbec59
+2026-04-30 04:46:22.990 [error] Invalid model for label change, rebuilding
+2026-04-30 04:46:22.992 [error] Invalid model for label change, rebuilding
+2026-04-30 04:46:22.992 [error] Invalid model for label change, rebuilding
+2026-04-30 04:46:22.993 [error] Invalid model for label change, rebuilding
+2026-04-30 04:46:30.674 [warning] [backup tracker] suspended, ignoring unregister event file:///c%3A/Users/Vahan/Desktop/Tsovic-Tsov/Tsovic-Tsov/web/package.json 
+2026-04-30 04:46:30.674 [warning] [backup tracker] suspended, ignoring unregister event file:///c%3A/Users/Vahan/Desktop/Tsovic-Tsov/Tsovic-Tsov/web/.next/package.json 
+2026-04-30 04:46:30.675 [warning] [backup tracker] suspended, ignoring unregister event file:///c%3A/Users/Vahan/Desktop/Tsovic-Tsov/Tsovic-Tsov/web/.next/dev/build/package.json 

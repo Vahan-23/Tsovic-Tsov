@@ -1,0 +1,16 @@
+2026-04-30 04:43:25.504 [info] [MCPService] State transition: cursor-ide-browser none → connected
+2026-04-30 04:43:29.363 [info] [MCPService] State transition: user-medusa-docs none → initializing
+2026-04-30 04:43:29.367 [info] [MCPService] State transition: user-firecrawl none → initializing
+2026-04-30 04:43:31.552 [info] [MCPService] State transition: user-medusa-docs initializing → connected
+2026-04-30 04:43:31.732 [info] [MCPService] State transition: user-firecrawl initializing → connected
+2026-04-30 04:43:32.549 [info] [MCPService] State transition: user-medusa-docs connected → error
+2026-04-30 04:43:32.584 [info] [MCPService] State transition: user-medusa-docs error → connected
+2026-04-30 04:43:38.817 [info] [MCPService] State transition: user-medusa-docs connected → degraded
+2026-04-30 04:43:38.819 [info] [MCPService] State transition: user-firecrawl connected → degraded
+2026-04-30 04:43:47.888 [info] [MCPService] State transition: cursor-ide-browser none → connected
+2026-04-30 04:43:49.725 [info] [MCPService] State transition: user-medusa-docs none → initializing
+2026-04-30 04:43:49.728 [info] [MCPService] State transition: user-firecrawl none → initializing
+2026-04-30 04:43:51.807 [info] [MCPService] State transition: user-firecrawl initializing → connected
+2026-04-30 04:43:52.490 [info] [MCPService] State transition: user-medusa-docs initializing → connected
+2026-04-30 04:43:53.340 [info] [MCPService] State transition: user-medusa-docs connected → error
+2026-04-30 04:46:30.665 [info] [MCPService] State transition: user-firecrawl connected → degraded

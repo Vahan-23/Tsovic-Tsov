@@ -1,0 +1,85 @@
+{
+    "telemetry.machineId": "78f8d63c2e1a022d6b85482db4b7564a522cffcab093b5074418e005e8c03062",
+    "telemetry.macMachineId": "4fd368a50cab7edf1f493950ad5427e90b9ac12fca180ac55f52481aaf7b6541",
+    "telemetry.sqmId": "{07522640-4B48-4405-A10B-24E2A96CC0E7}",
+    "telemetry.devDeviceId": "72f12506-d819-4a61-b84a-ecaebebb523e",
+    "backupWorkspaces": {
+        "workspaces": [],
+        "folders": [
+            {
+                "folderUri": "file:///c%3A/Users/Vahan/Desktop/Tsovic-Tsov/Tsovic-Tsov"
+            }
+        ],
+        "emptyWindows": [
+            {
+                "backupFolder": "1777509796043"
+            }
+        ]
+    },
+    "windowControlHeight": 35,
+    "profileAssociations": {
+        "workspaces": {
+            "file:///c%3A/Users/Vahan/Desktop/Tsovic-Tsov/Tsovic-Tsov": "__default__profile__"
+        },
+        "emptyWindows": {}
+    },
+    "theme": "vs-dark",
+    "themeBackground": "#181818",
+    "windowSplash": {
+        "zoomLevel": 0,
+        "baseTheme": "vs-dark",
+        "colorInfo": {
+            "foreground": "rgba(228, 228, 228, 0.92)",
+            "background": "#181818",
+            "editorBackground": "#181818",
+            "titleBarBackground": "#141414",
+            "titleBarBorder": "rgba(228, 228, 228, 0.07)",
+            "activityBarBackground": "#141414",
+            "sideBarBackground": "#141414",
+            "sideBarBorder": "rgba(228, 228, 228, 0.07)",
+            "statusBarBackground": "#141414",
+            "statusBarBorder": "rgba(228, 228, 228, 0.07)",
+            "statusBarNoFolderBackground": "#141414"
+        },
+        "layoutInfo": {
+            "sideBarSide": "left",
+            "editorPartMinWidth": 220,
+            "titleBarHeight": 35,
+            "activityBarWidth": 0,
+            "sideBarWidth": 300,
+            "auxiliarySideBarWidth": 422,
+            "statusBarHeight": 22,
+            "windowBorder": false
+        }
+    },
+    "windowsState": {
+        "lastActiveWindow": {
+            "folder": "file:///c%3A/Users/Vahan/Desktop/Tsovic-Tsov/Tsovic-Tsov",
+            "backupPath": "C:\\Users\\Vahan\\Desktop\\Tsovic-Tsov\\Tsovic-Tsov\\Backups\\95a252b3a5ec8dfe56815ac06b6bc1f7",
+            "uiState": {
+                "mode": 0,
+                "x": 320,
+                "y": 140,
+                "width": 1280,
+                "height": 800
+            }
+        },
+        "openedWindows": []
+    },
+    "windowSplashWorkspaceOverride": {
+        "layoutInfo": {
+            "auxiliarySideBarWidth": [
+                422,
+                [
+                    "645a68fd1fc36f36afdf84f372a67e21"
+                ]
+            ]
+        }
+    },
+    "lifecycle.lastShutdownJoinerTimings": {
+        "extHostStarter": 5,
+        "instanceLockfile": 17,
+        "workspaceStorage": 27,
+        "applicationStorage": 26
+    }
+}

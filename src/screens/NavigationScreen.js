@@ -311,6 +311,7 @@ export default function NavigationScreen({ route, navigation }) {
   const screenH = Dimensions.get('window').height;
   const mapBlockHeight = Math.round(screenH * 0.5);
   const params = route.params || {};
+  const collectionKind = params.collectionKind || 'statues';
   const targetId = params.targetId;
   const targetName = params.targetName;
   const rawLat = parseCoord(params.targetLat);
@@ -318,7 +319,7 @@ export default function NavigationScreen({ route, navigation }) {
   const fixed = fixLikelyLatLonSwap(rawLat, rawLng);
   const targetLat = fixed.latitude;
   const targetLon = fixed.longitude;
-  const { unlockById } = useFigures();
+  const { unlockForSearchMode } = useFigures();
   const mapRef = useRef(null);
   const hasTargetCoords =
     Number.isFinite(targetLat) && Number.isFinite(targetLon);
@@ -738,7 +739,7 @@ export default function NavigationScreen({ route, navigation }) {
             if (!didUnlockRef.current && dist < 50) {
               didUnlockRef.current = true;
               if (targetId != null) {
-                const result = unlockById(targetId);
+                const result = unlockForSearchMode(collectionKind, targetId);
                 Alert.alert(
                   'Բացվեց',
                   result.ok
@@ -783,7 +784,8 @@ export default function NavigationScreen({ route, navigation }) {
     targetLat,
     targetLon,
     targetName,
-    unlockById,
+    collectionKind,
+    unlockForSearchMode,
     requestRoadRoute,
     animateRegionSafe,
   ]);

@@ -1,396 +1,71 @@
-import React, { useEffect, useMemo, useRef } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   ActivityIndicator,
-  Alert,
-  Animated,
   FlatList,
-  Image,
-  Modal,
   Pressable,
   StyleSheet,
+  Switch,
   Text,
   View,
 } from 'react-native';
-import * as Location from 'expo-location';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import MapView, { Marker, Polyline } from 'react-native-maps';
-import { POSITION_MAX_ACCURACY, WATCH_MODAL_MAP } from '../constants/gpsAccuracy';
-import { getDarkMapProps } from '../constants/mapAppearance';
+import { TAB_BAR_SCROLL_SPACER } from '../constants/tabBar';
+import { useLanguage } from '../context/LanguageContext';
 import { useFigures } from '../context/FiguresContext';
-import { haversineDistanceMeters } from '../utils/haversine';
-
-const FOOTPRINT_ICON = require('../../assets/footprints_21766.png');
-const SEARCH_ICONS = [
-  require('../../assets/search_ico/Gemini_Generated_Image_rcrvqkrcrvqkrcrv.png'),
-  require('../../assets/search_ico/Gemini_Generated_Image_6b1xyb6b1xyb6b1x.png'),
-  require('../../assets/search_ico/Gemini_Generated_Image_jwomxqjwomxqjwom.png'),
-];
+import { useSearchTarget } from '../context/SearchTargetContext';
 
 const ACCENT = {
   abovyan: '#7C3AED',
   komitas: '#059669',
   tumanyan: '#D97706',
 };
-const UNLOCK_DISTANCE_METERS = 50;
-const MIN_SEARCH_MS = 3000;
 
-function wait(ms) {
-  return new Promise((resolve) => setTimeout(resolve, ms));
-}
+const LOCKED_ONLY_KEY = '@tsovic_tsov/collection_locked_only';
 
-function toRadians(value) {
-  return (value * Math.PI) / 180;
-}
-
-function toDegrees(value) {
-  return (value * 180) / Math.PI;
-}
-
-function getBearingDegrees(from, to) {
-  const lat1 = toRadians(from.latitude);
-  const lat2 = toRadians(to.latitude);
-  const lngDelta = toRadians(to.longitude - from.longitude);
-  const y = Math.sin(lngDelta) * Math.cos(lat2);
-  const x =
-    Math.cos(lat1) * Math.sin(lat2) -
-    Math.sin(lat1) * Math.cos(lat2) * Math.cos(lngDelta);
-  return (toDegrees(Math.atan2(y, x)) + 360) % 360;
-}
-
-function getDirectionLabel(bearing) {
-  const directions = [
-    { label: 'Հյուսիս', arrow: '↑' },
-    { label: 'Հյուսիս-Արևելք', arrow: '↗' },
-    { label: 'Արևելք', arrow: '→' },
-    { label: 'Հարավ-Արևելք', arrow: '↘' },
-    { label: 'Հարավ', arrow: '↓' },
-    { label: 'Հարավ-Արևմուտք', arrow: '↙' },
-    { label: 'Արևմուտք', arrow: '←' },
-    { label: 'Հյուսիս-Արևմուտք', arrow: '↖' },
-  ];
-  const index = Math.round(bearing / 45) % 8;
-  return directions[index];
-}
+const MODE_TKEY = {
+  statues: 'searchModeStatues',
+  statues3d: 'searchModeStatues3d',
+  pulpulaks: 'searchModePulpulaks',
+};
 
 export default function CollectionScreen({ navigation }) {
   const insets = useSafeAreaInsets();
-  const pulseAnim = useRef(new Animated.Value(0)).current;
-  const searchIconOpacity = useRef(new Animated.Value(1)).current;
-  const radarAnims = useRef(
-    Array.from({ length: 5 }, () => new Animated.Value(0))
-  ).current;
-  const radarLoopsRef = useRef([]);
-  const [isChecking, setIsChecking] = React.useState(false);
-  const [guidance, setGuidance] = React.useState(null);
-  const [mapVisible, setMapVisible] = React.useState(false);
-  const [searchIconIndex, setSearchIconIndex] = React.useState(0);
-  const [liveUserCoords, setLiveUserCoords] = React.useState(null);
-  const [liveDistanceMeters, setLiveDistanceMeters] = React.useState(null);
-  const [liveAzimuthDeg, setLiveAzimuthDeg] = React.useState(null);
+  const { t } = useLanguage();
   const {
-    figures,
-    figuresForGrid,
-    unlockedCount,
-    totalCount,
+    collectionGridForMode,
+    lockedOnlyGridForMode,
+    countsForSearchMode,
     storageLoaded,
-    unlockById,
   } = useFigures();
+  const { searchMode } = useSearchTarget();
+
+  const [lockedOnly, setLockedOnly] = useState(false);
 
   useEffect(() => {
-    const loop = Animated.loop(
-      Animated.sequence([
-        Animated.timing(pulseAnim, {
-          toValue: 1,
-          duration: 1200,
-          useNativeDriver: true,
-        }),
-        Animated.timing(pulseAnim, {
-          toValue: 0,
-          duration: 1200,
-          useNativeDriver: true,
-        }),
-      ])
-    );
-    loop.start();
-    return () => loop.stop();
-  }, [pulseAnim]);
-
-  useEffect(() => {
-    if (!isChecking) {
-      radarLoopsRef.current.forEach((loop) => loop.stop());
-      radarLoopsRef.current = [];
-      radarAnims.forEach((value) => value.setValue(0));
-      return;
-    }
-
-    radarLoopsRef.current = radarAnims.map((value, index) =>
-      Animated.loop(
-        Animated.timing(value, {
-          toValue: 1,
-          duration: 2200,
-          delay: index * 260,
-          useNativeDriver: false,
-        })
-      )
-    );
-
-    radarLoopsRef.current.forEach((loop) => loop.start());
-
-    return () => {
-      radarLoopsRef.current.forEach((loop) => loop.stop());
-      radarLoopsRef.current = [];
-    };
-  }, [isChecking, radarAnims]);
-
-  useEffect(() => {
-    if (!isChecking) return undefined;
-    const timer = setInterval(() => {
-      Animated.sequence([
-        Animated.timing(searchIconOpacity, {
-          toValue: 0.2,
-          duration: 260,
-          useNativeDriver: true,
-        }),
-        Animated.timing(searchIconOpacity, {
-          toValue: 1,
-          duration: 320,
-          useNativeDriver: true,
-        }),
-      ]).start();
-      setSearchIconIndex((prev) => (prev + 1) % SEARCH_ICONS.length);
-    }, 780);
-    return () => clearInterval(timer);
-  }, [isChecking, searchIconOpacity]);
-
-  useEffect(() => {
-    let watcher = null;
-    let isActive = true;
-
-    async function startLiveTracking() {
-      if (!mapVisible || !guidance?.targetLat || !guidance?.targetLon) {
-        setLiveUserCoords(null);
-        setLiveDistanceMeters(null);
-        setLiveAzimuthDeg(null);
-        return;
-      }
-
+    let cancelled = false;
+    (async () => {
       try {
-        watcher = await Location.watchPositionAsync(
-          WATCH_MODAL_MAP,
-          (position) => {
-            if (!isActive) return;
-            const current = {
-              latitude: position.coords.latitude,
-              longitude: position.coords.longitude,
-            };
-            const target = {
-              latitude: guidance.targetLat,
-              longitude: guidance.targetLon,
-            };
-            setLiveUserCoords(current);
-            setLiveDistanceMeters(
-              Math.max(0, Math.round(haversineDistanceMeters(current, target)))
-            );
-            setLiveAzimuthDeg(Math.round(getBearingDegrees(current, target)));
-          }
-        );
+        const raw = await AsyncStorage.getItem(LOCKED_ONLY_KEY);
+        if (!cancelled && raw === '1') setLockedOnly(true);
       } catch {
-        if (!isActive) return;
-        setLiveUserCoords(null);
+        /* ignore */
       }
-    }
-
-    startLiveTracking();
-
+    })();
     return () => {
-      isActive = false;
-      if (watcher) watcher.remove();
+      cancelled = true;
     };
-  }, [guidance?.targetLat, guidance?.targetLon, mapVisible]);
+  }, []);
 
-  const modalMapRegion = useMemo(() => {
-    const targetLat = guidance?.targetLat;
-    const targetLon = guidance?.targetLon;
-    if (!Number.isFinite(targetLat) || !Number.isFinite(targetLon)) return null;
+  const toggleLockedOnly = React.useCallback((value) => {
+    setLockedOnly(value);
+    AsyncStorage.setItem(LOCKED_ONLY_KEY, value ? '1' : '0').catch(() => {});
+  }, []);
 
-    const userLat = liveUserCoords?.latitude;
-    const userLon = liveUserCoords?.longitude;
-    if (!Number.isFinite(userLat) || !Number.isFinite(userLon)) {
-      return {
-        latitude: targetLat,
-        longitude: targetLon,
-        latitudeDelta: 0.006,
-        longitudeDelta: 0.006,
-      };
-    }
-
-    const latitude = (userLat + targetLat) / 2;
-    const longitude = (userLon + targetLon) / 2;
-    const latitudeDelta = Math.max(Math.abs(userLat - targetLat) * 2.6, 0.0045);
-    const longitudeDelta = Math.max(Math.abs(userLon - targetLon) * 2.6, 0.0045);
-    return { latitude, longitude, latitudeDelta, longitudeDelta };
-  }, [guidance?.targetLat, guidance?.targetLon, liveUserCoords?.latitude, liveUserCoords?.longitude]);
-
-  const shownDistanceMeters = liveDistanceMeters ?? guidance?.distanceMeters ?? 0;
-  const shownAzimuthDeg = liveAzimuthDeg ?? guidance?.azimuthDeg ?? 0;
-
-  const handleCheckNearby = React.useCallback(async () => {
-    if (isChecking) return;
-    setIsChecking(true);
-    setGuidance(null);
-    const startedAt = Date.now();
-
-    try {
-      let outcome = { type: 'none' };
-      const { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== 'granted') {
-        outcome = {
-          type: 'permission',
-          title: 'Թույլտվություն',
-          message: 'Խնդրում ենք թույլատրել տեղադրության հասանելիությունը։',
-        };
-      } else {
-        const location = await Location.getCurrentPositionAsync(
-          POSITION_MAX_ACCURACY
-        );
-
-        const userLat = location.coords.latitude;
-        const userLon = location.coords.longitude;
-        const userLatRad = (userLat * Math.PI) / 180;
-        const latDeltaMax = UNLOCK_DISTANCE_METERS / 111000; // ~degrees per meter
-        const cosLat = Math.cos(userLatRad);
-        const lonDeltaMax = cosLat > 1e-6 ? latDeltaMax / cosLat : Infinity;
-
-        const nearbyLockedStatues = figures.filter((figure) => {
-          if (figure.unlocked) return false;
-          if (
-            !Number.isFinite(figure.latitude) ||
-            !Number.isFinite(figure.longitude)
-          ) {
-            return false;
-          }
-
-          // Fast bounding-box prefilter (limits heavy haversine calls).
-          if (Math.abs(figure.latitude - userLat) > latDeltaMax) return false;
-          if (Math.abs(figure.longitude - userLon) > lonDeltaMax) return false;
-
-          const distance = haversineDistanceMeters(
-            { latitude: userLat, longitude: userLon },
-            { latitude: figure.latitude, longitude: figure.longitude }
-          );
-          return distance < UNLOCK_DISTANCE_METERS;
-        });
-
-        if (nearbyLockedStatues.length === 0) {
-          let nearestFigure = null;
-          let nearestDistance = Number.POSITIVE_INFINITY;
-
-          for (const figure of figures) {
-            if (figure.unlocked) continue;
-            if (!Number.isFinite(figure.latitude) || !Number.isFinite(figure.longitude)) {
-              continue;
-            }
-            const distance = haversineDistanceMeters(
-              { latitude: userLat, longitude: userLon },
-              { latitude: figure.latitude, longitude: figure.longitude }
-            );
-            if (distance < nearestDistance) {
-              nearestDistance = distance;
-              nearestFigure = figure;
-            }
-          }
-
-          if (!nearestFigure || !Number.isFinite(nearestDistance)) {
-            outcome = {
-              type: 'empty',
-              title: 'Արձան չգտնվեց',
-              message: 'Բոլոր արձանները արդեն բացված են։',
-            };
-            setGuidance(null);
-          } else {
-            const distanceMeters = Math.round(nearestDistance);
-            const bearing = getBearingDegrees(
-              { latitude: userLat, longitude: userLon },
-              {
-                latitude: nearestFigure.latitude,
-                longitude: nearestFigure.longitude,
-              }
-            );
-            const direction = getDirectionLabel(bearing);
-            let heading = 0;
-            try {
-              const headingResult = await Location.getHeadingAsync();
-              heading =
-                Number.isFinite(headingResult?.trueHeading) &&
-                headingResult.trueHeading >= 0
-                  ? headingResult.trueHeading
-                  : Number.isFinite(headingResult?.magHeading)
-                    ? headingResult.magHeading
-                    : 0;
-            } catch {
-              heading = 0;
-            }
-            const turnDelta = ((bearing - heading + 540) % 360) - 180;
-            setGuidance({
-              targetId: nearestFigure.id,
-              targetName: nearestFigure.displayName,
-              targetLat: nearestFigure.latitude,
-              targetLon: nearestFigure.longitude,
-              distanceMeters,
-              targetImage: nearestFigure.image || '',
-              directionLabel: `${direction.arrow} ${direction.label}`,
-              azimuthDeg: Math.round(bearing),
-              rotationDeg: Math.round(turnDelta),
-            });
-            outcome = { type: 'modal' };
-          }
-        } else {
-          const discovered = [];
-          nearbyLockedStatues.forEach((figure) => {
-            const result = unlockById(figure.id);
-            if (result.ok && !result.alreadyHad) {
-              discovered.push(figure.displayName);
-            }
-          });
-
-          if (discovered.length === 0) {
-            outcome = {
-              type: 'nonew',
-              title: 'Տեղեկացում',
-              message: 'Նոր արձան չբացվեց։',
-            };
-            setGuidance(null);
-          } else {
-            const message =
-              discovered.length === 1
-                ? `Դու հայտնաբերեցիր ${discovered[0]}-ը։`
-                : discovered.map((name) => `Դու հայտնաբերեցիր ${name}-ը։`).join('\n');
-            outcome = { type: 'success', title: 'Բացվեց', message };
-            setGuidance(null);
-          }
-        }
-      }
-
-      const elapsed = Date.now() - startedAt;
-      if (elapsed < MIN_SEARCH_MS) {
-        await wait(MIN_SEARCH_MS - elapsed);
-      }
-
-      if (outcome.type === 'modal') {
-        setMapVisible(true);
-      } else if (outcome.type !== 'none') {
-        Alert.alert(outcome.title, outcome.message);
-      }
-    } catch {
-      const elapsed = Date.now() - startedAt;
-      if (elapsed < MIN_SEARCH_MS) {
-        await wait(MIN_SEARCH_MS - elapsed);
-      }
-      Alert.alert('Սխալ', 'Չհաջողվեց ստանալ տեղադրությունը։ Փորձիր կրկին։');
-    } finally {
-      setIsChecking(false);
-    }
-  }, [figures, isChecking, unlockById]);
+  const gridData = lockedOnly
+    ? lockedOnlyGridForMode(searchMode)
+    : collectionGridForMode(searchMode);
+  const { unlockedCount, totalCount } = countsForSearchMode(searchMode);
 
   if (!storageLoaded) {
     return (
@@ -401,235 +76,93 @@ export default function CollectionScreen({ navigation }) {
   }
 
   return (
-    <View style={[styles.container, { paddingBottom: insets.bottom + 16 }]}>
+    <View style={[styles.container, { paddingBottom: 12 }]}>
+      <View style={styles.collectionBanner}>
+        <Text style={styles.bannerLabel}>{t(MODE_TKEY[searchMode])}</Text>
+      </View>
+
       <Text style={styles.progress}>
-        {unlockedCount} / {totalCount} հավաքված
-      </Text>
-      <FlatList
-        data={figuresForGrid}
-        keyExtractor={(item) => String(item.id)}
-        numColumns={3}
-        columnWrapperStyle={styles.row}
-        contentContainerStyle={styles.grid}
-        renderItem={({ item }) => (
-          <Pressable
-            style={({ pressed }) => [
-              styles.card,
-              !item.unlocked && styles.cardLocked,
-              pressed && styles.cardPressed,
-            ]}
-            onPress={() =>
-              navigation.navigate('StatueDetail', { statueId: item.id })
-            }
-          >
-            <Text
-              style={[
-                styles.cardInitial,
-                item.unlocked && { color: ACCENT[String(item.id)] ?? '#2563EB' },
-              ]}
-              numberOfLines={1}
-            >
-              {item.displayName?.charAt(0) ?? '•'}
-            </Text>
-            <Text
-              style={[styles.cardName, !item.unlocked && styles.cardNameLocked]}
-              numberOfLines={2}
-            >
-              {item.displayName}
-            </Text>
-          </Pressable>
-        )}
-      />
-      <Pressable
-        style={({ pressed }) => [
-          styles.scanButton,
-          pressed && styles.scanButtonPressed,
-        ]}
-        onPress={handleCheckNearby}
-        disabled={isChecking}
-      >
-        {isChecking ? (
-          <>
-            {radarAnims.map((radar, idx) => (
-              <Animated.View
-                key={`radar-${idx}`}
-                pointerEvents="none"
-                style={[
-                  styles.radarWave,
-                  {
-                    borderWidth: radar.interpolate({
-                      inputRange: [0, 1],
-                      outputRange: [1, 5],
-                    }),
-                    opacity: radar.interpolate({
-                      inputRange: [0, 0.7, 1],
-                      outputRange: [0.75, 0.38, 0],
-                    }),
-                    transform: [
-                      {
-                        scale: radar.interpolate({
-                          inputRange: [0, 1],
-                          outputRange: [0.58, 1.42],
-                        }),
-                      },
-                    ],
-                  },
-                ]}
-              />
-            ))}
-          </>
-        ) : (
-          <>
-            <Animated.View
-              pointerEvents="none"
-              style={[
-                styles.pulseRingOuter,
-                {
-                  opacity: pulseAnim.interpolate({
-                    inputRange: [0, 1],
-                    outputRange: [0.45, 0.15],
-                  }),
-                  transform: [
-                    {
-                      scale: pulseAnim.interpolate({
-                        inputRange: [0, 1],
-                        outputRange: [1, 1.12],
-                      }),
-                    },
-                  ],
-                },
-              ]}
-            />
-            <Animated.View
-              pointerEvents="none"
-              style={[
-                styles.pulseRingInner,
-                {
-                  opacity: pulseAnim.interpolate({
-                    inputRange: [0, 1],
-                    outputRange: [0.55, 0.22],
-                  }),
-                  transform: [
-                    {
-                      scale: pulseAnim.interpolate({
-                        inputRange: [0, 1],
-                        outputRange: [1, 1.08],
-                      }),
-                    },
-                  ],
-                },
-              ]}
-            />
-          </>
-        )}
-        <View style={styles.scanButtonCore}>
-          {isChecking ? (
-            <Animated.Image
-              source={SEARCH_ICONS[searchIconIndex]}
-              style={[styles.searchCycleIcon, { opacity: searchIconOpacity }]}
-            />
-          ) : (
-            <Text style={styles.scanButtonIcon}>⌕</Text>
-          )}
-          {!isChecking ? <Text style={styles.scanButtonText}>Փնտրել</Text> : null}
-        </View>
-      </Pressable>
-      <Text style={styles.scanHint}>
-        {isChecking
-          ? 'Ռադարն աշխատում է...'
-          : 'Սեղմիր՝ մոտակա արձանները գտնելու համար'}
+        {t('progressLabel', { unlocked: unlockedCount, total: totalCount })}
       </Text>
 
-      <Modal
-        visible={mapVisible}
-        transparent
-        animationType="fade"
-        onRequestClose={() => setMapVisible(false)}
-      >
-        <View style={styles.modalBackdrop}>
-          <View style={styles.modalCard}>
-            <Text style={styles.modalTitle}>ՄՈՏԱԿԱ ՆՊԱՏԱԿ</Text>
-            {modalMapRegion ? (
-              <MapView
-                {...getDarkMapProps()}
-                style={styles.modalMap}
-                region={modalMapRegion}
-                pitchEnabled={false}
-                rotateEnabled={false}
-                toolbarEnabled={false}
-              >
-                {liveUserCoords ? (
-                  <Marker coordinate={liveUserCoords} title="Դու" pinColor="#22C55E" />
-                ) : null}
-                {Number.isFinite(guidance?.targetLat) && Number.isFinite(guidance?.targetLon) ? (
-                  <Marker
-                    coordinate={{
-                      latitude: guidance.targetLat,
-                      longitude: guidance.targetLon,
-                    }}
-                    title={guidance?.targetName ?? 'Նպատակ'}
-                    pinColor="#EF4444"
-                  />
-                ) : null}
-                {liveUserCoords &&
-                Number.isFinite(guidance?.targetLat) &&
-                Number.isFinite(guidance?.targetLon) ? (
-                  <Polyline
-                    coordinates={[
-                      liveUserCoords,
-                      {
-                        latitude: guidance.targetLat,
-                        longitude: guidance.targetLon,
-                      },
-                    ]}
-                    strokeColor="#60A5FA"
-                    strokeWidth={3}
-                  />
-                ) : null}
-              </MapView>
-            ) : null}
-            {guidance?.targetImage ? (
-              <Image
-                source={{ uri: guidance.targetImage }}
-                style={styles.modalTargetImage}
-                resizeMode="cover"
-              />
-            ) : null}
-            <Text style={styles.modalHint}>
-              Թիրախ՝ {guidance?.targetName ?? '-'} • {guidance?.directionLabel ?? '-'}
-            </Text>
-            <Text style={styles.modalStatMain}>{shownDistanceMeters} մ</Text>
-            <Text style={styles.modalStatSub}>Ազիմուտ՝ {shownAzimuthDeg}°</Text>
-            <View style={styles.modalButtonsRow}>
-              <Pressable
-                style={({ pressed }) => [styles.modalGoButton, pressed && { opacity: 0.85 }]}
-                onPress={() => {
-                  const targetId = guidance?.targetId;
-                  const targetLat = guidance?.targetLat;
-                  const targetLon = guidance?.targetLon;
-                  const targetName = guidance?.targetName;
-                  setMapVisible(false);
-                  navigation.navigate('Navigate', {
-                    targetId,
-                    targetLat: Number(targetLat),
-                    targetLon: Number(targetLon),
-                    targetName,
-                  });
-                }}
-              >
-                <Text style={styles.modalGoButtonText}>Գնալ</Text>
-                <Image source={FOOTPRINT_ICON} style={styles.modalGoIcon} />
-              </Pressable>
-              <Pressable
-                style={({ pressed }) => [styles.okButton, pressed && { opacity: 0.85 }]}
-                onPress={() => setMapVisible(false)}
-              >
-                <Text style={styles.okButtonText}>Փակել</Text>
-              </Pressable>
-            </View>
-          </View>
+      <View style={styles.filterRow}>
+        <View style={styles.filterTextWrap}>
+          <Text style={styles.filterTitle}>{t('collectionLockedToggle')}</Text>
+          <Text style={styles.filterHint}>{t('collectionLockedHint')}</Text>
         </View>
-      </Modal>
+        <Switch
+          value={lockedOnly}
+          onValueChange={toggleLockedOnly}
+          trackColor={{ false: '#D1D5DB', true: '#93C5FD' }}
+          thumbColor={lockedOnly ? '#1D4ED8' : '#F3F4F6'}
+        />
+      </View>
+
+      {gridData.length === 0 ? (
+        <Text
+          style={[
+            styles.emptyFilter,
+            {
+              paddingBottom: TAB_BAR_SCROLL_SPACER + Math.max(insets.bottom, 8),
+            },
+          ]}
+        >
+          {t('collectionLockedEmpty')}
+        </Text>
+      ) : (
+        <FlatList
+          data={gridData}
+          keyExtractor={(item) => String(item.id)}
+          numColumns={3}
+          columnWrapperStyle={styles.row}
+          contentContainerStyle={[
+            styles.grid,
+            {
+              paddingBottom: TAB_BAR_SCROLL_SPACER + Math.max(insets.bottom, 8),
+            },
+          ]}
+          renderItem={({ item }) => (
+            <Pressable
+              style={({ pressed }) => [
+                styles.card,
+                !item.unlocked && styles.cardLocked,
+                pressed && styles.cardPressed,
+              ]}
+              onPress={() =>
+                navigation.navigate('StatueDetail', {
+                  statueId: item.id,
+                  collectionKind: searchMode,
+                })
+              }
+            >
+              <Text
+                style={[
+                  styles.cardInitial,
+                  item.unlocked && {
+                    color:
+                      searchMode === 'pulpulaks'
+                        ? '#0EA5E9'
+                        : searchMode === 'statues3d'
+                          ? ACCENT[String(item.linkedStatueId)] ?? '#7C3AED'
+                          : ACCENT[String(item.id)] ?? '#2563EB',
+                  },
+                ]}
+                numberOfLines={1}
+              >
+                {searchMode === 'pulpulaks'
+                  ? '💧'
+                  : item.displayName?.charAt(0) ?? '•'}
+              </Text>
+              <Text
+                style={[styles.cardName, !item.unlocked && styles.cardNameLocked]}
+                numberOfLines={2}
+              >
+                {item.displayName ?? item.name}
+              </Text>
+            </Pressable>
+          )}
+        />
+      )}
     </View>
   );
 }
@@ -647,12 +180,61 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     backgroundColor: '#F9FAFB',
   },
+  collectionBanner: {
+    alignSelf: 'center',
+    paddingHorizontal: 14,
+    paddingVertical: 8,
+    borderRadius: 999,
+    backgroundColor: '#EEF2FF',
+    marginBottom: 10,
+  },
+  bannerLabel: {
+    fontSize: 13,
+    fontWeight: '800',
+    color: '#4338CA',
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
+  },
   progress: {
     fontSize: 16,
     fontWeight: '600',
     color: '#111827',
-    marginBottom: 8,
+    marginBottom: 10,
     textAlign: 'center',
+  },
+  filterRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: 12,
+    marginBottom: 12,
+    paddingVertical: 10,
+    paddingHorizontal: 12,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
+  },
+  filterTextWrap: {
+    flex: 1,
+  },
+  filterTitle: {
+    fontSize: 15,
+    fontWeight: '700',
+    color: '#111827',
+  },
+  filterHint: {
+    marginTop: 4,
+    fontSize: 12,
+    color: '#6B7280',
+    lineHeight: 16,
+  },
+  emptyFilter: {
+    textAlign: 'center',
+    color: '#9CA3AF',
+    fontSize: 15,
+    marginTop: 24,
+    paddingHorizontal: 16,
   },
   grid: {
     paddingBottom: 8,
@@ -699,172 +281,5 @@ const styles = StyleSheet.create({
   },
   cardNameLocked: {
     color: '#6B7280',
-  },
-  scanButton: {
-    marginTop: 'auto',
-    width: 168,
-    height: 168,
-    borderRadius: 84,
-    alignItems: 'center',
-    justifyContent: 'center',
-    alignSelf: 'center',
-    position: 'relative',
-  },
-  scanButtonPressed: {
-    transform: [{ scale: 0.97 }],
-  },
-  pulseRingOuter: {
-    position: 'absolute',
-    width: 168,
-    height: 168,
-    borderRadius: 84,
-    borderWidth: 2,
-    borderColor: '#4F46E5',
-  },
-  pulseRingInner: {
-    position: 'absolute',
-    width: 146,
-    height: 146,
-    borderRadius: 73,
-    borderWidth: 2,
-    borderColor: '#818CF8',
-  },
-  radarWave: {
-    position: 'absolute',
-    width: 168,
-    height: 168,
-    borderRadius: 84,
-    borderColor: '#22C55E',
-  },
-  scanButtonCore: {
-    width: 132,
-    height: 132,
-    borderRadius: 66,
-    backgroundColor: '#111827',
-    alignItems: 'center',
-    justifyContent: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.24,
-    shadowRadius: 10,
-    elevation: 8,
-    overflow: 'hidden',
-  },
-  scanButtonIcon: {
-    color: '#FFFFFF',
-    fontSize: 34,
-    marginBottom: 4,
-  },
-  searchCycleIcon: {
-    width: 78,
-    height: 78,
-    marginBottom: 2,
-    resizeMode: 'contain',
-  },
-  scanButtonText: {
-    color: '#FFFFFF',
-    fontSize: 15,
-    fontWeight: '700',
-    textAlign: 'center',
-  },
-  scanHint: {
-    marginTop: 14,
-    marginBottom: 2,
-    color: '#4B5563',
-    fontSize: 13,
-    textAlign: 'center',
-  },
-  modalBackdrop: {
-    flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.64)',
-    justifyContent: 'center',
-    padding: 14,
-  },
-  modalCard: {
-    backgroundColor: '#0b0b0b',
-    borderRadius: 16,
-    borderWidth: 1,
-    borderColor: '#1f1f1f',
-    padding: 12,
-  },
-  modalTitle: {
-    color: '#fff',
-    fontSize: 17,
-    fontWeight: '900',
-    letterSpacing: 1.2,
-    marginBottom: 10,
-  },
-  modalHint: {
-    color: '#d4d4d4',
-    fontSize: 13,
-    fontWeight: '600',
-    marginTop: 10,
-    marginBottom: 8,
-  },
-  modalMap: {
-    width: '100%',
-    height: 210,
-    borderRadius: 12,
-    overflow: 'hidden',
-    backgroundColor: '#000000',
-  },
-  modalTargetImage: {
-    width: '100%',
-    height: 160,
-    borderRadius: 12,
-    marginTop: 10,
-    backgroundColor: '#111',
-  },
-  modalStatMain: {
-    color: '#FFFFFF',
-    fontSize: 36,
-    lineHeight: 40,
-    fontWeight: '900',
-    letterSpacing: 0.8,
-  },
-  modalStatSub: {
-    color: '#E5E7EB',
-    fontSize: 16,
-    lineHeight: 20,
-    fontWeight: '700',
-    marginTop: 4,
-    marginBottom: 12,
-  },
-  modalButtonsRow: {
-    flexDirection: 'row',
-    justifyContent: 'flex-end',
-    gap: 10,
-  },
-  okButton: {
-    backgroundColor: '#16A34A',
-    borderRadius: 10,
-    paddingVertical: 10,
-    paddingHorizontal: 16,
-  },
-  okButtonText: {
-    color: '#FFFFFF',
-    fontSize: 14,
-    fontWeight: '900',
-    letterSpacing: 0.4,
-  },
-  modalGoButton: {
-    backgroundColor: '#1D4ED8',
-    borderRadius: 10,
-    paddingVertical: 8,
-    paddingHorizontal: 12,
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  modalGoIcon: {
-    width: 16,
-    height: 16,
-    tintColor: '#FFFFFF',
-  },
-  modalGoButtonText: {
-    color: '#FFFFFF',
-    fontSize: 14,
-    fontWeight: '900',
-    letterSpacing: 0.4,
   },
 });

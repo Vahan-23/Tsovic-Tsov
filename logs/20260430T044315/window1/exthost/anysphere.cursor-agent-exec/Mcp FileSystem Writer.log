@@ -1,0 +1,53 @@
+2026-04-30 04:43:24.696 [info] Constructor: scheduling initial write
+2026-04-30 04:43:24.696 [info] fetchAndWrite: lease returned 0 tools across 0 clients
+2026-04-30 04:43:25.501 [info] Lease change event received {"reason":"cursor_mcp_lease_providers"}
+2026-04-30 04:43:25.504 [info] Lease change event received {"serverIdentifiers":["cursor-ide-browser"],"reason":"cursor_mcp_lease_server_status"}
+2026-04-30 04:43:25.554 [info] Lease change event received {"reason":"cursor_mcp_lease_settings"}
+2026-04-30 04:43:25.682 [info] fetchAndWrite: lease returned 0 tools across 0 clients
+2026-04-30 04:43:26.291 [info] Lease change event received {"reason":"cursor_mcp_lease_settings"}
+2026-04-30 04:43:26.294 [info] Lease change event received {"reason":"cursor_mcp_lease_settings"}
+2026-04-30 04:43:26.407 [info] fetchAndWrite: lease returned 0 tools across 0 clients
+2026-04-30 04:43:26.646 [info] Lease change event received {"reason":"cursor_mcp_lease_settings"}
+2026-04-30 04:43:26.646 [info] Lease change event received {"reason":"cursor_mcp_lease_settings"}
+2026-04-30 04:43:26.749 [info] fetchAndWrite: lease returned 0 tools across 0 clients
+2026-04-30 04:43:29.318 [info] Lease change event received {"reason":"cursor_mcp_lease_settings"}
+2026-04-30 04:43:29.363 [info] Lease change event received {"serverIdentifiers":["user-medusa-docs"],"reason":"cursor_mcp_lease_server_status"}
+2026-04-30 04:43:29.367 [info] Lease change event received {"serverIdentifiers":["user-firecrawl"],"reason":"cursor_mcp_lease_server_status"}
+2026-04-30 04:43:29.475 [info] fetchAndWrite: lease returned 0 tools across 2 clients
+2026-04-30 04:43:29.476 [info] Server "user-medusa-docs" excluded from write: tools=0, resources=0, prompts=0, hasInstructions=false, status=initializing
+2026-04-30 04:43:29.476 [info] Server "user-firecrawl" excluded from write: tools=0, resources=0, prompts=0, hasInstructions=false, status=initializing
+2026-04-30 04:43:31.552 [info] Lease change event received {"serverIdentifiers":["user-medusa-docs"],"reason":"cursor_mcp_lease_server_status"}
+2026-04-30 04:43:31.653 [info] fetchAndWrite: refreshing 1 targeted servers {"serverIdentifiers":["user-medusa-docs"]}
+2026-04-30 04:43:31.732 [info] Lease change event received {"serverIdentifiers":["user-firecrawl"],"reason":"cursor_mcp_lease_server_status"}
+2026-04-30 04:43:32.549 [info] Lease change event received {"serverIdentifiers":["user-medusa-docs"],"reason":"cursor_mcp_lease_server_status"}
+2026-04-30 04:43:32.584 [info] Lease change event received {"serverIdentifiers":["user-medusa-docs"],"reason":"cursor_mcp_lease_server_status"}
+2026-04-30 04:43:32.592 [info] Lease change event received {"reason":"cursor_mcp_lease_settings"}
+2026-04-30 04:43:33.357 [info] Lease change event received {"reason":"cursor_mcp_lease_settings"}
+2026-04-30 04:43:33.377 [info] Incremental write: 1 changed, 0 removed, 0 unchanged {"changedServerCount":1,"changedServers":[{"serverIdentifier":"user-medusa-docs","sanitizedId":"user-medusa-docs","toolCount":1}],"removedServerCount":0,"removedServerSanitizedIds":[],"unchangedServerCount":0,"totalServerCount":1,"mcpFsStructuredLogOptIn":true}
+2026-04-30 04:43:33.382 [info] fetchAndWrite: refreshing 1 targeted servers {"serverIdentifiers":["user-firecrawl"]}
+2026-04-30 04:43:33.399 [info] Incremental write: 1 changed, 0 removed, 1 unchanged {"changedServerCount":1,"changedServers":[{"serverIdentifier":"user-firecrawl","sanitizedId":"user-firecrawl","toolCount":12}],"removedServerCount":0,"removedServerSanitizedIds":[],"unchangedServerCount":1,"totalServerCount":2,"mcpFsStructuredLogOptIn":true}
+2026-04-30 04:43:33.420 [info] fetchAndWrite: lease returned 13 tools across 2 clients
+2026-04-30 04:43:33.478 [info] fetchAndWrite: lease returned 13 tools across 2 clients
+2026-04-30 04:43:47.548 [info] Constructor: scheduling initial write
+2026-04-30 04:43:47.548 [info] fetchAndWrite: lease returned 0 tools across 0 clients
+2026-04-30 04:43:47.548 [info] Incremental write: 0 changed, 2 removed, 0 unchanged {"changedServerCount":0,"changedServers":[],"removedServerCount":2,"removedServerSanitizedIds":["user-firecrawl","user-medusa-docs"],"unchangedServerCount":0,"totalServerCount":0,"mcpFsStructuredLogOptIn":true}
+2026-04-30 04:43:47.887 [info] Lease change event received {"reason":"cursor_mcp_lease_providers"}
+2026-04-30 04:43:47.889 [info] Lease change event received {"serverIdentifiers":["cursor-ide-browser"],"reason":"cursor_mcp_lease_server_status"}
+2026-04-30 04:43:47.940 [info] Lease change event received {"serverIdentifiers":["cursor-ide-browser"],"reason":"cursor_mcp_lease_snapshot_store"}
+2026-04-30 04:43:48.083 [info] fetchAndWrite: lease returned 0 tools across 0 clients
+2026-04-30 04:43:49.726 [info] Lease change event received {"serverIdentifiers":["user-medusa-docs"],"reason":"cursor_mcp_lease_server_status"}
+2026-04-30 04:43:49.728 [info] Lease change event received {"serverIdentifiers":["user-firecrawl"],"reason":"cursor_mcp_lease_server_status"}
+2026-04-30 04:43:49.837 [info] fetchAndWrite: refreshing 2 targeted servers {"serverIdentifiers":["user-medusa-docs","user-firecrawl"]}
+2026-04-30 04:43:51.807 [info] Lease change event received {"serverIdentifiers":["user-firecrawl"],"reason":"cursor_mcp_lease_server_status"}
+2026-04-30 04:43:51.826 [info] Lease change event received {"serverIdentifiers":["user-firecrawl"],"reason":"cursor_mcp_lease_snapshot_store"}
+2026-04-30 04:43:51.926 [info] fetchAndWrite: refreshing 1 targeted servers {"serverIdentifiers":["user-firecrawl"]}
+2026-04-30 04:43:51.936 [info] Incremental write: 1 changed, 0 removed, 0 unchanged {"changedServerCount":1,"changedServers":[{"serverIdentifier":"user-firecrawl","sanitizedId":"user-firecrawl","toolCount":12}],"removedServerCount":0,"removedServerSanitizedIds":[],"unchangedServerCount":0,"totalServerCount":1,"mcpFsStructuredLogOptIn":true}
+2026-04-30 04:43:52.491 [info] Lease change event received {"serverIdentifiers":["user-medusa-docs"],"reason":"cursor_mcp_lease_server_status"}
+2026-04-30 04:43:52.603 [info] fetchAndWrite: refreshing 1 targeted servers {"serverIdentifiers":["user-medusa-docs"]}
+2026-04-30 04:43:53.333 [info] Lease change event received {"serverIdentifiers":["user-medusa-docs"],"reason":"cursor_mcp_lease_server_status"}
+2026-04-30 04:43:53.364 [info] Lease change event received {"serverIdentifiers":["user-medusa-docs"],"reason":"cursor_mcp_lease_snapshot_store"}
+2026-04-30 04:43:53.364 [info] Lease change event received {"serverIdentifiers":["user-medusa-docs"],"reason":"cursor_mcp_lease_server_status"}
+2026-04-30 04:43:53.366 [info] Lease change event received {"serverIdentifiers":["user-medusa-docs"],"reason":"cursor_mcp_lease_snapshot_store"}
+2026-04-30 04:43:53.366 [info] Lease change event received {"serverIdentifiers":["user-medusa-docs"],"reason":"cursor_mcp_lease_server_status"}
+2026-04-30 04:43:53.481 [info] fetchAndWrite: refreshing 1 targeted servers {"serverIdentifiers":["user-medusa-docs"]}
+2026-04-30 04:43:53.511 [info] Incremental write: 1 changed, 0 removed, 1 unchanged {"changedServerCount":1,"changedServers":[{"serverIdentifier":"user-medusa-docs","sanitizedId":"user-medusa-docs","toolCount":1}],"removedServerCount":0,"removedServerSanitizedIds":[],"unchangedServerCount":1,"totalServerCount":2,"mcpFsStructuredLogOptIn":true}

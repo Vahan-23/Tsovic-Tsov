@@ -1,0 +1,17 @@
+2026-04-30 04:43:15.482 [info] updateURL https://api2.cursor.sh/updates/api/update/win32-x64-user/cursor/3.2.16/78f8d63c2e1a022d6b85482db4b7564a522cffcab093b5074418e005e8c03062/stable
+2026-04-30 04:43:15.483 [info] update#setState idle
+2026-04-30 04:43:32.383 [info] [CursorProclistService] Config enabled feature (subsample every 10s)
+2026-04-30 04:43:38.806 [info] Extension host with pid 34320 exited with code: 0, signal: unknown.
+2026-04-30 04:43:38.809 [info] Extension host with pid 52296 exited with code: 0, signal: unknown.
+2026-04-30 04:43:38.816 [info] Extension host with pid 56632 exited with code: 0, signal: unknown.
+2026-04-30 04:43:38.827 [info] Extension host with pid 3648 exited with code: 0, signal: unknown.
+2026-04-30 04:43:42.764 [info] update#setState checking for updates
+2026-04-30 04:43:42.917 [info] update#setState idle
+2026-04-30 04:43:55.359 [info] [CursorProclistService] Config enabled feature (subsample every 10s)
+2026-04-30 04:44:46.256 [warning] TracingService: dropping unsupported envelope
+2026-04-30 04:44:46.671 [info] [PowerMainService] Started wakelock id=0 owner=window:1 reason="agent-loop" activeCount=1
+2026-04-30 04:45:04.837 [info] [PowerMainService] Stopping wakelock id=0 owner=window:1 reason="agent-loop" heldForMs=18166
+2026-04-30 04:46:30.639 [info] Extension host with pid 23396 exited with code: 0, signal: unknown.
+2026-04-30 04:46:30.650 [info] Extension host with pid 45976 exited with code: 0, signal: unknown.
+2026-04-30 04:46:30.650 [info] Extension host with pid 2160 exited with code: 0, signal: unknown.
+2026-04-30 04:46:30.676 [info] Extension host with pid 11540 exited with code: 0, signal: unknown.

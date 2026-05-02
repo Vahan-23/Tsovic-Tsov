@@ -1,0 +1,26 @@
+[2026-04-30T00:43:25.496Z] [INFO] [general] Cursor Browser Automation extension activated
+[2026-04-30T00:43:25.496Z] [INFO] [general] Using Browser MCP provider
+[2026-04-30T00:43:25.497Z] [INFO] [general] Browser Automation MCP Provider initialized with direct execution
+[2026-04-30T00:43:25.498Z] [INFO] [general] injectBrowserUIScript called
+[2026-04-30T00:43:25.531Z] [ERROR] [general] Failed to inject browser UI script:: No browser view available
+[2026-04-30T00:43:25.531Z] [ERROR] [general] Error: No browser view available
+    at lmn (vscode-file://vscode-app/c:/Users/Vahan/AppData/Local/Programs/cursor/resources/app/out/vs/workbench/workbench.desktop.main.js:41817:98575)
+    at vscode-file://vscode-app/c:/Users/Vahan/AppData/Local/Programs/cursor/resources/app/out/vs/workbench/workbench.desktop.main.js:41817:100127
+    at CMm.invokeFunction (vscode-file://vscode-app/c:/Users/Vahan/AppData/Local/Programs/cursor/resources/app/out/vs/workbench/workbench.desktop.main.js:42043:1028)
+    at vscode-file://vscode-app/c:/Users/Vahan/AppData/Local/Programs/cursor/resources/app/out/vs/workbench/workbench.desktop.main.js:41602:3251
+    at mMw (vscode-file://vscode-app/c:/Users/Vahan/AppData/Local/Programs/cursor/resources/app/out/vs/workbench/workbench.desktop.main.js:62:57350)
+    at iGe (vscode-file://vscode-app/c:/Users/Vahan/AppData/Local/Programs/cursor/resources/app/out/vs/workbench/workbench.desktop.main.js:62:57311)
+    at bem._tryExecuteCommand (vscode-file://vscode-app/c:/Users/Vahan/AppData/Local/Programs/cursor/resources/app/out/vs/workbench/workbench.desktop.main.js:41602:3103)
+    at bem.executeCommandImpl (vscode-file://vscode-app/c:/Users/Vahan/AppData/Local/Programs/cursor/resources/app/out/vs/workbench/workbench.desktop.main.js:41602:2286)
+    at bem.executeCommand (vscode-file://vscode-app/c:/Users/Vahan/AppData/Local/Programs/cursor/resources/app/out/vs/workbench/workbench.desktop.main.js:41602:1937)
+    at Hhy.$executeCommand (vscode-file://vscode-app/c:/Users/Vahan/AppData/Local/Programs/cursor/resources/app/out/vs/workbench/workbench.desktop.main.js:38775:693)
+    at mJn._doInvokeHandler (vscode-file://vscode-app/c:/Users/Vahan/AppData/Local/Programs/cursor/resources/app/out/vs/workbench/workbench.desktop.main.js:41621:25436)
+    at mJn._invokeHandler (vscode-file://vscode-app/c:/Users/Vahan/AppData/Local/Programs/cursor/resources/app/out/vs/workbench/workbench.desktop.main.js:41621:25178)
+    at mJn._receiveRequest (vscode-file://vscode-app/c:/Users/Vahan/AppData/Local/Programs/cursor/resources/app/out/vs/workbench/workbench.desktop.main.js:41621:23701)
+    at mJn._receiveOneMessage (vscode-file://vscode-app/c:/Users/Vahan/AppData/Local/Programs/cursor/resources/app/out/vs/workbench/workbench.desktop.main.js:41621:22158)
+    at dRr.value (vscode-file://vscode-app/c:/Users/Vahan/AppData/Local/Programs/cursor/resources/app/out/vs/workbench/workbench.desktop.main.js:41621:20090)
+    at gt._deliver (vscode-file://vscode-app/c:/Users/Vahan/AppData/Local/Programs/cursor/resources/app/out/vs/workbench/workbench.desktop.main.js:55:2962)
+    at gt.fire (vscode-file://vscode-app/c:/Users/Vahan/AppData/Local/Programs/cursor/resources/app/out/vs/workbench/workbench.desktop.main.js:55:3283)
+    at iKi.fire (vscode-file://vscode-app/c:/Users/Vahan/AppData/Local/Programs/cursor/resources/app/out/vs/workbench/workbench.desktop.main.js:38798:12646)
+    at MessagePort.<anonymous> (vscode-file://vscode-app/c:/Users/Vahan/AppData/Local/Programs/cursor/resources/app/out/vs/workbench/workbench.desktop.main.js:46480:21768)
+[2026-04-30T00:43:38.809Z] [INFO] [general] Browser Automation MCP Provider disposed
