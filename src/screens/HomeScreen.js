@@ -1,13 +1,6 @@
 import React from 'react';
-import {
-  ActivityIndicator,
-  ScrollView,
-  StyleSheet,
-  Text,
-  View,
-} from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { TAB_BAR_SCROLL_SPACER } from '../constants/tabBar';
+import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
+import HomeAlphabetBrowse from '../components/HomeAlphabetBrowse';
 import { useLanguage } from '../context/LanguageContext';
 import { useFigures } from '../context/FiguresContext';
 import { useSearchTarget } from '../context/SearchTargetContext';
@@ -19,7 +12,6 @@ const MODE_TKEY = {
 };
 
 export default function HomeScreen() {
-  const insets = useSafeAreaInsets();
   const { t } = useLanguage();
   const { storageLoaded, countsForSearchMode } = useFigures();
   const { searchMode } = useSearchTarget();
@@ -36,19 +28,8 @@ export default function HomeScreen() {
 
   return (
     <View style={styles.root}>
-      <ScrollView
-        style={styles.scroll}
-        contentContainerStyle={[
-          styles.scrollInner,
-          {
-            paddingTop: 20,
-            paddingBottom: 24 + TAB_BAR_SCROLL_SPACER + insets.bottom,
-          },
-        ]}
-        keyboardShouldPersistTaps="handled"
-      >
+      <View style={[styles.header, { paddingHorizontal: 22 }]}>
         <Text style={styles.headline}>{t('homeHeadline')}</Text>
-
         <Text style={styles.progressLine}>
           {t('homeProgressContext', {
             mode: t(MODE_TKEY[searchMode]),
@@ -56,7 +37,10 @@ export default function HomeScreen() {
             total: totalCount,
           })}
         </Text>
-      </ScrollView>
+      </View>
+      <View style={styles.browseFill}>
+        <HomeAlphabetBrowse />
+      </View>
     </View>
   );
 }
@@ -66,12 +50,13 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#F9FAFB',
   },
-  scroll: {
-    flex: 1,
+  header: {
+    paddingTop: 16,
+    paddingBottom: 8,
   },
-  scrollInner: {
-    paddingHorizontal: 22,
-    alignItems: 'center',
+  browseFill: {
+    flex: 1,
+    minHeight: 0,
   },
   centered: {
     flex: 1,
@@ -87,12 +72,13 @@ const styles = StyleSheet.create({
     lineHeight: 30,
   },
   progressLine: {
-    marginTop: 14,
+    marginTop: 12,
     fontSize: 16,
     fontWeight: '600',
     color: '#4B5563',
     textAlign: 'center',
     lineHeight: 24,
-    maxWidth: 320,
+    maxWidth: 360,
+    alignSelf: 'center',
   },
 });

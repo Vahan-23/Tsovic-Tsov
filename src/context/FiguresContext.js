@@ -12,6 +12,7 @@ import * as FileSystem from 'expo-file-system';
 import { FALLBACK_FIGURES, sortFiguresList } from '../data/figures';
 import { PULPULAK_POINTS } from '../data/pulpulaks';
 import { STATUES_3D_ENTRIES } from '../data/statues3d';
+import { finalizeCuratedStatueList } from '../data/curatedStatueProfiles';
 import {
   convertOverpassJsonToStatues,
   fetchOverpassData,
@@ -89,7 +90,11 @@ export function FiguresProvider({ children }) {
     try {
       const overpassJson = await fetchOverpassData(getOverpassQuery());
       const converted = convertOverpassJsonToStatues(overpassJson);
-      const nextStatues = converted.length ? converted : FALLBACK_FIGURES;
+      const finalized = finalizeCuratedStatueList(converted);
+      const nextStatues =
+        finalized.length > 0
+          ? finalized
+          : finalizeCuratedStatueList(FALLBACK_FIGURES);
       setStatues(nextStatues);
       setStatuesLoaded(true);
 
@@ -97,7 +102,7 @@ export function FiguresProvider({ children }) {
         const now = Date.now();
         await FileSystem.writeAsStringAsync(
           STATUES_CACHE_FILE,
-          JSON.stringify(converted),
+          JSON.stringify(nextStatues),
           { encoding: FileSystem.EncodingType.UTF8 }
         );
         await AsyncStorage.multiSet([
@@ -108,7 +113,7 @@ export function FiguresProvider({ children }) {
         // Cache failures shouldn't break the app.
       }
     } catch {
-      setStatues(FALLBACK_FIGURES);
+      setStatues(finalizeCuratedStatueList(FALLBACK_FIGURES));
       setStatuesLoaded(true);
     } finally {
       setStatuesRefreshing(false);
@@ -247,7 +252,7 @@ export function FiguresProvider({ children }) {
           now - lastUpdated < STATUES_MAX_AGE_MS
         ) {
           if (!cancelled) {
-            setStatues(cachedFromFile);
+            setStatues(finalizeCuratedStatueList(cachedFromFile));
             setStatuesLoaded(true);
           }
           return;
@@ -258,7 +263,7 @@ export function FiguresProvider({ children }) {
         }
       } catch {
         if (!cancelled) {
-          setStatues(FALLBACK_FIGURES);
+          setStatues(finalizeCuratedStatueList(FALLBACK_FIGURES));
           setStatuesLoaded(true);
         }
       }

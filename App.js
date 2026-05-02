@@ -9,10 +9,12 @@ import { FiguresProvider } from './src/context/FiguresContext';
 import { LanguageProvider } from './src/context/LanguageContext';
 import { SettingsProvider } from './src/context/SettingsContext';
 import { SearchTargetProvider } from './src/context/SearchTargetContext';
+import { RU_NON_CYRILLIC_BUCKET } from './src/constants/alphabet';
 import MainTabNavigator from './src/navigation/MainTabNavigator';
 import StatueDetailScreen from './src/screens/StatueDetailScreen';
 import ScanScreen from './src/screens/ScanScreen';
 import NavigationScreen from './src/screens/NavigationScreen';
+import StatuesByLetterScreen from './src/screens/StatuesByLetterScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -44,6 +46,20 @@ export default function App() {
                       name="StatueDetail"
                       component={StatueDetailScreen}
                       options={{ title: 'Արձան' }}
+                    />
+                    <Stack.Screen
+                      name="StatuesByLetter"
+                      component={StatuesByLetterScreen}
+                      options={({ route }) => {
+                        const letter = route.params?.letter;
+                        const title =
+                          letter == null
+                            ? '—'
+                            : letter === RU_NON_CYRILLIC_BUCKET
+                              ? 'N/n'
+                              : String(letter);
+                        return { title };
+                      }}
                     />
                     <Stack.Screen
                       name="Scan"

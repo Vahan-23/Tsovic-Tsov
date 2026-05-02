@@ -18,8 +18,7 @@ export const FALLBACK_FIGURES = [
     name: 'Khachatur Abovyan monument',
     name_hy: 'Խաչատուր Աբովյանի արձան',
     name_ru: 'Памятник Хачатуру Абовяну',
-    description:
-      'Bronze monument to writer and educator Khachatur Abovyan (1809–1848) at the foot of Abovyan Street. Same location as OSM node 703798666 (historic=monument). HY: Խաչատուր Աբովյանի արձան. RU: Памятник Хачатуру Абовяну — памятник на этих координатах в Ереване.',
+    description: '',
     image: null,
     latitude: 40.1916418,
     longitude: 44.5281451,
@@ -32,8 +31,7 @@ export const FALLBACK_FIGURES = [
     name: 'Komitas statue',
     name_hy: 'Կոմիտասի արձան',
     name_ru: 'Памятник Комитасу',
-    description:
-      'Monument to composer and musicologist Komitas (1869–1935). Mapped as OSM node 614350861 (tourism=artwork, artwork_type=statue). HY: Կոմիտասի արձան. RU: Памятник Комитасу — статуя у Оперного театра, эти координаты.',
+    description: '',
     image: null,
     latitude: 40.1871993,
     longitude: 44.5162449,
@@ -46,8 +44,7 @@ export const FALLBACK_FIGURES = [
     name: 'Hovhannes Tumanyan monument',
     name_hy: 'Հովհաննես Թումանյանի արձան',
     name_ru: 'Памятник Ованесу Туманяну',
-    description:
-      'Memorial to poet Hovhannes Tumanyan (1869–1923). OSM node 614334700 (historic=memorial). HY: Հովհաննես Թումանյանի արձան. RU: Памятник Туманяну на площади у Лебединого озера — точка по картам OSM.',
+    description: '',
     image: null,
     latitude: 40.1854189,
     longitude: 44.5147058,
@@ -60,8 +57,7 @@ export const FALLBACK_FIGURES = [
     name: 'Sayat-Nova monument',
     name_hy: 'Սայաթ Նովայի հուշարձան',
     name_ru: 'Памятник Саят-Нове',
-    description:
-      'Memorial to ashugh Sayat-Nova (1712–1795). OSM node 614352792 (historic=memorial; mapped near the Sayat-Nova music fountain). HY: Սայաթ Նովայի հուշարձան. RU: Мемориал Саят-Новы — отмечен в OSM на этих координатах.',
+    description: '',
     image: null,
     latitude: 40.1878591,
     longitude: 44.5164671,
@@ -74,8 +70,7 @@ export const FALLBACK_FIGURES = [
     name: 'Yeghishe Charents Monument',
     name_hy: 'Եղիշե Չարենցի արձան',
     name_ru: 'Памятник Егише Чаренцу',
-    description:
-      'Monument to poet Yeghishe Charents (1897–1937) on Mashtots Avenue. OSM node 974787078 (historic=monument); way 1383819206 is the same sculpture mapped as an area. HY: Եղիշե Չարենցի արձան. RU: Памятник Чаренцу — точка центра узла OSM на проспекте Маштоца.',
+    description: '',
     image: null,
     latitude: 40.1797924,
     longitude: 44.5246095,

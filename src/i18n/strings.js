@@ -14,6 +14,21 @@ export const strings = {
     discoverSearch: 'Փնտրել',
     discoverSearching: 'Ռադարն աշխատում է...',
     discoverHintIdle: 'Սեղմիր՝ մոտակա արձանները գտնելու համար',
+    letterListEmpty: 'Այս տառով դեռ ոչինչ չկա։',
+    quickInfoCoords: 'Կոորդինատներ',
+    quickInfoOk: 'Լավ',
+    statueMetaLife: 'Կյանք․ {born}–{died}',
+    statueMetaMonument: 'Հուշարձան՝ մոտավորապես {year} թ.',
+    curatedBio_abovyan:
+      'Խաչատուր Աբովյանը (1809–1848) հայ գրող և լուսավորիչ էր․ նրա վեպերը և դպրոցական բարեփոխումները կարևոր դեր ունեցան նոր հայ գրականության կազմավորման մեջ։ Երևանի այս հուշարձանը կանգնեցված է նրա անունը կրող փողոցի սկզբում՝ որպես հարգանքի նշան դեպի դասական դպրոց և ինստիտուտ, որոնք նույնպես կրում են նրա անունը։',
+    curatedBio_komitas:
+      'Սողոմոն Գևորգյան՝ Կոմիտաս (1869–1935), կոմպոզիտոր և հայ երաժշտության հետազոտող․ հավաքել և համակարգել է հայ ժողովրդական երգերը։ Հուշարձանը (առաջին բացումը՝ մոտ 1969 թ.) գտնվում է օպերայի և բալետի թատրոնի մոտ՝ որպես կենդանի հիշատակում նրա ներդրումը համաշխարհային երաժշտության մեջ։',
+    curatedBio_tumanyan:
+      'Հովհաննես Թումանյանը (1869–1923) հայ գրականության ամենահայտնի բանաստեղծներից մեկն է․ հայտնի են «Անուշ» պոյմանը, հեքիաթները և հասարակական գործունեությունը։ Այս հուշարձանը հարգանքի նշան է նրա՝ որպես «ողջ ժողովրդի բանաստեղծ» դիրքի։',
+    curatedBio_sayat_nova:
+      'Սայաթ-Նովան (1712–1795) հայ աշուղ էր և բանաստեղծ․ խողովակային երգ («աշուղական») ժանրի խոշոր գործիչ։ Հուշարձանը գտնվում է Սայաթ-Նովայի անունը կրող շատրվանի ու համերգային տարածքի մոտ՝ նշելով նրա տեղը հայ երաժշտական մշակույթում։',
+    curatedBio_charents:
+      'Եղիշե Չարենցը (1897–1937) XX դարի վաղ շրջանի հայ բանաստեղծ էր․ ստեղծագործություններում համատեղել է մոդեռնիզմը և քաղաքացիական թեմաները։ Մաշտոցի պողոտայի այս հուշարձանը կոչված է պահպանել նրա գաղափարական ժառանգությունը ու ընթերցողներին մոտեցնել գրողին։',
     permissionTitle: 'Թույլտվություն',
     permissionMessage: 'Խնդրում ենք թույլատրել տեղադրության հասանելիությունը։',
     emptyStatueTitle: 'Արձան չգտնվեց',
@@ -100,6 +115,21 @@ export const strings = {
     discoverSearch: 'Искать',
     discoverSearching: 'Радар работает…',
     discoverHintIdle: 'Нажмите, чтобы найти памятники поблизости',
+    letterListEmpty: 'Для этой буквы пока нет объектов.',
+    quickInfoCoords: 'Координаты',
+    quickInfoOk: 'Хорошо',
+    statueMetaLife: 'Годы жизни: {born}–{died}',
+    statueMetaMonument: 'Памятник (ориентировочно {year})',
+    curatedBio_abovyan:
+      'Хачатур Абовян (1809–1848) — писатель и просветитель, один из основоположников новой армянской литературы; автор «Записок отчего человека» и участник школьной реформы. Памятник у подножия улицы Абовяна в Ереване соотнесён с его именем и с институтом, напоминая о вкладе в культуру и образование.',
+    curatedBio_komitas:
+      'Комитас (Согомон Геворкян, 1869–1935) — композитор и этномузыколог, собиратель армянского фольклора. Скульптура у оперного театра (часто указывают открытие около 1969 года) символизирует его роль в сохранении и популяризации армянской музыки.',
+    curatedBio_tumanyan:
+      'Ованес Туманян (1869–1923) — поэт, автор «Ануша», сказок и эпоса. Памятник у Лебединого озера отражает его значение как «всенародного поэта» в новой армянской литературе.',
+    curatedBio_sayat_nova:
+      'Саят-Нова (1712–1795) — ашуг и поэт, мастер любовной лирики. Мемориал у музыкального комплекса его имени отмечает его место в истории армянской и кавказской музыкальной традиции.',
+    curatedBio_charents:
+      'Егише Чаренц (1897–1937) — поэт XX века, сочетавший модернизм и гражданскую тематику. Памятник на проспекте Месропа Маштоца связывает жителей города с его литературным наследием.',
     permissionTitle: 'Доступ',
     permissionMessage: 'Разрешите доступ к геолокации.',
     emptyStatueTitle: 'Нет памятников',
@@ -186,6 +216,21 @@ export const strings = {
     discoverSearch: 'Search',
     discoverSearching: 'Radar running…',
     discoverHintIdle: 'Tap to find nearby statues',
+    letterListEmpty: 'Nothing for this letter yet.',
+    quickInfoCoords: 'Coordinates',
+    quickInfoOk: 'OK',
+    statueMetaLife: 'Life: {born}–{died}',
+    statueMetaMonument: 'Monument (c. {year})',
+    curatedBio_abovyan:
+      'Khachatur Abovyan (1809–1848) was an Armenian writer and educator who helped shape modern Armenian literature and promoted schooling reforms. The monument stands near Abovyan Street and institutions bearing his name, honoring his cultural legacy.',
+    curatedBio_komitas:
+      'Komitas (Soghomon Gevorkian, 1869–1935) was a composer and pioneering collector of Armenian folk music. The statue by the opera house (often dated around its 1969 unveiling) celebrates his worldwide influence on Armenian music.',
+    curatedBio_tumanyan:
+      'Hovhannes Tumanyan (1869–1923) is Armenia’s beloved poet, known for Anush, fairy tales, and civic poetry. The monument by Swan Lake reflects his role as a national storyteller.',
+    curatedBio_sayat_nova:
+      'Sayat-Nova (1712–1795) was an ashugh — poet-musician — central to Armenian lyrical tradition. The memorial near the music fountain named for him marks his place in regional musical heritage.',
+    curatedBio_charents:
+      'Yeghishe Charents (1897–1937) was a leading poet of the early 20th century, blending modernism with civic themes. The Mashtots Avenue monument keeps his literary legacy visible in the city.',
     permissionTitle: 'Permission',
     permissionMessage: 'Please allow location access.',
     emptyStatueTitle: 'No statue found',

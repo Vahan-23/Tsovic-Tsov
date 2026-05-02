@@ -13,6 +13,27 @@ import { Ionicons } from '@expo/vector-icons';
 import { useLanguage } from '../context/LanguageContext';
 import { useFigures } from '../context/FiguresContext';
 
+function CuratedStatueCopy({ figure, t }) {
+  if (!figure?.curatedKey) {
+    return figure?.description ? (
+      <Text style={styles.body}>{figure.description}</Text>
+    ) : null;
+  }
+  const bioKey = `curatedBio_${figure.curatedKey}`;
+  const bio = t(bioKey);
+  return (
+    <>
+      <Text style={styles.metaMuted}>{t('statueMetaLife', { born: figure.born, died: figure.died })}</Text>
+      {figure.monumentUnveiled != null ? (
+        <Text style={[styles.metaMuted, styles.metaSpaced]}>
+          {t('statueMetaMonument', { year: figure.monumentUnveiled })}
+        </Text>
+      ) : null}
+      <Text style={[styles.body, styles.bioBlock]}>{bio}</Text>
+    </>
+  );
+}
+
 export default function StatueDetailScreen({ route, navigation }) {
   const { t } = useLanguage();
   const { statueId, collectionKind = 'statues' } = route.params || {};
@@ -124,7 +145,7 @@ export default function StatueDetailScreen({ route, navigation }) {
           />
         ) : null}
         <Text style={styles.discovered}>{t('statueDiscovered')}</Text>
-        <Text style={styles.body}>{figure.description}</Text>
+        <CuratedStatueCopy figure={figure} t={t} />
       </ScrollView>
     );
   }
@@ -144,7 +165,7 @@ export default function StatueDetailScreen({ route, navigation }) {
         />
       ) : null}
       <Text style={styles.discovered}>{t('statueDiscovered')}</Text>
-      <Text style={styles.body}>{figure.description}</Text>
+      <CuratedStatueCopy figure={figure} t={t} />
     </ScrollView>
   );
 }
@@ -195,6 +216,18 @@ const styles = StyleSheet.create({
     fontSize: 16,
     lineHeight: 24,
     color: '#374151',
+  },
+  metaMuted: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#6B7280',
+    lineHeight: 20,
+  },
+  metaSpaced: {
+    marginTop: 6,
+  },
+  bioBlock: {
+    marginTop: 14,
   },
   coords: {
     fontSize: 14,
