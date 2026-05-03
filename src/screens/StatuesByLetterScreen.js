@@ -9,6 +9,7 @@ import {
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { TAB_BAR_SCROLL_SPACER } from '../constants/tabBar';
 import { useLanguage } from '../context/LanguageContext';
+import { useSettings } from '../context/SettingsContext';
 import { useFigures } from '../context/FiguresContext';
 import {
   filterItemsForLetter,
@@ -18,6 +19,47 @@ import {
 export default function StatuesByLetterScreen({ route, navigation }) {
   const insets = useSafeAreaInsets();
   const { t, locale } = useLanguage();
+  const { colors } = useSettings();
+  const styles = useMemo(
+    () =>
+      StyleSheet.create({
+        root: {
+          flex: 1,
+          backgroundColor: colors.bg,
+        },
+        centered: {
+          flex: 1,
+          justifyContent: 'center',
+          padding: 24,
+        },
+        body: {
+          fontSize: 16,
+          color: colors.textMuted,
+          textAlign: 'center',
+          lineHeight: 22,
+        },
+        listContent: {
+          paddingTop: 8,
+        },
+        row: {
+          paddingVertical: 16,
+          paddingHorizontal: 20,
+          backgroundColor: colors.bgElevated,
+          borderBottomWidth: StyleSheet.hairlineWidth,
+          borderBottomColor: colors.border,
+        },
+        rowPressed: {
+          backgroundColor: colors.bg,
+        },
+        rowTitle: {
+          fontSize: 17,
+          fontWeight: '600',
+          color: colors.text,
+          lineHeight: 24,
+        },
+      }),
+    [colors]
+  );
   const { radarTargetsForMode } = useFigures();
   const letter = route.params?.letter;
   const searchMode = route.params?.searchMode ?? 'statues';
@@ -74,40 +116,3 @@ export default function StatuesByLetterScreen({ route, navigation }) {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  root: {
-    flex: 1,
-    backgroundColor: '#F9FAFB',
-  },
-  centered: {
-    flex: 1,
-    justifyContent: 'center',
-    padding: 24,
-  },
-  body: {
-    fontSize: 16,
-    color: '#6B7280',
-    textAlign: 'center',
-    lineHeight: 22,
-  },
-  listContent: {
-    paddingTop: 8,
-  },
-  row: {
-    paddingVertical: 16,
-    paddingHorizontal: 20,
-    backgroundColor: '#FFFFFF',
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: '#E5E7EB',
-  },
-  rowPressed: {
-    backgroundColor: '#F9FAFB',
-  },
-  rowTitle: {
-    fontSize: 17,
-    fontWeight: '600',
-    color: '#111827',
-    lineHeight: 24,
-  },
-});

@@ -3,6 +3,7 @@ import { useNavigation } from '@react-navigation/native';
 import {
   Alert,
   Animated,
+  Easing,
   Image,
   Modal,
   Pressable,
@@ -16,18 +17,30 @@ import { POSITION_MAX_ACCURACY, WATCH_MODAL_MAP } from '../constants/gpsAccuracy
 import { getDarkMapProps } from '../constants/mapAppearance';
 import { useLanguage } from '../context/LanguageContext';
 import { useFigures } from '../context/FiguresContext';
+import { useSettings } from '../context/SettingsContext';
 import { useSearchTarget } from '../context/SearchTargetContext';
 import { haversineDistanceMeters } from '../utils/haversine';
 
 const FOOTPRINT_ICON = require('../../assets/footprints_21766.png');
 const SEARCH_ICONS = [
-  require('../../assets/search_ico/Gemini_Generated_Image_rcrvqkrcrvqkrcrv.png'),
-  require('../../assets/search_ico/Gemini_Generated_Image_6b1xyb6b1xyb6b1x.png'),
-  require('../../assets/search_ico/Gemini_Generated_Image_jwomxqjwomxqjwom.png'),
+  require('../../assets/search_ico/cascade.png'),
+  require('../../assets/search_ico/monument.png'),
+  require('../../assets/search_ico/opera.png'),
+  require('../../assets/search_ico/dav.png'),
 ];
 
 const UNLOCK_DISTANCE_METERS = 50;
 const MIN_SEARCH_MS = 1800;
+
+/** Idle: very slow gentle 3D turn (rotateY) left→center→right→center; small angle keeps face visible. */
+const IDLE_WOBBLE_HALF_MS = 5200;
+/** Tap: one full 3D flip around vertical axis (rotateY 360°), then search starts. */
+const BURST_FLIP_MS = 620;
+/** Peak rotateY — keep low so the disk still reads “mostly frontal”. */
+const WOBBLE_Y_DEG = 6;
+
+const BTN = 200;
+const CORE = 158;
 
 function wait(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
@@ -57,20 +70,22 @@ function getDirectionLabel(bearing, directions) {
   return directions[index];
 }
 
-export default function DiscoverNearbyBlock({
-  navigation: navigationProp,
-  variant = 'default',
-}) {
+export default function DiscoverNearbyBlock({ navigation: navigationProp }) {
   const navigationFallback = useNavigation();
   const navigation = navigationProp ?? navigationFallback;
   const { t, stringsForLocale } = useLanguage();
+  const { colors } = useSettings();
   const pulseAnim = useRef(new Animated.Value(0)).current;
+  /** 0 → −deg, 0.5 → face-on, 1 → +deg — slow vertical-axis drift (before & after search). */
+  const idleWobble = useRef(new Animated.Value(0)).current;
+  const burstSpin = useRef(new Animated.Value(0)).current;
   const searchIconOpacity = useRef(new Animated.Value(1)).current;
   const radarAnims = useRef(
     Array.from({ length: 5 }, () => new Animated.Value(0))
   ).current;
   const radarLoopsRef = useRef([]);
   const [isChecking, setIsChecking] = React.useState(false);
+  const [windingUp, setWindingUp] = React.useState(false);
   const [guidance, setGuidance] = React.useState(null);
   const [mapVisible, setMapVisible] = React.useState(false);
   const [searchIconIndex, setSearchIconIndex] = React.useState(0);
@@ -106,6 +121,36 @@ export default function DiscoverNearbyBlock({
     return () => loop.stop();
   }, [pulseAnim]);
 
+  /** Idle: smooth slow rotateY sway — pauses only during tap flip / radar. */
+  useEffect(() => {
+    if (isChecking || windingUp) {
+      idleWobble.stopAnimation();
+      return;
+    }
+    idleWobble.setValue(0);
+    const loopAnim = Animated.loop(
+      Animated.sequence([
+        Animated.timing(idleWobble, {
+          toValue: 1,
+          duration: IDLE_WOBBLE_HALF_MS,
+          easing: Easing.inOut(Easing.cubic),
+          useNativeDriver: true,
+        }),
+        Animated.timing(idleWobble, {
+          toValue: 0,
+          duration: IDLE_WOBBLE_HALF_MS,
+          easing: Easing.inOut(Easing.cubic),
+          useNativeDriver: true,
+        }),
+      ])
+    );
+    loopAnim.start();
+    return () => {
+      loopAnim.stop();
+      idleWobble.stopAnimation();
+    };
+  }, [isChecking, windingUp, idleWobble]);
+
   useEffect(() => {
     if (!isChecking) {
       radarLoopsRef.current.forEach((loop) => loop.stop());
@@ -139,17 +184,17 @@ export default function DiscoverNearbyBlock({
       Animated.sequence([
         Animated.timing(searchIconOpacity, {
           toValue: 0.15,
-          duration: 120,
+          duration: 85,
           useNativeDriver: true,
         }),
         Animated.timing(searchIconOpacity, {
           toValue: 1,
-          duration: 160,
+          duration: 105,
           useNativeDriver: true,
         }),
       ]).start();
       setSearchIconIndex((prev) => (prev + 1) % SEARCH_ICONS.length);
-    }, 380);
+    }, 280);
     return () => clearInterval(timer);
   }, [isChecking, searchIconOpacity]);
 
@@ -225,7 +270,7 @@ export default function DiscoverNearbyBlock({
   const shownDistanceMeters = liveDistanceMeters ?? guidance?.distanceMeters ?? 0;
   const shownAzimuthDeg = liveAzimuthDeg ?? guidance?.azimuthDeg ?? 0;
 
-  const handleCheckNearby = React.useCallback(async () => {
+  const runCheckNearby = React.useCallback(async () => {
     if (isChecking) return;
     setIsChecking(true);
     setGuidance(null);
@@ -290,13 +335,11 @@ export default function DiscoverNearbyBlock({
           }
 
           if (!nearestFigure || !Number.isFinite(nearestDistance)) {
-            const empty =
-              searchMode === 'pulpulaks'
-                ? { title: t('emptyPulpulakTitle'), message: t('emptyPulpulakMessage') }
-                : searchMode === 'statues3d'
-                  ? { title: t('emptyStatue3dTitle'), message: t('emptyStatue3dMessage') }
-                  : { title: t('emptyStatueTitle'), message: t('emptyStatueMessage') };
-            outcome = { type: 'empty', ...empty };
+            outcome = {
+              type: 'empty',
+              title: t('emptyStatueTitle'),
+              message: t('emptyStatueMessage'),
+            };
             setGuidance(null);
           } else {
             const distanceMeters = Math.round(nearestDistance);
@@ -383,129 +426,199 @@ export default function DiscoverNearbyBlock({
     }
   }, [directions, targets, isChecking, t, unlockForSearchMode, searchMode]);
 
+  /** Perspective + idle tilt — only on core stack (rings stay flat & circular). */
+  const coreOuter3DStyle = useMemo(
+    () => ({
+      transform: [
+        { perspective: 1000 },
+        {
+          rotateY: idleWobble.interpolate({
+            inputRange: [0, 0.5, 1],
+            outputRange: [
+              `-${WOBBLE_Y_DEG}deg`,
+              '0deg',
+              `${WOBBLE_Y_DEG}deg`,
+            ],
+          }),
+        },
+      ],
+    }),
+    [idleWobble]
+  );
+
+  /** One full “coin” flip on tap (3D rotateY), subtle scale for punch. */
+  const coreInnerBurstStyle = useMemo(
+    () => ({
+      transform: [
+        {
+          rotateY: burstSpin.interpolate({
+            inputRange: [0, 1],
+            outputRange: ['0deg', '360deg'],
+          }),
+        },
+        {
+          scale: burstSpin.interpolate({
+            inputRange: [0, 0.12, 1],
+            outputRange: [1, 1.08, 1],
+          }),
+        },
+      ],
+    }),
+    [burstSpin]
+  );
+
+  const onMedallionPress = React.useCallback(() => {
+    if (isChecking || windingUp) return;
+    setWindingUp(true);
+    idleWobble.stopAnimation();
+    idleWobble.setValue(0.5);
+    burstSpin.setValue(0);
+    Animated.timing(burstSpin, {
+      toValue: 1,
+      duration: BURST_FLIP_MS,
+      easing: Easing.out(Easing.cubic),
+      useNativeDriver: true,
+    }).start(({ finished }) => {
+      burstSpin.setValue(0);
+      setWindingUp(false);
+      if (finished) {
+        void runCheckNearby();
+      }
+    });
+  }, [isChecking, windingUp, burstSpin, idleWobble, runCheckNearby]);
+
   if (!storageLoaded) {
     return null;
   }
 
-  const isTabBar = variant === 'tabBar';
-
   return (
-    <View style={[styles.wrap, isTabBar && styles.wrapTabBar]}>
+    <View style={styles.wrap}>
       <Pressable
         style={({ pressed }) => [
           styles.scanButton,
-          isTabBar && styles.scanButtonTabBar,
           pressed && styles.scanButtonPressed,
         ]}
-        onPress={handleCheckNearby}
-        disabled={isChecking}
+        onPress={onMedallionPress}
+        disabled={isChecking || windingUp}
       >
-        {isChecking ? (
-          <>
-            {radarAnims.map((radar, idx) => (
+        {/* Flat rings — always perfect circles, geometric center = button center */}
+        <View style={styles.ringLayer} pointerEvents="none">
+          {isChecking ? (
+            <>
+              {radarAnims.map((radar, idx) => (
+                <Animated.View
+                  key={`radar-${idx}`}
+                  style={[
+                    styles.radarWave,
+                    {
+                      borderWidth: radar.interpolate({
+                        inputRange: [0, 1],
+                        outputRange: [1, 5],
+                      }),
+                      opacity: radar.interpolate({
+                        inputRange: [0, 0.7, 1],
+                        outputRange: [0.75, 0.38, 0],
+                      }),
+                      transform: [
+                        {
+                          scale: radar.interpolate({
+                            inputRange: [0, 1],
+                            outputRange: [0.58, 1.42],
+                          }),
+                        },
+                      ],
+                    },
+                  ]}
+                />
+              ))}
+            </>
+          ) : (
+            <>
               <Animated.View
-                key={`radar-${idx}`}
                 pointerEvents="none"
                 style={[
-                  styles.radarWave,
-                  isTabBar && styles.radarWaveTabBar,
+                  styles.pulseRingOuter,
+                  { borderColor: colors.primary },
                   {
-                    borderWidth: radar.interpolate({
+                    opacity: pulseAnim.interpolate({
                       inputRange: [0, 1],
-                      outputRange: [1, 5],
-                    }),
-                    opacity: radar.interpolate({
-                      inputRange: [0, 0.7, 1],
-                      outputRange: [0.75, 0.38, 0],
+                      outputRange: [0.45, 0.15],
                     }),
                     transform: [
                       {
-                        scale: radar.interpolate({
+                        scale: pulseAnim.interpolate({
                           inputRange: [0, 1],
-                          outputRange: [0.58, 1.42],
+                          outputRange: [1, 1.12],
                         }),
                       },
                     ],
                   },
                 ]}
               />
-            ))}
-          </>
-        ) : (
-          <>
-            <Animated.View
-              pointerEvents="none"
-              style={[
-                styles.pulseRingOuter,
-                isTabBar && styles.pulseRingOuterTabBar,
-                {
-                  opacity: pulseAnim.interpolate({
-                    inputRange: [0, 1],
-                    outputRange: [0.45, 0.15],
-                  }),
-                  transform: [
-                    {
-                      scale: pulseAnim.interpolate({
-                        inputRange: [0, 1],
-                        outputRange: [1, 1.12],
-                      }),
-                    },
-                  ],
-                },
-              ]}
-            />
-            <Animated.View
-              pointerEvents="none"
-              style={[
-                styles.pulseRingInner,
-                isTabBar && styles.pulseRingInnerTabBar,
-                {
-                  opacity: pulseAnim.interpolate({
-                    inputRange: [0, 1],
-                    outputRange: [0.55, 0.22],
-                  }),
-                  transform: [
-                    {
-                      scale: pulseAnim.interpolate({
-                        inputRange: [0, 1],
-                        outputRange: [1, 1.08],
-                      }),
-                    },
-                  ],
-                },
-              ]}
-            />
-          </>
-        )}
-        <View style={[styles.scanButtonCore, isTabBar && styles.scanButtonCoreTabBar]}>
-          {isChecking ? (
-            <Animated.Image
-              source={SEARCH_ICONS[searchIconIndex]}
-              style={[
-                styles.searchCycleIcon,
-                isTabBar && styles.searchCycleIconTabBar,
-                { opacity: searchIconOpacity },
-              ]}
-            />
-          ) : (
-            <Text style={[styles.scanButtonIcon, isTabBar && styles.scanButtonIconTabBar]}>
-              ⌕
-            </Text>
+              <Animated.View
+                pointerEvents="none"
+                style={[
+                  styles.pulseRingInner,
+                  { borderColor: colors.primaryMuted },
+                  {
+                    opacity: pulseAnim.interpolate({
+                      inputRange: [0, 1],
+                      outputRange: [0.55, 0.22],
+                    }),
+                    transform: [
+                      {
+                        scale: pulseAnim.interpolate({
+                          inputRange: [0, 1],
+                          outputRange: [1, 1.08],
+                        }),
+                      },
+                    ],
+                  },
+                ]}
+              />
+            </>
           )}
-          {!isChecking && !isTabBar ? (
-            <Text style={styles.scanButtonText}>{t('discoverSearch')}</Text>
-          ) : null}
         </View>
+
+        {/* Core only: idle wobble + tap = full 3D rotateY flip */}
+        <Animated.View style={[styles.core3DHost, coreOuter3DStyle]}>
+          <Animated.View style={coreInnerBurstStyle}>
+            <View
+              style={[
+                styles.scanButtonCore,
+                { backgroundColor: colors.radarCore },
+              ]}
+            >
+              {isChecking ? (
+                <Animated.Image
+                  source={SEARCH_ICONS[searchIconIndex]}
+                  style={[styles.searchCycleIcon, { opacity: searchIconOpacity }]}
+                />
+              ) : (
+                <Text
+                  style={[
+                    styles.scanButtonIcon,
+                    { color: colors.radarTextOnCore },
+                  ]}
+                >
+                  ⌕
+                </Text>
+              )}
+              {!isChecking ? (
+                <Text style={[styles.scanButtonText, { color: colors.radarTextOnCore }]}>
+                  {t('discoverSearch')}
+                </Text>
+              ) : null}
+            </View>
+          </Animated.View>
+        </Animated.View>
       </Pressable>
       <Text
-        style={[styles.scanHint, isTabBar && styles.scanHintTabBar]}
-        numberOfLines={isTabBar ? 1 : undefined}
+        style={[styles.scanHint, { color: colors.textSecondary }]}
       >
         {isChecking
           ? t('discoverSearching')
-          : isTabBar
-            ? t('discoverSearch')
-            : t('discoverHintIdle')}
+          : t('discoverHintIdle')}
       </Text>
 
       <Modal
@@ -612,72 +725,73 @@ const styles = StyleSheet.create({
   wrap: {
     alignItems: 'center',
     width: '100%',
-  },
-  wrapTabBar: {
-    maxWidth: 124,
-    alignSelf: 'center',
+    marginTop: -26,
   },
   scanButton: {
-    width: 182,
-    height: 182,
-    borderRadius: 91,
+    width: BTN,
+    height: BTN,
+    borderRadius: BTN / 2,
     alignItems: 'center',
     justifyContent: 'center',
     position: 'relative',
-  },
-  /** Bottom tab — larger than side icons so the radar stays the primary control. */
-  scanButtonTabBar: {
-    width: 76,
-    height: 76,
-    borderRadius: 38,
+    overflow: 'visible',
   },
   scanButtonPressed: {
     transform: [{ scale: 0.97 }],
   },
+  ringLayer: {
+    ...StyleSheet.absoluteFillObject,
+    zIndex: 0,
+  },
+  core3DHost: {
+    position: 'absolute',
+    left: 0,
+    top: 0,
+    right: 0,
+    bottom: 0,
+    zIndex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   pulseRingOuter: {
     position: 'absolute',
-    width: 182,
-    height: 182,
-    borderRadius: 91,
+    width: BTN,
+    height: BTN,
+    borderRadius: BTN / 2,
+    left: '50%',
+    top: '50%',
+    marginLeft: -BTN / 2,
+    marginTop: -BTN / 2,
     borderWidth: 2,
     borderColor: '#4F46E5',
   },
-  pulseRingOuterTabBar: {
-    width: 76,
-    height: 76,
-    borderRadius: 38,
-    borderWidth: 2,
-  },
   pulseRingInner: {
     position: 'absolute',
-    width: 158,
-    height: 158,
-    borderRadius: 79,
+    width: 174,
+    height: 174,
+    borderRadius: 87,
+    left: '50%',
+    top: '50%',
+    marginLeft: -87,
+    marginTop: -87,
     borderWidth: 2,
     borderColor: '#818CF8',
   },
-  pulseRingInnerTabBar: {
-    width: 66,
-    height: 66,
-    borderRadius: 33,
-    borderWidth: 2,
-  },
   radarWave: {
     position: 'absolute',
-    width: 182,
-    height: 182,
-    borderRadius: 91,
+    width: BTN,
+    height: BTN,
+    borderRadius: BTN / 2,
+    left: '50%',
+    top: '50%',
+    marginLeft: -BTN / 2,
+    marginTop: -BTN / 2,
     borderColor: '#22C55E',
   },
-  radarWaveTabBar: {
-    width: 76,
-    height: 76,
-    borderRadius: 38,
-  },
   scanButtonCore: {
-    width: 144,
-    height: 144,
-    borderRadius: 72,
+    width: CORE,
+    height: CORE,
+    borderRadius: CORE / 2,
     backgroundColor: '#111827',
     alignItems: 'center',
     justifyContent: 'center',
@@ -688,34 +802,16 @@ const styles = StyleSheet.create({
     elevation: 8,
     overflow: 'hidden',
   },
-  scanButtonCoreTabBar: {
-    width: 60,
-    height: 60,
-    borderRadius: 30,
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.22,
-    shadowRadius: 8,
-    elevation: 8,
-  },
   scanButtonIcon: {
     color: '#FFFFFF',
     fontSize: 34,
     marginBottom: 4,
   },
-  scanButtonIconTabBar: {
-    fontSize: 28,
-    marginBottom: 0,
-  },
   searchCycleIcon: {
-    width: 78,
-    height: 78,
+    width: 86,
+    height: 86,
     marginBottom: 2,
     resizeMode: 'contain',
-  },
-  searchCycleIconTabBar: {
-    width: 40,
-    height: 40,
-    marginBottom: 0,
   },
   scanButtonText: {
     color: '#FFFFFF',
@@ -729,14 +825,6 @@ const styles = StyleSheet.create({
     fontSize: 13,
     textAlign: 'center',
     paddingHorizontal: 12,
-  },
-  scanHintTabBar: {
-    marginTop: 5,
-    fontSize: 11,
-    fontWeight: '800',
-    lineHeight: 13,
-    paddingHorizontal: 2,
-    color: '#374151',
   },
   modalBackdrop: {
     flex: 1,

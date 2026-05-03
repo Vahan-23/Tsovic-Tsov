@@ -12,8 +12,9 @@ import {
 import { Ionicons } from '@expo/vector-icons';
 import { useLanguage } from '../context/LanguageContext';
 import { useFigures } from '../context/FiguresContext';
+import { useSettings } from '../context/SettingsContext';
 
-function CuratedStatueCopy({ figure, t }) {
+function CuratedStatueCopy({ figure, t, styles }) {
   if (!figure?.curatedKey) {
     return figure?.description ? (
       <Text style={styles.body}>{figure.description}</Text>
@@ -36,6 +37,89 @@ function CuratedStatueCopy({ figure, t }) {
 
 export default function StatueDetailScreen({ route, navigation }) {
   const { t } = useLanguage();
+  const { colors } = useSettings();
+  const styles = useMemo(
+    () =>
+      StyleSheet.create({
+        centered: {
+          flex: 1,
+          justifyContent: 'center',
+          alignItems: 'center',
+          padding: 24,
+          backgroundColor: colors.bg,
+        },
+        scroll: {
+          padding: 20,
+          paddingBottom: 40,
+          backgroundColor: colors.bg,
+        },
+        kind: {
+          fontSize: 13,
+          fontWeight: '700',
+          color: colors.link,
+          textTransform: 'uppercase',
+          letterSpacing: 0.6,
+          marginBottom: 8,
+        },
+        kind3d: {
+          color: colors.accentPurple,
+        },
+        title: {
+          fontSize: 24,
+          fontWeight: '700',
+          color: colors.text,
+          marginBottom: 16,
+        },
+        subLine: {
+          fontSize: 14,
+          lineHeight: 20,
+          color: colors.textMuted,
+          marginBottom: 14,
+        },
+        discovered: {
+          fontSize: 15,
+          fontWeight: '600',
+          color: colors.accentGreen,
+          marginBottom: 12,
+        },
+        body: {
+          fontSize: 16,
+          lineHeight: 24,
+          color: colors.iconMuted,
+        },
+        metaMuted: {
+          fontSize: 14,
+          fontWeight: '600',
+          color: colors.textMuted,
+          lineHeight: 20,
+        },
+        metaSpaced: {
+          marginTop: 6,
+        },
+        bioBlock: {
+          marginTop: 14,
+        },
+        coords: {
+          fontSize: 14,
+          color: colors.textMuted,
+        },
+        hint: {
+          fontSize: 16,
+          lineHeight: 24,
+          color: colors.textSecondary,
+          marginTop: 8,
+        },
+        image: {
+          width: '100%',
+          height: 200,
+          borderRadius: 12,
+          marginBottom: 16,
+          backgroundColor: colors.placeholderBg,
+        },
+      }),
+    [colors]
+  );
+
   const { statueId, collectionKind = 'statues' } = route.params || {};
   const { resolveCollectionItem } = useFigures();
 
@@ -78,12 +162,12 @@ export default function StatueDetailScreen({ route, navigation }) {
                 accessibilityRole="button"
                 accessibilityLabel={t('shareAccessibility')}
               >
-                <Ionicons name="share-outline" size={22} color="#111827" />
+                <Ionicons name="share-outline" size={22} color={colors.icon} />
               </Pressable>
             )
           : undefined,
     });
-  }, [navigation, figure, collectionKind, t, titleText, shareMessage]);
+  }, [navigation, figure, collectionKind, t, titleText, shareMessage, colors.icon]);
 
   if (!figure) {
     return (
@@ -145,7 +229,7 @@ export default function StatueDetailScreen({ route, navigation }) {
           />
         ) : null}
         <Text style={styles.discovered}>{t('statueDiscovered')}</Text>
-        <CuratedStatueCopy figure={figure} t={t} />
+        <CuratedStatueCopy figure={figure} t={t} styles={styles} />
       </ScrollView>
     );
   }
@@ -165,85 +249,7 @@ export default function StatueDetailScreen({ route, navigation }) {
         />
       ) : null}
       <Text style={styles.discovered}>{t('statueDiscovered')}</Text>
-      <CuratedStatueCopy figure={figure} t={t} />
+      <CuratedStatueCopy figure={figure} t={t} styles={styles} />
     </ScrollView>
   );
 }
-
-const styles = StyleSheet.create({
-  centered: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 24,
-    backgroundColor: '#F9FAFB',
-  },
-  scroll: {
-    padding: 20,
-    paddingBottom: 40,
-    backgroundColor: '#F9FAFB',
-  },
-  kind: {
-    fontSize: 13,
-    fontWeight: '700',
-    color: '#0284C7',
-    textTransform: 'uppercase',
-    letterSpacing: 0.6,
-    marginBottom: 8,
-  },
-  kind3d: {
-    color: '#6D28D9',
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: '700',
-    color: '#111827',
-    marginBottom: 16,
-  },
-  subLine: {
-    fontSize: 14,
-    lineHeight: 20,
-    color: '#6B7280',
-    marginBottom: 14,
-  },
-  discovered: {
-    fontSize: 15,
-    fontWeight: '600',
-    color: '#059669',
-    marginBottom: 12,
-  },
-  body: {
-    fontSize: 16,
-    lineHeight: 24,
-    color: '#374151',
-  },
-  metaMuted: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: '#6B7280',
-    lineHeight: 20,
-  },
-  metaSpaced: {
-    marginTop: 6,
-  },
-  bioBlock: {
-    marginTop: 14,
-  },
-  coords: {
-    fontSize: 14,
-    color: '#6B7280',
-  },
-  hint: {
-    fontSize: 16,
-    lineHeight: 24,
-    color: '#4B5563',
-    marginTop: 8,
-  },
-  image: {
-    width: '100%',
-    height: 200,
-    borderRadius: 12,
-    marginBottom: 16,
-    backgroundColor: '#E5E7EB',
-  },
-});

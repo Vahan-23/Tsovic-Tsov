@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import {
   Dimensions,
   Modal,
@@ -14,7 +14,12 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { SUPPORTED_LOCALES } from '../i18n/strings';
 import { useFigures } from '../context/FiguresContext';
 import { useLanguage } from '../context/LanguageContext';
-import { useSettings } from '../context/SettingsContext';
+import {
+  useSettings,
+  THEME_LIGHT,
+  THEME_DARK,
+  THEME_SYSTEM,
+} from '../context/SettingsContext';
 
 const HISTORY_MODE_TKEY = {
   statues: 'searchModeStatues',
@@ -29,6 +34,12 @@ const FLAGS = {
   en: '🇬🇧',
 };
 
+const THEME_OPTIONS = [
+  { id: THEME_LIGHT, labelKey: 'themeLight' },
+  { id: THEME_DARK, labelKey: 'themeDark' },
+  { id: THEME_SYSTEM, labelKey: 'themeSystem' },
+];
+
 export default function MainMenu() {
   const insets = useSafeAreaInsets();
   const { t, locale, setLocale } = useLanguage();
@@ -37,9 +48,172 @@ export default function MainMenu() {
     notificationsEnabled,
     setSoundsEnabled,
     setNotificationsEnabled,
+    themePreference,
+    setThemePreference,
+    colors,
   } = useSettings();
   const { discoveryHistory } = useFigures();
   const [open, setOpen] = React.useState(false);
+
+  const styles = useMemo(
+    () =>
+      StyleSheet.create({
+        burger: {
+          marginRight: 12,
+          padding: 6,
+          justifyContent: 'center',
+          alignItems: 'center',
+        },
+        burgerPressed: {
+          opacity: 0.65,
+        },
+        overlayRoot: {
+          flex: 1,
+          flexDirection: 'row',
+        },
+        drawer: {
+          alignSelf: 'stretch',
+          backgroundColor: colors.drawerBg,
+          borderRightWidth: StyleSheet.hairlineWidth,
+          borderRightColor: colors.border,
+          flexDirection: 'column',
+          shadowColor: colors.shadow,
+          shadowOffset: { width: 4, height: 0 },
+          shadowOpacity: 0.12,
+          shadowRadius: 12,
+          elevation: 8,
+        },
+        drawerHeader: {
+          flexDirection: 'row',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          paddingHorizontal: 16,
+          paddingBottom: 12,
+          borderBottomWidth: StyleSheet.hairlineWidth,
+          borderBottomColor: colors.border,
+        },
+        drawerTitle: {
+          fontSize: 20,
+          fontWeight: '800',
+          color: colors.text,
+        },
+        closeBtn: {
+          padding: 4,
+        },
+        scroll: {
+          flexGrow: 1,
+        },
+        scrollContent: {
+          paddingHorizontal: 16,
+          paddingTop: 20,
+        },
+        sectionLabel: {
+          fontSize: 12,
+          fontWeight: '800',
+          letterSpacing: 0.6,
+          color: colors.textMuted,
+          textTransform: 'uppercase',
+          marginBottom: 10,
+        },
+        sectionSpaced: {
+          marginTop: 28,
+        },
+        langRow: {
+          flexDirection: 'row',
+          alignItems: 'center',
+          gap: 12,
+          paddingVertical: 14,
+          paddingHorizontal: 14,
+          borderRadius: 12,
+          backgroundColor: colors.langRowBg,
+          marginBottom: 10,
+          borderWidth: 2,
+          borderColor: 'transparent',
+        },
+        langRowActive: {
+          backgroundColor: colors.langRowActiveBg,
+          borderColor: colors.primary,
+        },
+        langRowPressed: {
+          opacity: 0.9,
+        },
+        flagEmoji: {
+          fontSize: 24,
+        },
+        langLabel: {
+          flex: 1,
+          fontSize: 16,
+          fontWeight: '700',
+          color: colors.iconMuted,
+        },
+        langLabelActive: {
+          color: colors.primaryText,
+        },
+        langSpacer: {
+          width: 22,
+          height: 22,
+        },
+        settingRow: {
+          flexDirection: 'row',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          gap: 12,
+          paddingVertical: 14,
+          borderBottomWidth: StyleSheet.hairlineWidth,
+          borderBottomColor: colors.borderMuted,
+        },
+        settingTextBlock: {
+          flex: 1,
+          paddingRight: 8,
+        },
+        settingTitle: {
+          fontSize: 16,
+          fontWeight: '700',
+          color: colors.text,
+        },
+        settingHint: {
+          marginTop: 4,
+          fontSize: 13,
+          lineHeight: 18,
+          color: colors.textMuted,
+        },
+        footerNote: {
+          marginTop: 20,
+          fontSize: 12,
+          lineHeight: 17,
+          color: colors.textSubtle,
+        },
+        historyEmpty: {
+          fontSize: 14,
+          color: colors.textSubtle,
+          marginBottom: 8,
+        },
+        historyRow: {
+          paddingVertical: 10,
+          paddingHorizontal: 12,
+          borderRadius: 10,
+          backgroundColor: colors.historyRowBg,
+          marginBottom: 8,
+          borderWidth: 1,
+          borderColor: colors.borderMuted,
+        },
+        historyName: {
+          fontSize: 14,
+          fontWeight: '700',
+          color: colors.text,
+        },
+        historyMeta: {
+          marginTop: 4,
+          fontSize: 12,
+          color: colors.textMuted,
+        },
+        backdrop: {
+          flex: 1,
+          backgroundColor: colors.overlay,
+        },
+      }),
+    [colors]
+  );
 
   const drawerWidth = Math.min(
     DRAWER_MAX,
@@ -56,7 +230,7 @@ export default function MainMenu() {
         accessibilityRole="button"
         accessibilityLabel={t('menuAccessibilityOpen')}
       >
-        <Ionicons name="menu" size={26} color="#111827" />
+        <Ionicons name="menu" size={26} color={colors.icon} />
       </Pressable>
 
       <Modal
@@ -84,7 +258,7 @@ export default function MainMenu() {
                 accessibilityRole="button"
                 accessibilityLabel={t('menuClose')}
               >
-                <Ionicons name="close" size={28} color="#374151" />
+                <Ionicons name="close" size={28} color={colors.iconMuted} />
               </Pressable>
             </View>
 
@@ -121,7 +295,40 @@ export default function MainMenu() {
                       {t(`langName_${code}`)}
                     </Text>
                     {active ? (
-                      <Ionicons name="checkmark-circle" size={22} color="#4F46E5" />
+                      <Ionicons name="checkmark-circle" size={22} color={colors.primary} />
+                    ) : (
+                      <View style={styles.langSpacer} />
+                    )}
+                  </Pressable>
+                );
+              })}
+
+              <Text style={[styles.sectionLabel, styles.sectionSpaced]}>
+                {t('themeAppearance')}
+              </Text>
+              {THEME_OPTIONS.map((opt) => {
+                const active = themePreference === opt.id;
+                return (
+                  <Pressable
+                    key={opt.id}
+                    onPress={() => setThemePreference(opt.id)}
+                    style={({ pressed }) => [
+                      styles.langRow,
+                      active && styles.langRowActive,
+                      pressed && !active && styles.langRowPressed,
+                    ]}
+                    accessibilityRole="radio"
+                    accessibilityState={{ selected: active }}
+                    accessibilityLabel={t(opt.labelKey)}
+                  >
+                    <Text
+                      style={[styles.langLabel, active && styles.langLabelActive]}
+                      numberOfLines={1}
+                    >
+                      {t(opt.labelKey)}
+                    </Text>
+                    {active ? (
+                      <Ionicons name="checkmark-circle" size={22} color={colors.primary} />
                     ) : (
                       <View style={styles.langSpacer} />
                     )}
@@ -163,8 +370,13 @@ export default function MainMenu() {
                 <Switch
                   value={soundsEnabled}
                   onValueChange={setSoundsEnabled}
-                  trackColor={{ false: '#D1D5DB', true: '#93C5FD' }}
-                  thumbColor={soundsEnabled ? '#1D4ED8' : '#F3F4F6'}
+                  trackColor={{
+                    false: colors.switchTrackOff,
+                    true: colors.switchTrackOn,
+                  }}
+                  thumbColor={
+                    soundsEnabled ? colors.switchThumbOn : colors.switchThumbOff
+                  }
                 />
               </View>
 
@@ -176,8 +388,15 @@ export default function MainMenu() {
                 <Switch
                   value={notificationsEnabled}
                   onValueChange={setNotificationsEnabled}
-                  trackColor={{ false: '#D1D5DB', true: '#93C5FD' }}
-                  thumbColor={notificationsEnabled ? '#1D4ED8' : '#F3F4F6'}
+                  trackColor={{
+                    false: colors.switchTrackOff,
+                    true: colors.switchTrackOn,
+                  }}
+                  thumbColor={
+                    notificationsEnabled
+                      ? colors.switchThumbOn
+                      : colors.switchThumbOff
+                  }
                 />
               </View>
 
@@ -195,159 +414,3 @@ export default function MainMenu() {
     </>
   );
 }
-
-const styles = StyleSheet.create({
-  burger: {
-    marginRight: 12,
-    padding: 6,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  burgerPressed: {
-    opacity: 0.65,
-  },
-  overlayRoot: {
-    flex: 1,
-    flexDirection: 'row',
-  },
-  drawer: {
-    alignSelf: 'stretch',
-    backgroundColor: '#FFFFFF',
-    borderRightWidth: StyleSheet.hairlineWidth,
-    borderRightColor: '#E5E7EB',
-    flexDirection: 'column',
-    shadowColor: '#000',
-    shadowOffset: { width: 4, height: 0 },
-    shadowOpacity: 0.12,
-    shadowRadius: 12,
-    elevation: 8,
-  },
-  drawerHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: 16,
-    paddingBottom: 12,
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: '#E5E7EB',
-  },
-  drawerTitle: {
-    fontSize: 20,
-    fontWeight: '800',
-    color: '#111827',
-  },
-  closeBtn: {
-    padding: 4,
-  },
-  scroll: {
-    flexGrow: 1,
-  },
-  scrollContent: {
-    paddingHorizontal: 16,
-    paddingTop: 20,
-  },
-  sectionLabel: {
-    fontSize: 12,
-    fontWeight: '800',
-    letterSpacing: 0.6,
-    color: '#6B7280',
-    textTransform: 'uppercase',
-    marginBottom: 10,
-  },
-  sectionSpaced: {
-    marginTop: 28,
-  },
-  langRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
-    paddingVertical: 14,
-    paddingHorizontal: 14,
-    borderRadius: 12,
-    backgroundColor: '#F3F4F6',
-    marginBottom: 10,
-    borderWidth: 2,
-    borderColor: 'transparent',
-  },
-  langRowActive: {
-    backgroundColor: '#EEF2FF',
-    borderColor: '#4F46E5',
-  },
-  langRowPressed: {
-    opacity: 0.9,
-  },
-  flagEmoji: {
-    fontSize: 24,
-  },
-  langLabel: {
-    flex: 1,
-    fontSize: 16,
-    fontWeight: '700',
-    color: '#374151',
-  },
-  langLabelActive: {
-    color: '#1E1B4B',
-  },
-  langSpacer: {
-    width: 22,
-    height: 22,
-  },
-  settingRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    gap: 12,
-    paddingVertical: 14,
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: '#F3F4F6',
-  },
-  settingTextBlock: {
-    flex: 1,
-    paddingRight: 8,
-  },
-  settingTitle: {
-    fontSize: 16,
-    fontWeight: '700',
-    color: '#111827',
-  },
-  settingHint: {
-    marginTop: 4,
-    fontSize: 13,
-    lineHeight: 18,
-    color: '#6B7280',
-  },
-  footerNote: {
-    marginTop: 20,
-    fontSize: 12,
-    lineHeight: 17,
-    color: '#9CA3AF',
-  },
-  historyEmpty: {
-    fontSize: 14,
-    color: '#9CA3AF',
-    marginBottom: 8,
-  },
-  historyRow: {
-    paddingVertical: 10,
-    paddingHorizontal: 12,
-    borderRadius: 10,
-    backgroundColor: '#F9FAFB',
-    marginBottom: 8,
-    borderWidth: 1,
-    borderColor: '#F3F4F6',
-  },
-  historyName: {
-    fontSize: 14,
-    fontWeight: '700',
-    color: '#111827',
-  },
-  historyMeta: {
-    marginTop: 4,
-    fontSize: 12,
-    color: '#6B7280',
-  },
-  backdrop: {
-    flex: 1,
-    backgroundColor: 'rgba(15, 23, 42, 0.45)',
-  },
-});

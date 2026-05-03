@@ -1,20 +1,98 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useLanguage } from '../context/LanguageContext';
-import DiscoverNearbyBlock from './DiscoverNearbyBlock';
+import { useSettings } from '../context/SettingsContext';
 
 /**
- * Home | [radar] | Collection — symmetric tappable row, radar centered (typical “main app” pattern).
+ * Home · Map · Letters · Collection — equal-width tabs.
  */
 export default function MainBottomTabBar({ state, navigation }) {
   const insets = useSafeAreaInsets();
   const { t } = useLanguage();
+  const { colors } = useSettings();
+  const styles = useMemo(
+    () =>
+      StyleSheet.create({
+        bar: {
+          backgroundColor: colors.bgElevated,
+          borderTopWidth: StyleSheet.hairlineWidth,
+          borderTopColor: colors.border,
+          paddingTop: 8,
+          shadowColor: colors.shadow,
+          shadowOffset: { width: 0, height: -3 },
+          shadowOpacity: 0.07,
+          shadowRadius: 10,
+          elevation: 14,
+        },
+        row: {
+          flexDirection: 'row',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          paddingHorizontal: 4,
+        },
+        tab: {
+          flex: 1,
+          minHeight: 52,
+          alignItems: 'center',
+          justifyContent: 'center',
+          paddingVertical: 4,
+          paddingHorizontal: 2,
+        },
+        tabPressed: {
+          opacity: 0.72,
+        },
+        label: {
+          marginTop: 2,
+          fontSize: 10,
+          fontWeight: '700',
+          color: colors.tabInactive,
+          letterSpacing: -0.2,
+          textAlign: 'center',
+        },
+        labelActive: {
+          color: colors.primary,
+        },
+      }),
+    [colors]
+  );
+
   const homeIndex = state.routes.findIndex((r) => r.name === 'Home');
+  const mapIndex = state.routes.findIndex((r) => r.name === 'Map');
+  const lettersIndex = state.routes.findIndex((r) => r.name === 'Letters');
   const collectionIndex = state.routes.findIndex((r) => r.name === 'Collection');
-  const homeFocused = state.index === homeIndex;
-  const collectionFocused = state.index === collectionIndex;
+
+  const tabs = [
+    {
+      routeName: 'Home',
+      index: homeIndex,
+      iconActive: 'home',
+      iconInactive: 'home-outline',
+      labelKey: 'tabHome',
+    },
+    {
+      routeName: 'Map',
+      index: mapIndex,
+      iconActive: 'map',
+      iconInactive: 'map-outline',
+      labelKey: 'tabMap',
+    },
+    {
+      routeName: 'Letters',
+      index: lettersIndex,
+      iconActive: 'text',
+      iconInactive: 'text-outline',
+      labelKey: 'tabLetters',
+    },
+    {
+      routeName: 'Collection',
+      index: collectionIndex,
+      iconActive: 'albums',
+      iconInactive: 'albums-outline',
+      labelKey: 'tabCollection',
+    },
+  ];
 
   return (
     <View
@@ -26,88 +104,28 @@ export default function MainBottomTabBar({ state, navigation }) {
       ]}
     >
       <View style={styles.row}>
-        <Pressable
-          accessibilityRole="button"
-          accessibilityState={{ selected: homeFocused }}
-          onPress={() => navigation.navigate('Home')}
-          style={({ pressed }) => [styles.side, pressed && styles.sidePressed]}
-        >
-          <Ionicons
-            name={homeFocused ? 'home' : 'home-outline'}
-            size={26}
-            color={homeFocused ? '#4F46E5' : '#9CA3AF'}
-          />
-          <Text style={[styles.sideLabel, homeFocused && styles.sideLabelActive]}>
-            {t('tabHome')}
-          </Text>
-        </Pressable>
-
-        <View style={styles.centerSlot} pointerEvents="box-none">
-          <DiscoverNearbyBlock variant="tabBar" />
-        </View>
-
-        <Pressable
-          accessibilityRole="button"
-          accessibilityState={{ selected: collectionFocused }}
-          onPress={() => navigation.navigate('Collection')}
-          style={({ pressed }) => [styles.side, pressed && styles.sidePressed]}
-        >
-          <Ionicons
-            name={collectionFocused ? 'albums' : 'albums-outline'}
-            size={26}
-            color={collectionFocused ? '#4F46E5' : '#9CA3AF'}
-          />
-          <Text style={[styles.sideLabel, collectionFocused && styles.sideLabelActive]}>
-            {t('tabCollection')}
-          </Text>
-        </Pressable>
+        {tabs.map((tab) => {
+          const focused = tab.index >= 0 && state.index === tab.index;
+          return (
+            <Pressable
+              key={tab.routeName}
+              accessibilityRole="button"
+              accessibilityState={{ selected: focused }}
+              onPress={() => navigation.navigate(tab.routeName)}
+              style={({ pressed }) => [styles.tab, pressed && styles.tabPressed]}
+            >
+              <Ionicons
+                name={focused ? tab.iconActive : tab.iconInactive}
+                size={24}
+                color={focused ? colors.primary : colors.tabInactive}
+              />
+              <Text style={[styles.label, focused && styles.labelActive]}>
+                {t(tab.labelKey)}
+              </Text>
+            </Pressable>
+          );
+        })}
       </View>
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  bar: {
-    backgroundColor: '#FFFFFF',
-    borderTopWidth: StyleSheet.hairlineWidth,
-    borderTopColor: '#E5E7EB',
-    paddingTop: 8,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: -3 },
-    shadowOpacity: 0.07,
-    shadowRadius: 10,
-    elevation: 14,
-  },
-  row: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: 4,
-  },
-  side: {
-    flex: 1,
-    minHeight: 56,
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: 6,
-    paddingHorizontal: 6,
-  },
-  sidePressed: {
-    opacity: 0.72,
-  },
-  sideLabel: {
-    marginTop: 4,
-    fontSize: 11,
-    fontWeight: '700',
-    color: '#9CA3AF',
-    letterSpacing: -0.2,
-  },
-  sideLabelActive: {
-    color: '#4F46E5',
-  },
-  centerSlot: {
-    width: 124,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});

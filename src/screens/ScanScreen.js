@@ -1,16 +1,113 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Alert, Animated, Pressable, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import * as Location from 'expo-location';
 
 import { POSITION_MAX_ACCURACY } from '../constants/gpsAccuracy';
 import { useFigures } from '../context/FiguresContext';
+import { useSettings } from '../context/SettingsContext';
 import { haversineDistanceMeters } from '../utils/haversine';
 
 const UNLOCK_DISTANCE_METERS = 50;
 
 export default function ScanScreen({ navigation }) {
   const insets = useSafeAreaInsets();
+  const { colors } = useSettings();
+  const styles = useMemo(
+    () =>
+      StyleSheet.create({
+        root: {
+          flex: 1,
+          backgroundColor: colors.bg,
+          paddingHorizontal: 20,
+          paddingBottom: 24,
+        },
+        content: {
+          flex: 1,
+          justifyContent: 'center',
+          alignItems: 'center',
+        },
+        title: {
+          fontSize: 24,
+          fontWeight: '700',
+          color: colors.text,
+          marginBottom: 10,
+          textAlign: 'center',
+        },
+        body: {
+          fontSize: 16,
+          textAlign: 'center',
+          color: colors.iconMuted,
+          marginBottom: 20,
+          lineHeight: 24,
+        },
+        primaryBtn: {
+          width: 168,
+          height: 168,
+          borderRadius: 84,
+          alignItems: 'center',
+          justifyContent: 'center',
+          position: 'relative',
+        },
+        primaryBtnPressed: {
+          transform: [{ scale: 0.97 }],
+        },
+        pulseRingOuter: {
+          position: 'absolute',
+          width: 168,
+          height: 168,
+          borderRadius: 84,
+          borderWidth: 2,
+          borderColor: colors.primary,
+        },
+        pulseRingInner: {
+          position: 'absolute',
+          width: 146,
+          height: 146,
+          borderRadius: 73,
+          borderWidth: 2,
+          borderColor: colors.primaryMuted,
+        },
+        primaryBtnCore: {
+          width: 132,
+          height: 132,
+          borderRadius: 66,
+          backgroundColor: colors.radarCore,
+          alignItems: 'center',
+          justifyContent: 'center',
+          shadowColor: colors.shadow,
+          shadowOffset: { width: 0, height: 6 },
+          shadowOpacity: 0.24,
+          shadowRadius: 10,
+          elevation: 8,
+        },
+        primaryBtnIcon: {
+          color: colors.radarTextOnCore,
+          fontSize: 34,
+          marginBottom: 4,
+        },
+        primaryBtnText: {
+          color: colors.radarTextOnCore,
+          fontWeight: '600',
+          fontSize: 15,
+        },
+        secondaryBtn: {
+          alignSelf: 'center',
+          paddingVertical: 10,
+        },
+        secondaryBtnText: {
+          color: colors.textSecondary,
+          fontSize: 16,
+        },
+        hintText: {
+          marginTop: 14,
+          color: colors.textSecondary,
+          fontSize: 14,
+          textAlign: 'center',
+        },
+      }),
+    [colors]
+  );
   const { figures, unlockById } = useFigures();
   const [isChecking, setIsChecking] = useState(false);
   const [statusText, setStatusText] = useState('');
@@ -173,95 +270,3 @@ export default function ScanScreen({ navigation }) {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  root: {
-    flex: 1,
-    backgroundColor: '#F9FAFB',
-    paddingHorizontal: 20,
-    paddingBottom: 24,
-  },
-  content: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: '700',
-    color: '#111827',
-    marginBottom: 10,
-    textAlign: 'center',
-  },
-  body: {
-    fontSize: 16,
-    textAlign: 'center',
-    color: '#374151',
-    marginBottom: 20,
-    lineHeight: 24,
-  },
-  primaryBtn: {
-    width: 168,
-    height: 168,
-    borderRadius: 84,
-    alignItems: 'center',
-    justifyContent: 'center',
-    position: 'relative',
-  },
-  primaryBtnPressed: {
-    transform: [{ scale: 0.97 }],
-  },
-  pulseRingOuter: {
-    position: 'absolute',
-    width: 168,
-    height: 168,
-    borderRadius: 84,
-    borderWidth: 2,
-    borderColor: '#4F46E5',
-  },
-  pulseRingInner: {
-    position: 'absolute',
-    width: 146,
-    height: 146,
-    borderRadius: 73,
-    borderWidth: 2,
-    borderColor: '#818CF8',
-  },
-  primaryBtnCore: {
-    width: 132,
-    height: 132,
-    borderRadius: 66,
-    backgroundColor: '#111827',
-    alignItems: 'center',
-    justifyContent: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.24,
-    shadowRadius: 10,
-    elevation: 8,
-  },
-  primaryBtnIcon: {
-    color: '#FFF',
-    fontSize: 34,
-    marginBottom: 4,
-  },
-  primaryBtnText: {
-    color: '#FFF',
-    fontWeight: '600',
-    fontSize: 15,
-  },
-  secondaryBtn: {
-    alignSelf: 'center',
-    paddingVertical: 10,
-  },
-  secondaryBtnText: {
-    color: '#4B5563',
-    fontSize: 16,
-  },
-  hintText: {
-    marginTop: 14,
-    color: '#4B5563',
-    fontSize: 14,
-    textAlign: 'center',
-  },
-});

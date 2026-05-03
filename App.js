@@ -1,13 +1,17 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { StyleSheet } from 'react-native';
-import { NavigationContainer } from '@react-navigation/native';
+import {
+  NavigationContainer,
+  DarkTheme,
+  DefaultTheme,
+} from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import { FiguresProvider } from './src/context/FiguresContext';
 import { LanguageProvider } from './src/context/LanguageContext';
-import { SettingsProvider } from './src/context/SettingsContext';
+import { SettingsProvider, useSettings } from './src/context/SettingsContext';
 import { SearchTargetProvider } from './src/context/SearchTargetContext';
 import { RU_NON_CYRILLIC_BUCKET } from './src/constants/alphabet';
 import MainTabNavigator from './src/navigation/MainTabNavigator';
@@ -18,6 +22,80 @@ import StatuesByLetterScreen from './src/screens/StatuesByLetterScreen';
 
 const Stack = createNativeStackNavigator();
 
+function RootStack() {
+  const { colors, resolvedScheme } = useSettings();
+  const navigationTheme = useMemo(() => {
+    const base = resolvedScheme === 'dark' ? DarkTheme : DefaultTheme;
+    return {
+      ...base,
+      colors: {
+        ...base.colors,
+        primary: colors.primary,
+        background: colors.bg,
+        card: colors.bgElevated,
+        text: colors.text,
+        border: colors.border,
+        notification: colors.primary,
+      },
+    };
+  }, [colors, resolvedScheme]);
+
+  return (
+    <NavigationContainer theme={navigationTheme}>
+      <StatusBar style={resolvedScheme === 'dark' ? 'light' : 'dark'} />
+      <Stack.Navigator
+        initialRouteName="Main"
+        screenOptions={{
+          headerStyle: { backgroundColor: colors.bg },
+          headerTintColor: colors.text,
+          headerTitleStyle: { fontWeight: '700', color: colors.text },
+          contentStyle: { backgroundColor: colors.bg },
+        }}
+      >
+        <Stack.Screen
+          name="Main"
+          component={MainTabNavigator}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="StatueDetail"
+          component={StatueDetailScreen}
+          options={{ title: 'Արձան' }}
+        />
+        <Stack.Screen
+          name="StatuesByLetter"
+          component={StatuesByLetterScreen}
+          options={({ route }) => {
+            const letter = route.params?.letter;
+            const title =
+              letter == null
+                ? '—'
+                : letter === RU_NON_CYRILLIC_BUCKET
+                  ? 'N/n'
+                  : String(letter);
+            return { title };
+          }}
+        />
+        <Stack.Screen
+          name="Scan"
+          component={ScanScreen}
+          options={{
+            headerShown: false,
+            presentation: 'modal',
+          }}
+        />
+        <Stack.Screen
+          name="Navigate"
+          component={NavigationScreen}
+          options={{
+            headerShown: false,
+          }}
+        />
+      </Stack.Navigator>
+    </NavigationContainer>
+  );
+}
+
 export default function App() {
   return (
     <GestureHandlerRootView style={styles.root}>
@@ -26,58 +104,7 @@ export default function App() {
           <SettingsProvider>
             <SearchTargetProvider>
               <FiguresProvider>
-                <NavigationContainer>
-                  <StatusBar style="dark" />
-                  <Stack.Navigator
-                    initialRouteName="Main"
-                    screenOptions={{
-                      headerStyle: { backgroundColor: '#F9FAFB' },
-                      headerTintColor: '#111827',
-                      headerTitleStyle: { fontWeight: '700' },
-                      contentStyle: { backgroundColor: '#F9FAFB' },
-                    }}
-                  >
-                    <Stack.Screen
-                      name="Main"
-                      component={MainTabNavigator}
-                      options={{ headerShown: false }}
-                    />
-                    <Stack.Screen
-                      name="StatueDetail"
-                      component={StatueDetailScreen}
-                      options={{ title: 'Արձան' }}
-                    />
-                    <Stack.Screen
-                      name="StatuesByLetter"
-                      component={StatuesByLetterScreen}
-                      options={({ route }) => {
-                        const letter = route.params?.letter;
-                        const title =
-                          letter == null
-                            ? '—'
-                            : letter === RU_NON_CYRILLIC_BUCKET
-                              ? 'N/n'
-                              : String(letter);
-                        return { title };
-                      }}
-                    />
-                    <Stack.Screen
-                      name="Scan"
-                      component={ScanScreen}
-                      options={{
-                        headerShown: false,
-                        presentation: 'modal',
-                      }}
-                    />
-                    <Stack.Screen
-                      name="Navigate"
-                      component={NavigationScreen}
-                      options={{
-                        headerShown: false,
-                      }}
-                    />
-                  </Stack.Navigator>
-                </NavigationContainer>
+                <RootStack />
               </FiguresProvider>
             </SearchTargetProvider>
           </SettingsProvider>

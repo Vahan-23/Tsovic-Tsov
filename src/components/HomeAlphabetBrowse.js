@@ -15,6 +15,7 @@ import {
 import { useLanguage } from '../context/LanguageContext';
 import { useFigures } from '../context/FiguresContext';
 import { useSearchTarget } from '../context/SearchTargetContext';
+import { useSettings } from '../context/SettingsContext';
 import { buildLetterCounts, chunk } from '../utils/alphabetBrowse';
 
 const GAP = 8;
@@ -81,6 +82,7 @@ function tileLetterLabel(letter, locale) {
 export default function HomeAlphabetBrowse() {
   const navigation = useNavigation();
   const { width: windowWidth } = useWindowDimensions();
+  const { colors } = useSettings();
   const { locale } = useLanguage();
   const { radarTargetsForMode } = useFigures();
   const { searchMode } = useSearchTarget();
@@ -138,6 +140,95 @@ export default function HomeAlphabetBrowse() {
       searchMode,
     });
   };
+
+  const styles = useMemo(
+    () =>
+      StyleSheet.create({
+        fill: {
+          flex: 1,
+          width: '100%',
+          paddingHorizontal: H_PADDING,
+          alignItems: 'center',
+          justifyContent: 'flex-start',
+        },
+        flow: {
+          alignSelf: 'center',
+        },
+        row: {
+          flexDirection: 'row',
+          justifyContent: 'flex-start',
+          alignItems: 'flex-start',
+        },
+        tile: {
+          borderRadius: 14,
+          alignItems: 'center',
+          justifyContent: 'center',
+          paddingVertical: 5,
+          paddingHorizontal: 4,
+          overflow: Platform.OS === 'android' ? 'hidden' : 'visible',
+        },
+        tileInner: {
+          alignItems: 'center',
+          justifyContent: 'center',
+          maxWidth: '100%',
+        },
+        tileEnabled: {
+          backgroundColor: colors.tileEnabled,
+          borderWidth: 2,
+          borderColor: colors.tileEnabledBorder,
+          shadowColor: colors.tileShadow,
+          shadowOffset: { width: 0, height: 3 },
+          shadowOpacity: 0.14,
+          shadowRadius: 6,
+          elevation: 4,
+        },
+        tileDisabled: {
+          backgroundColor: colors.tileDisabled,
+          borderWidth: 1,
+          borderColor: colors.tileDisabledBorder,
+          opacity: 0.72,
+          shadowOpacity: 0,
+          elevation: 0,
+        },
+        tilePressed: {
+          backgroundColor: colors.tilePressed,
+          borderColor: colors.tilePressedBorder,
+        },
+        tileLetter: {
+          fontWeight: '800',
+          textAlign: 'center',
+          marginBottom: 3,
+          alignSelf: 'center',
+          flexShrink: 1,
+          maxWidth: '100%',
+        },
+        tileLetterAndroid: {
+          includeFontPadding: false,
+          textAlignVertical: 'center',
+        },
+        tileLetterCyrillic: Platform.select({
+          ios: { marginTop: -2 },
+          default: {},
+        }),
+        tileLetterEnabled: {
+          color: colors.tileLetter,
+        },
+        tileLetterDisabled: {
+          color: colors.tileLetterDisabled,
+        },
+        tileCount: {
+          fontWeight: '800',
+          textAlign: 'center',
+        },
+        tileCountEnabled: {
+          color: colors.tileCount,
+        },
+        tileCountDisabled: {
+          color: colors.tileCountDisabled,
+        },
+      }),
+    [colors]
+  );
 
   return (
     <View style={styles.fill} onLayout={onBrowseLayout}>
@@ -224,89 +315,3 @@ export default function HomeAlphabetBrowse() {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  fill: {
-    flex: 1,
-    width: '100%',
-    paddingHorizontal: H_PADDING,
-    alignItems: 'center',
-    justifyContent: 'flex-start',
-  },
-  flow: {
-    alignSelf: 'center',
-  },
-  row: {
-    flexDirection: 'row',
-    justifyContent: 'flex-start',
-    alignItems: 'flex-start',
-  },
-  tile: {
-    borderRadius: 14,
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: 5,
-    paddingHorizontal: 4,
-    overflow: Platform.OS === 'android' ? 'hidden' : 'visible',
-  },
-  tileInner: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    maxWidth: '100%',
-  },
-  tileEnabled: {
-    backgroundColor: '#FFFFFF',
-    borderWidth: 2,
-    borderColor: '#A5B4FC',
-    shadowColor: '#4F46E5',
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.14,
-    shadowRadius: 6,
-    elevation: 4,
-  },
-  tileDisabled: {
-    backgroundColor: '#F4F4F5',
-    borderWidth: 1,
-    borderColor: '#D4D4D8',
-    opacity: 0.72,
-    shadowOpacity: 0,
-    elevation: 0,
-  },
-  tilePressed: {
-    backgroundColor: '#EEF2FF',
-    borderColor: '#818CF8',
-  },
-  tileLetter: {
-    fontWeight: '800',
-    textAlign: 'center',
-    marginBottom: 3,
-    alignSelf: 'center',
-    flexShrink: 1,
-    maxWidth: '100%',
-  },
-  tileLetterAndroid: {
-    includeFontPadding: false,
-    textAlignVertical: 'center',
-  },
-  /** Small upward nudge so А–Я look centered next to Latin (iOS metrics). */
-  tileLetterCyrillic: Platform.select({
-    ios: { marginTop: -2 },
-    default: {},
-  }),
-  tileLetterEnabled: {
-    color: '#111827',
-  },
-  tileLetterDisabled: {
-    color: '#9CA3AF',
-  },
-  tileCount: {
-    fontWeight: '800',
-    textAlign: 'center',
-  },
-  tileCountEnabled: {
-    color: '#4F46E5',
-  },
-  tileCountDisabled: {
-    color: '#A1A1AA',
-  },
-});
