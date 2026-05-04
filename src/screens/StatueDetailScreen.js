@@ -2,6 +2,7 @@ import React, { useLayoutEffect, useMemo } from 'react';
 import {
   Alert,
   Image,
+  Platform,
   Pressable,
   ScrollView,
   Share,
@@ -110,6 +111,35 @@ export default function StatueDetailScreen({ route, navigation }) {
           color: colors.textSecondary,
           marginTop: 8,
         },
+        navButtonOuter: {
+          marginTop: 28,
+          alignSelf: 'stretch',
+          borderRadius: 14,
+          overflow: 'hidden',
+          ...(Platform.OS === 'ios'
+            ? {
+                shadowColor: '#000',
+                shadowOffset: { width: 0, height: 4 },
+                shadowOpacity: 0.2,
+                shadowRadius: 10,
+              }
+            : { elevation: 5 }),
+        },
+        navButtonInner: {
+          flexDirection: 'row',
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: 10,
+          paddingVertical: 16,
+          paddingHorizontal: 22,
+          backgroundColor: colors.primary,
+        },
+        navButtonText: {
+          color: '#FFFFFF',
+          fontSize: 17,
+          fontWeight: '800',
+          letterSpacing: 0.25,
+        },
         image: {
           width: '100%',
           height: 200,
@@ -130,6 +160,11 @@ export default function StatueDetailScreen({ route, navigation }) {
   );
 
   const titleText = figure ? labelForBrowseLocale(figure, locale) : '';
+
+  const canNavigateToTarget =
+    figure != null &&
+    Number.isFinite(Number(figure.latitude)) &&
+    Number.isFinite(Number(figure.longitude));
 
   const shareMessage = useMemo(() => {
     if (!figure || !Number.isFinite(Number(figure.latitude))) return '';
@@ -195,6 +230,31 @@ export default function StatueDetailScreen({ route, navigation }) {
               ? t('statue3dLockedHint')
               : t('statueLockedHint')}
         </Text>
+        {canNavigateToTarget ? (
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel={t('statueLockedNavigateCta')}
+            android_ripple={{ color: 'rgba(255,255,255,0.25)' }}
+            style={({ pressed }) => [
+              styles.navButtonOuter,
+              pressed && { opacity: 0.9 },
+            ]}
+            onPress={() =>
+              navigation.navigate('Navigate', {
+                targetId: figure.id,
+                targetLat: Number(figure.latitude),
+                targetLon: Number(figure.longitude),
+                targetName: titleText,
+                collectionKind,
+              })
+            }
+          >
+            <View style={styles.navButtonInner}>
+              <Ionicons name="navigate" size={22} color="#FFFFFF" />
+              <Text style={styles.navButtonText}>{t('statueLockedNavigateCta')}</Text>
+            </View>
+          </Pressable>
+        ) : null}
       </ScrollView>
     );
   }
