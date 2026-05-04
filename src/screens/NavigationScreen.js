@@ -15,6 +15,8 @@ import MapView, { Marker, Polyline } from 'react-native-maps';
 import { useFigures } from '../context/FiguresContext';
 import { WATCH_NAVIGATION } from '../constants/gpsAccuracy';
 import { getDarkMapProps } from '../constants/mapAppearance';
+import { fetchOsrmFootRoute } from '../services/osrmRouter';
+import { getWalkingRoute } from '../services/yandexRouter';
 import { haversineDistanceMeters } from '../utils/haversine';
 
 const FOOTPRINT_ICON = require('../../assets/footprints_21766.png');
@@ -329,11 +331,16 @@ export default function NavigationScreen({ route, navigation }) {
   const [routeFollowBearingDeg, setRouteFollowBearingDeg] = useState(0);
   const [headingDeg, setHeadingDeg] = useState(0);
   const [isRunning, setIsRunning] = useState(false);
+  /** UI for “follow / free look” — FAB highlights when the map tracks GPS. */
+  const [mapFollowUser, setMapFollowUser] = useState(true);
   const [userCoords, setUserCoords] = useState(null);
   const [routeCoords, setRouteCoords] = useState([]);
   const fullRouteCoordsRef = useRef([]);
   const trimStartIdxRef = useRef(0);
   const lastFollowCameraAtRef = useRef(0);
+  /** When false, GPS updates do not drive the camera (user panned the map). */
+  const followNavigationRef = useRef(true);
+  const lastFollowCameraCenterRef = useRef(null);
   const lastProgrammaticCameraAtRef = useRef(0);
   /** Не давим clamp после «следы» — иначе animateToRegion сбросит поворот карты. */
   const suppressClampUntilRef = useRef(0);
@@ -428,6 +435,8 @@ export default function NavigationScreen({ route, navigation }) {
 
   const handleFollowTracksPress = React.useCallback(() => {
     if (!mapRef.current) return;
+    followNavigationRef.current = true;
+    setMapFollowUser(true);
 
     const center =
       userCoords ??
@@ -490,8 +499,18 @@ export default function NavigationScreen({ route, navigation }) {
     userCoords,
   ]);
 
-  const handleRegionChangeComplete = React.useCallback((r) => {
+  const handleRegionChangeComplete = React.useCallback((r, details) => {
     if (!r || !mapRef.current) return;
+
+    if (details?.isGesture) {
+      followNavigationRef.current = false;
+      setMapFollowUser(false);
+    }
+
+    if (!followNavigationRef.current) {
+      return;
+    }
+
     if (Date.now() < suppressClampUntilRef.current) return;
     if (Date.now() - lastProgrammaticCameraAtRef.current < 480) return;
     const before = {
@@ -550,36 +569,31 @@ export default function NavigationScreen({ route, navigation }) {
       routeRequestRef.current = controller;
 
       try {
-        /** `foot`: walking-ish graph; avoids useless transoceanic snapping vs `driving` for mixed cases. */
-        const url = `https://router.project-osrm.org/route/v1/foot/${origin.longitude},${origin.latitude};${targetLon},${targetLat}?overview=full&geometries=geojson`;
-        const response = await fetch(url, { signal: controller.signal });
-        if (!response.ok) return;
-
-        const data = await response.json();
-        if ((data.code && data.code !== 'Ok') || data.routes?.length === 0) {
-          return;
+        let formattedCoords = null;
+        try {
+          const routeData = await getWalkingRoute(
+            origin.latitude,
+            origin.longitude,
+            targetLat,
+            targetLon,
+            { signal: controller.signal }
+          );
+          formattedCoords = routeData.coordinates;
+        } catch (e) {
+          console.warn('Yandex Router failed, using OSRM fallback:', e);
+          try {
+            formattedCoords = await fetchOsrmFootRoute(
+              origin,
+              targetLat,
+              targetLon,
+              controller.signal
+            );
+          } catch (osrmErr) {
+            console.warn('OSRM fallback failed:', osrmErr);
+          }
         }
 
-        const bestRoute = data?.routes?.[0];
-        const coordinates = bestRoute?.geometry?.coordinates;
-        if (!Array.isArray(coordinates) || coordinates.length < 2) {
-          return;
-        }
-
-        const formattedCoords = coordinates
-          .filter(
-            (coord) =>
-              Array.isArray(coord) &&
-              coord.length >= 2 &&
-              Number.isFinite(coord[0]) &&
-              Number.isFinite(coord[1])
-          )
-          .map((coord) => ({
-            latitude: coord[1],
-            longitude: coord[0],
-          }));
-
-        if (formattedCoords.length < 2) return;
+        if (!formattedCoords || formattedCoords.length < 2) return;
 
         fullRouteCoordsRef.current = formattedCoords;
         trimStartIdxRef.current = 0;
@@ -675,59 +689,76 @@ export default function NavigationScreen({ route, navigation }) {
             requestRoadRoute(pt);
 
             const nowTs = Date.now();
-            if (
-              mapRef.current &&
-              nowTs - lastFollowCameraAtRef.current > 820
-            ) {
-              lastFollowCameraAtRef.current = nowTs;
-              if (crowStraight > MAX_ROUTE_CROW_METERS) {
-                animateRegionSafe(
-                  {
-                    latitude: targetLat,
-                    longitude: targetLon,
-                    latitudeDelta: 0.06,
-                    longitudeDelta: 0.06,
-                  },
-                  360
-                );
-              } else if (
-                full.length >= 2 &&
-                typeof mapRef.current.animateCamera === 'function'
-              ) {
-                const prevCamFwd = lastCameraAnimFwdRef.current;
-                const dh =
-                  prevCamFwd != null
-                    ? smallestHeadingDeltaDeg(prevCamFwd, fwd)
-                    : 0;
-                const duration = 340 + Math.min(620, Math.round(dh * 3.8));
-                lastProgrammaticCameraAtRef.current = Date.now();
-                suppressClampUntilRef.current = Date.now() + duration + 900;
-                mapRef.current.animateCamera(
-                  Platform.OS === 'android'
-                    ? {
-                        center: pt,
-                        heading: fwd,
-                        pitch: 50,
-                        zoom: 19.65,
-                      }
-                    : {
-                        center: pt,
-                        heading: fwd,
-                        pitch: 50,
-                        altitude: 168,
-                      },
-                  { duration }
-                );
-                lastCameraAnimFwdRef.current = fwd;
-              } else {
-                animateRegionSafe(
-                  {
-                    latitude: lat,
-                    longitude: lon,
-                    ...CLOSE_ZOOM_DELTA,
-                  },
-                  360
-                );
+            if (mapRef.current && followNavigationRef.current) {
+              const dt = nowTs - lastFollowCameraAtRef.current;
+              const movedSinceCam = lastFollowCameraCenterRef.current
+                ? haversineDistanceMeters(pt, lastFollowCameraCenterRef.current)
+                : 9999;
+              const prevCamFwd = lastCameraAnimFwdRef.current;
+              const dh =
+                prevCamFwd != null
+                  ? smallestHeadingDeltaDeg(prevCamFwd, fwd)
+                  : 999;
+
+              const crowFar = crowStraight > MAX_ROUTE_CROW_METERS;
+              const noPolyline = full.length < 2;
+              const shouldFollowCam =
+                crowFar ||
+                noPolyline ||
+                dt > 1680 ||
+                (dt > 780 && (movedSinceCam > 13 || dh > 9));
+
+              if (shouldFollowCam) {
+                lastFollowCameraAtRef.current = nowTs;
+                lastFollowCameraCenterRef.current = {
+                  latitude: lat,
+                  longitude: lon,
+                };
+
+                if (crowFar) {
+                  animateRegionSafe(
+                    {
+                      latitude: targetLat,
+                      longitude: targetLon,
+                      latitudeDelta: 0.06,
+                      longitudeDelta: 0.06,
+                    },
+                    360
+                  );
+                } else if (
+                  full.length >= 2 &&
+                  typeof mapRef.current.animateCamera === 'function'
+                ) {
+                  const duration = 340 + Math.min(620, Math.round(dh * 3.8));
+                  lastProgrammaticCameraAtRef.current = Date.now();
+                  suppressClampUntilRef.current = Date.now() + duration + 900;
+                  mapRef.current.animateCamera(
+                    Platform.OS === 'android'
+                      ? {
+                          center: pt,
+                          heading: fwd,
+                          pitch: 50,
+                          zoom: 19.65,
+                        }
+                      : {
+                          center: pt,
+                          heading: fwd,
+                          pitch: 50,
+                          altitude: 168,
+                        },
+                    { duration }
+                  );
+                  lastCameraAnimFwdRef.current = fwd;
+                } else {
+                  animateRegionSafe(
+                    {
+                      latitude: lat,
+                      longitude: lon,
+                      ...CLOSE_ZOOM_DELTA,
+                    },
+                    360
+                  );
+                }
               }
             }
 
@@ -887,6 +918,7 @@ export default function NavigationScreen({ route, navigation }) {
           accessibilityLabel="Իմ վրա"
           style={({ pressed }) => [
             styles.followFab,
+            mapFollowUser ? styles.followFabOn : styles.followFabOff,
             pressed && { opacity: 0.88 },
           ]}
           onPress={handleFollowTracksPress}
@@ -967,12 +999,18 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 2,
-    borderColor: ROUTE_STROKE,
     elevation: 8,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.35,
     shadowRadius: 5,
+  },
+  followFabOn: {
+    borderColor: ROUTE_STROKE,
+  },
+  followFabOff: {
+    borderColor: 'rgba(201,160,32,0.35)',
+    opacity: 0.92,
   },
   followFabIcon: {
     width: 30,

@@ -29,32 +29,25 @@ export function bucketLetterForItem(item, locale) {
   return bucketLetter(bucketSrc, locale);
 }
 
+/**
+ * Title for the current UI language: prefers name_hy / name_ru / name_en, then generic `name`.
+ * Does not use `displayName` (that field is derived from this function in FiguresContext).
+ */
 export function labelForBrowseLocale(item, locale) {
+  if (item == null) return '';
+  const hy = (item.name_hy || '').trim();
+  const ru = (item.name_ru || '').trim();
+  const en = (item.name_en || '').trim();
+  const generic = (item.name || '').trim();
+  const id = String(item.id ?? '');
+
   if (locale === 'hy') {
-    return (
-      item.name_hy ||
-      item.displayName ||
-      item.name ||
-      item.name_en ||
-      String(item.id)
-    ).trim();
+    return (hy || generic || en || ru || id).trim();
   }
   if (locale === 'ru') {
-    return (
-      item.name_ru ||
-      item.displayName ||
-      item.name ||
-      item.name_en ||
-      String(item.id)
-    ).trim();
+    return (ru || generic || en || hy || id).trim();
   }
-  return (
-    item.name_en ||
-    item.displayName ||
-    item.name ||
-    item.name_hy ||
-    String(item.id)
-  ).trim();
+  return (en || generic || ru || hy || id).trim();
 }
 
 export function bucketLetter(rawName, localeKey) {

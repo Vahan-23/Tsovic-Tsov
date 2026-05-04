@@ -241,7 +241,7 @@ export default function CollectionScreen({ navigation }) {
                 style={[
                   styles.cardInitial,
                   item.unlocked && {
-                    color: ACCENT[String(item.id)] ?? '#2563EB',
+                    color: ACCENT[String(item.id)] ?? '#5B63E8',
                   },
                 ]}
                 numberOfLines={1}

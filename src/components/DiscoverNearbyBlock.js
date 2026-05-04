@@ -92,6 +92,9 @@ export default function DiscoverNearbyBlock({ navigation: navigationProp }) {
   const [liveUserCoords, setLiveUserCoords] = React.useState(null);
   const [liveDistanceMeters, setLiveDistanceMeters] = React.useState(null);
   const [liveAzimuthDeg, setLiveAzimuthDeg] = React.useState(null);
+  const liveUserCoordsRef = useRef(null);
+  liveUserCoordsRef.current = liveUserCoords;
+  const modalMapRef = useRef(null);
   const { radarTargetsForMode, storageLoaded, unlockForSearchMode } = useFigures();
   const { searchMode } = useSearchTarget();
 
@@ -244,28 +247,44 @@ export default function DiscoverNearbyBlock({ navigation: navigationProp }) {
     };
   }, [guidance?.targetLat, guidance?.targetLon, mapVisible]);
 
-  const modalMapRegion = useMemo(() => {
-    const targetLat = guidance?.targetLat;
-    const targetLon = guidance?.targetLon;
-    if (!Number.isFinite(targetLat) || !Number.isFinite(targetLon)) return null;
+  const scheduleModalMapFit = React.useCallback(() => {
+    const tLat = guidance?.targetLat;
+    const tLon = guidance?.targetLon;
+    if (!Number.isFinite(tLat) || !Number.isFinite(tLon)) return;
+    const map = modalMapRef.current;
+    if (!map || typeof map.fitToCoordinates !== 'function') return;
+    const goal = { latitude: tLat, longitude: tLon };
+    const u = liveUserCoordsRef.current;
+    const coords =
+      u && Number.isFinite(u.latitude) && Number.isFinite(u.longitude)
+        ? [u, goal]
+        : [goal];
+    map.fitToCoordinates(coords, {
+      edgePadding: { top: 44, right: 44, bottom: 44, left: 44 },
+      animated: true,
+    });
+  }, [guidance?.targetLat, guidance?.targetLon]);
 
-    const userLat = liveUserCoords?.latitude;
-    const userLon = liveUserCoords?.longitude;
-    if (!Number.isFinite(userLat) || !Number.isFinite(userLon)) {
-      return {
-        latitude: targetLat,
-        longitude: targetLon,
-        latitudeDelta: 0.006,
-        longitudeDelta: 0.006,
-      };
-    }
-
-    const latitude = (userLat + targetLat) / 2;
-    const longitude = (userLon + targetLon) / 2;
-    const latitudeDelta = Math.max(Math.abs(userLat - targetLat) * 2.6, 0.0045);
-    const longitudeDelta = Math.max(Math.abs(userLon - targetLon) * 2.6, 0.0045);
-    return { latitude, longitude, latitudeDelta, longitudeDelta };
-  }, [guidance?.targetLat, guidance?.targetLon, liveUserCoords?.latitude, liveUserCoords?.longitude]);
+  React.useEffect(() => {
+    if (!mapVisible || !Number.isFinite(guidance?.targetLat)) return;
+    let cancelled = false;
+    const run = () => {
+      if (!cancelled) scheduleModalMapFit();
+    };
+    const a = setTimeout(run, 140);
+    const b = setTimeout(run, 880);
+    return () => {
+      cancelled = true;
+      clearTimeout(a);
+      clearTimeout(b);
+    };
+  }, [
+    mapVisible,
+    guidance?.targetId,
+    guidance?.targetLat,
+    guidance?.targetLon,
+    scheduleModalMapFit,
+  ]);
 
   const shownDistanceMeters = liveDistanceMeters ?? guidance?.distanceMeters ?? 0;
   const shownAzimuthDeg = liveAzimuthDeg ?? guidance?.azimuthDeg ?? 0;
@@ -630,11 +649,18 @@ export default function DiscoverNearbyBlock({ navigation: navigationProp }) {
         <View style={styles.modalBackdrop}>
           <View style={styles.modalCard}>
             <Text style={styles.modalTitle}>{t('modalNearbyTarget')}</Text>
-            {modalMapRegion ? (
+            {Number.isFinite(guidance?.targetLat) &&
+            Number.isFinite(guidance?.targetLon) ? (
               <MapView
                 {...getDarkMapProps()}
+                ref={modalMapRef}
                 style={styles.modalMap}
-                region={modalMapRegion}
+                initialRegion={{
+                  latitude: guidance.targetLat,
+                  longitude: guidance.targetLon,
+                  latitudeDelta: 0.007,
+                  longitudeDelta: 0.007,
+                }}
                 pitchEnabled={false}
                 rotateEnabled={false}
                 toolbarEnabled={false}
@@ -763,7 +789,7 @@ const styles = StyleSheet.create({
     marginLeft: -BTN / 2,
     marginTop: -BTN / 2,
     borderWidth: 2,
-    borderColor: '#4F46E5',
+    borderColor: '#5B63E8',
   },
   pulseRingInner: {
     position: 'absolute',
@@ -775,7 +801,7 @@ const styles = StyleSheet.create({
     marginLeft: -87,
     marginTop: -87,
     borderWidth: 2,
-    borderColor: '#818CF8',
+    borderColor: '#A3AAF5',
   },
   radarWave: {
     position: 'absolute',
@@ -792,7 +818,7 @@ const styles = StyleSheet.create({
     width: CORE,
     height: CORE,
     borderRadius: CORE / 2,
-    backgroundColor: '#111827',
+    backgroundColor: '#1A2233',
     alignItems: 'center',
     justifyContent: 'center',
     shadowColor: '#000',

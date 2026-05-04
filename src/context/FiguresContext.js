@@ -9,7 +9,13 @@ import React, {
 import { LayoutAnimation, Platform, UIManager } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as FileSystem from 'expo-file-system';
-import { FALLBACK_FIGURES, sortFiguresList } from '../data/figures';
+import {
+  FALLBACK_FIGURES,
+  mergeYandexIntoCuratedStatues,
+  sortFiguresList,
+} from '../data/figures';
+import { labelForBrowseLocale } from '../utils/alphabetBrowse';
+import { useLanguage } from './LanguageContext';
 import { PULPULAK_POINTS } from '../data/pulpulaks';
 import { STATUES_3D_ENTRIES } from '../data/statues3d';
 import { finalizeCuratedStatueList } from '../data/curatedStatueProfiles';
@@ -76,6 +82,7 @@ function cappedCollectionGrid(items) {
 }
 
 export function FiguresProvider({ children }) {
+  const { locale } = useLanguage();
   const [unlockedIds, setUnlockedIds] = useState(() => new Set());
   const [unlocked3dIds, setUnlocked3dIds] = useState(() => new Set());
   const [unlockedPulpulakIds, setUnlockedPulpulakIds] = useState(() => new Set());
@@ -90,11 +97,15 @@ export function FiguresProvider({ children }) {
     try {
       const overpassJson = await fetchOverpassData(getOverpassQuery());
       const converted = convertOverpassJsonToStatues(overpassJson);
-      const finalized = finalizeCuratedStatueList(converted);
+      const finalized = mergeYandexIntoCuratedStatues(
+        finalizeCuratedStatueList(converted)
+      );
       const nextStatues =
         finalized.length > 0
           ? finalized
-          : finalizeCuratedStatueList(FALLBACK_FIGURES);
+          : mergeYandexIntoCuratedStatues(
+              finalizeCuratedStatueList(FALLBACK_FIGURES)
+            );
       setStatues(nextStatues);
       setStatuesLoaded(true);
 
@@ -113,7 +124,11 @@ export function FiguresProvider({ children }) {
         // Cache failures shouldn't break the app.
       }
     } catch {
-      setStatues(finalizeCuratedStatueList(FALLBACK_FIGURES));
+      setStatues(
+        mergeYandexIntoCuratedStatues(
+          finalizeCuratedStatueList(FALLBACK_FIGURES)
+        )
+      );
       setStatuesLoaded(true);
     } finally {
       setStatuesRefreshing(false);
@@ -196,17 +211,13 @@ export function FiguresProvider({ children }) {
     });
   }, []);
 
-  const normalizeStatueForDisplay = useCallback((s) => {
-    const displayName =
-      s?.displayName ||
-      s?.name_hy ||
-      s?.name ||
-      s?.name_official ||
-      s?.name_loc ||
-      s?.name_ref ||
-      '';
-    return { ...s, displayName };
-  }, []);
+  const normalizeStatueForDisplay = useCallback(
+    (s) => ({
+      ...s,
+      displayName: labelForBrowseLocale(s, locale),
+    }),
+    [locale]
+  );
 
   useEffect(() => {
     let cancelled = false;
@@ -252,7 +263,11 @@ export function FiguresProvider({ children }) {
           now - lastUpdated < STATUES_MAX_AGE_MS
         ) {
           if (!cancelled) {
-            setStatues(finalizeCuratedStatueList(cachedFromFile));
+            setStatues(
+              mergeYandexIntoCuratedStatues(
+                finalizeCuratedStatueList(cachedFromFile)
+              )
+            );
             setStatuesLoaded(true);
           }
           return;
@@ -263,7 +278,11 @@ export function FiguresProvider({ children }) {
         }
       } catch {
         if (!cancelled) {
-          setStatues(finalizeCuratedStatueList(FALLBACK_FIGURES));
+          setStatues(
+            mergeYandexIntoCuratedStatues(
+              finalizeCuratedStatueList(FALLBACK_FIGURES)
+            )
+          );
           setStatuesLoaded(true);
         }
       }

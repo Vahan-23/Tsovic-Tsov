@@ -11,6 +11,7 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useLanguage } from '../context/LanguageContext';
+import { labelForBrowseLocale } from '../utils/alphabetBrowse';
 import { useFigures } from '../context/FiguresContext';
 import { useSettings } from '../context/SettingsContext';
 
@@ -36,7 +37,7 @@ function CuratedStatueCopy({ figure, t, styles }) {
 }
 
 export default function StatueDetailScreen({ route, navigation }) {
-  const { t } = useLanguage();
+  const { t, locale } = useLanguage();
   const { colors } = useSettings();
   const styles = useMemo(
     () =>
@@ -128,7 +129,7 @@ export default function StatueDetailScreen({ route, navigation }) {
     [resolveCollectionItem, collectionKind, statueId]
   );
 
-  const titleText = figure ? figure.displayName ?? figure.name : '';
+  const titleText = figure ? labelForBrowseLocale(figure, locale) : '';
 
   const shareMessage = useMemo(() => {
     if (!figure || !Number.isFinite(Number(figure.latitude))) return '';
@@ -167,7 +168,7 @@ export default function StatueDetailScreen({ route, navigation }) {
             )
           : undefined,
     });
-  }, [navigation, figure, collectionKind, t, titleText, shareMessage, colors.icon]);
+  }, [navigation, figure, collectionKind, t, locale, titleText, shareMessage, colors.icon]);
 
   if (!figure) {
     return (

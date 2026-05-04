@@ -98,6 +98,10 @@ export function finalizeCuratedStatueList(rows) {
   if (!Array.isArray(rows)) return [];
   const out = [];
   for (const row of rows) {
+    if (row?.collectedSource === 'yandex') {
+      out.push(row);
+      continue;
+    }
     const next = enrichFigureIfCurated(row);
     if (next) out.push(next);
   }
