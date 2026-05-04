@@ -57,3 +57,14 @@ export function getDarkMapProps() {
   }
   return { mapType: 'standard', customMapStyle: undefined };
 }
+
+/** Light = standard map; dark = same styling as radar / legacy navigation. */
+export function getMapAppearanceProps(resolvedScheme) {
+  if (resolvedScheme === 'dark') {
+    return getDarkMapProps();
+  }
+  if (Platform.OS === 'ios') {
+    return { mapType: 'mutedStandard', customMapStyle: undefined };
+  }
+  return { mapType: 'standard', customMapStyle: undefined };
+}

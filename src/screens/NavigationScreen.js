@@ -1,7 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import {
   Alert,
-  Dimensions,
   Image,
   Platform,
   Pressable,
@@ -9,22 +8,21 @@ import {
   Text,
   View,
 } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import * as Location from 'expo-location';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import MapView, { Marker, Polyline } from 'react-native-maps';
 import { useFigures } from '../context/FiguresContext';
+import { useLanguage } from '../context/LanguageContext';
+import { useSettings } from '../context/SettingsContext';
 import { WATCH_NAVIGATION } from '../constants/gpsAccuracy';
-import { getDarkMapProps } from '../constants/mapAppearance';
+import { getMapAppearanceProps } from '../constants/mapAppearance';
 import { fetchOsrmFootRoute } from '../services/osrmRouter';
 import { getWalkingRoute } from '../services/yandexRouter';
 import { haversineDistanceMeters } from '../utils/haversine';
 
 const FOOTPRINT_ICON = require('../../assets/footprints_21766.png');
 const TIGRAN_NAV_BACK = require('../../assets/Tigran_Mets_Back.png');
-
-function smallestHeadingDeltaDeg(a, b) {
-  return Math.abs(((a - b + 540) % 360) - 180);
-}
 
 function toRadians(value) {
   return (value * Math.PI) / 180;
@@ -43,15 +41,6 @@ function getBearingDegrees(from, to) {
     Math.cos(lat1) * Math.sin(lat2) -
     Math.sin(lat1) * Math.cos(lat2) * Math.cos(lngDelta);
   return (toDegrees(Math.atan2(y, x)) + 360) % 360;
-}
-
-function getTurnHint(deltaDeg) {
-  const abs = Math.abs(deltaDeg);
-  if (abs < 15) return { title: 'Ուղիղ առաջ', arrow: '↑' };
-  if (deltaDeg > 0) {
-    return { title: `Աջ թեքիր ${Math.round(abs)}°`, arrow: '↗' };
-  }
-  return { title: `Ձախ թեքիր ${Math.round(abs)}°`, arrow: '↖' };
 }
 
 /** Rough local meters offsets for projecting a lat/lng point onto a segment (fine for Armenia-scale segments). */
@@ -188,6 +177,11 @@ const CLOSE_ZOOM_DELTA = {
   longitude: 0.00105,
 };
 
+/** Авто-камера по GPS редкая: не дёргать карту при каждом тике и при ручном сдвиге вида. */
+const MIN_MS_BETWEEN_AUTO_FOLLOW_CAM = 9000;
+const MIN_METERS_MOVED_FOR_AUTO_FOLLOW_CAM = 48;
+const MIN_MS_BETWEEN_CROW_TARGET_CAM = 14000;
+
 /** Dark map + amber road accent (reads “black map, dark-yellow route”). */
 const ROUTE_STROKE = '#c9a020';
 const ROUTE_DIM = 'rgba(201,160,32,0.38)';
@@ -310,8 +304,8 @@ function regionNeedsSnap(before, after) {
 
 export default function NavigationScreen({ route, navigation }) {
   const insets = useSafeAreaInsets();
-  const screenH = Dimensions.get('window').height;
-  const mapBlockHeight = Math.round(screenH * 0.5);
+  const { colors, resolvedScheme } = useSettings();
+  const { t } = useLanguage();
   const params = route.params || {};
   const collectionKind = params.collectionKind || 'statues';
   const targetId = params.targetId;
@@ -329,8 +323,6 @@ export default function NavigationScreen({ route, navigation }) {
   const [distanceMeters, setDistanceMeters] = useState(null);
   /** Азимут вперёд по полилинии маршрута (для Тиграна, подсказок и камеры). */
   const [routeFollowBearingDeg, setRouteFollowBearingDeg] = useState(0);
-  const [headingDeg, setHeadingDeg] = useState(0);
-  const [isRunning, setIsRunning] = useState(false);
   /** UI for “follow / free look” — FAB highlights when the map tracks GPS. */
   const [mapFollowUser, setMapFollowUser] = useState(true);
   const [userCoords, setUserCoords] = useState(null);
@@ -344,9 +336,9 @@ export default function NavigationScreen({ route, navigation }) {
   const lastProgrammaticCameraAtRef = useRef(0);
   /** Не давим clamp после «следы» — иначе animateToRegion сбросит поворот карты. */
   const suppressClampUntilRef = useRef(0);
-  /** Курс в момент последнего programmatic animateCamera (для плавности на изломах). */
-  const lastCameraAnimFwdRef = useRef(null);
-  const headingDegRef = useRef(0);
+  /** Один раз подвинуть камеру к позиции при старте (пока включён follow). */
+  const hasAutoCenteredOnFirstFixRef = useRef(false);
+  const lastCrowTargetCameraAtRef = useRef(0);
   const didUnlockRef = useRef(false);
   const didFitRef = useRef(false);
   const lastRouteFetchRef = useRef({
@@ -375,12 +367,158 @@ export default function NavigationScreen({ route, navigation }) {
     return Math.max(0, Math.round(distanceMeters));
   }, [distanceMeters, remainingAlongRouteMeters, routeCoords.length]);
 
-  const turnHint = useMemo(() => {
-    if (distanceMeters == null) return { title: 'Սկսում ենք…', arrow: '↑' };
-    const turnDelta =
-      ((routeFollowBearingDeg - headingDeg + 540) % 360) - 180;
-    return getTurnHint(turnDelta);
-  }, [routeFollowBearingDeg, headingDeg, distanceMeters]);
+  const routeStrokeColor = useMemo(
+    () => (resolvedScheme === 'dark' ? ROUTE_STROKE : colors.primary),
+    [resolvedScheme, colors.primary]
+  );
+
+  const routeOutlineColor = useMemo(
+    () =>
+      resolvedScheme === 'dark'
+        ? ROUTE_DIM
+        : 'rgba(91, 99, 232, 0.38)',
+    [resolvedScheme]
+  );
+
+  const uiStyles = useMemo(
+    () =>
+      StyleSheet.create({
+        root: {
+          flex: 1,
+          backgroundColor: colors.bg,
+        },
+        mapSection: {
+          flex: 1,
+          position: 'relative',
+        },
+        mapInner: {
+          ...StyleSheet.absoluteFillObject,
+          borderBottomLeftRadius: 0,
+          borderBottomRightRadius: 0,
+        },
+        floatingCard: {
+          position: 'absolute',
+          top: 12,
+          left: 16,
+          right: 16,
+          paddingHorizontal: 18,
+          paddingVertical: 16,
+          borderRadius: 18,
+          backgroundColor: colors.bgElevated,
+          borderWidth: StyleSheet.hairlineWidth,
+          borderColor: colors.border,
+          shadowColor: colors.shadow,
+          shadowOffset: { width: 0, height: 8 },
+          shadowOpacity: Platform.OS === 'ios' ? 1 : 0,
+          shadowRadius: 20,
+          elevation: Platform.OS === 'android' ? 6 : 0,
+        },
+        floatingLabel: {
+          fontSize: 11,
+          fontWeight: '800',
+          letterSpacing: 1.2,
+          textTransform: 'uppercase',
+          color: colors.textMuted,
+          marginBottom: 6,
+        },
+        floatingTitle: {
+          fontSize: 19,
+          fontWeight: '800',
+          color: colors.text,
+          lineHeight: 24,
+        },
+        floatingDistance: {
+          marginTop: 10,
+          fontSize: 34,
+          fontWeight: '900',
+          letterSpacing: -0.5,
+          color: routeStrokeColor,
+        },
+        bottomSheet: {
+          borderTopLeftRadius: 22,
+          borderTopRightRadius: 22,
+          paddingHorizontal: 20,
+          paddingTop: 18,
+          backgroundColor: colors.bgElevated,
+          borderTopWidth: StyleSheet.hairlineWidth,
+          borderLeftWidth: StyleSheet.hairlineWidth,
+          borderRightWidth: StyleSheet.hairlineWidth,
+          borderColor: colors.border,
+          shadowColor: '#000',
+          shadowOffset: { width: 0, height: -4 },
+          shadowOpacity: Platform.OS === 'ios' ? 0.12 : 0,
+          shadowRadius: 16,
+          elevation: Platform.OS === 'android' ? 16 : 0,
+        },
+        actionsRow: {
+          flexDirection: 'row',
+          alignItems: 'center',
+          gap: 12,
+        },
+        followFab: {
+          width: 58,
+          height: 58,
+          borderRadius: 29,
+          alignItems: 'center',
+          justifyContent: 'center',
+          backgroundColor: colors.bgMuted,
+          borderWidth: 2,
+        },
+        followFabActive: {
+          borderColor: routeStrokeColor,
+          backgroundColor: colors.bgElevated,
+        },
+        followFabIdle: {
+          borderColor: colors.borderMuted,
+        },
+        followFabIcon: {
+          width: 28,
+          height: 28,
+          tintColor: routeStrokeColor,
+        },
+        endBtn: {
+          flex: 1,
+          flexDirection: 'row',
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: 8,
+          paddingVertical: 16,
+          paddingHorizontal: 16,
+          borderRadius: 16,
+          backgroundColor: colors.primaryBg,
+          borderWidth: StyleSheet.hairlineWidth,
+          borderColor: colors.tileEnabledBorder,
+        },
+        endBtnText: {
+          fontSize: 16,
+          fontWeight: '800',
+          color: colors.primaryText,
+        },
+        invalidWrap: {
+          flex: 1,
+          justifyContent: 'center',
+          alignItems: 'center',
+          padding: 28,
+        },
+        invalidText: {
+          fontSize: 16,
+          fontWeight: '600',
+          color: colors.textSecondary,
+          textAlign: 'center',
+        },
+        tigranMarkerBox: {
+          width: 52,
+          height: 68,
+          alignItems: 'center',
+          justifyContent: 'flex-end',
+        },
+        tigranMarkerImg: {
+          width: 48,
+          height: 64,
+        },
+      }),
+    [colors, routeStrokeColor]
+  );
 
   const mapBounds = useMemo(() => {
     const cos = Math.cos((targetLat * Math.PI) / 180);
@@ -437,6 +575,7 @@ export default function NavigationScreen({ route, navigation }) {
     if (!mapRef.current) return;
     followNavigationRef.current = true;
     setMapFollowUser(true);
+    hasAutoCenteredOnFirstFixRef.current = true;
 
     const center =
       userCoords ??
@@ -499,12 +638,18 @@ export default function NavigationScreen({ route, navigation }) {
     userCoords,
   ]);
 
+  const handleUserMovedMap = React.useCallback(() => {
+    followNavigationRef.current = false;
+    setMapFollowUser(false);
+    /** Не делать отложенный «первый» авто-центр после жеста — иначе вид сбросится. */
+    hasAutoCenteredOnFirstFixRef.current = true;
+  }, []);
+
   const handleRegionChangeComplete = React.useCallback((r, details) => {
     if (!r || !mapRef.current) return;
 
     if (details?.isGesture) {
-      followNavigationRef.current = false;
-      setMapFollowUser(false);
+      handleUserMovedMap();
     }
 
     if (!followNavigationRef.current) {
@@ -512,7 +657,7 @@ export default function NavigationScreen({ route, navigation }) {
     }
 
     if (Date.now() < suppressClampUntilRef.current) return;
-    if (Date.now() - lastProgrammaticCameraAtRef.current < 480) return;
+    if (Date.now() - lastProgrammaticCameraAtRef.current < 720) return;
     const before = {
       latitude: r.latitude,
       longitude: r.longitude,
@@ -523,7 +668,7 @@ export default function NavigationScreen({ route, navigation }) {
     if (!regionNeedsSnap(before, fixed)) return;
     lastProgrammaticCameraAtRef.current = Date.now();
     mapRef.current.animateToRegion(fixed, 200);
-  }, []);
+  }, [handleUserMovedMap]);
 
   const requestRoadRoute = React.useCallback(
     async (origin, force = false) => {
@@ -615,7 +760,6 @@ export default function NavigationScreen({ route, navigation }) {
 
   useEffect(() => {
     let locSub = null;
-    let headingSub = null;
     let cancelled = false;
 
     (async () => {
@@ -625,7 +769,6 @@ export default function NavigationScreen({ route, navigation }) {
           navigation.goBack();
           return;
         }
-        setIsRunning(true);
         const { status } =
           await Location.requestForegroundPermissionsAsync();
         if (status !== 'granted') {
@@ -689,75 +832,84 @@ export default function NavigationScreen({ route, navigation }) {
             requestRoadRoute(pt);
 
             const nowTs = Date.now();
+            const crowFar = crowStraight > MAX_ROUTE_CROW_METERS;
+            const noPolyline = full.length < 2;
+
+            const runFollowCamera = () => {
+              if (!mapRef.current || !followNavigationRef.current) return;
+              lastFollowCameraAtRef.current = nowTs;
+              lastFollowCameraCenterRef.current = {
+                latitude: lat,
+                longitude: lon,
+              };
+
+              if (crowFar) {
+                lastCrowTargetCameraAtRef.current = nowTs;
+                animateRegionSafe(
+                  {
+                    latitude: targetLat,
+                    longitude: targetLon,
+                    latitudeDelta: 0.06,
+                    longitudeDelta: 0.06,
+                  },
+                  380
+                );
+              } else if (
+                full.length >= 2 &&
+                typeof mapRef.current.animateCamera === 'function'
+              ) {
+                const duration = 520;
+                lastProgrammaticCameraAtRef.current = Date.now();
+                suppressClampUntilRef.current = Date.now() + duration + 1100;
+                mapRef.current.animateCamera(
+                  Platform.OS === 'android'
+                    ? {
+                        center: pt,
+                        heading: fwd,
+                        pitch: 50,
+                        zoom: 19.65,
+                      }
+                    : {
+                        center: pt,
+                        heading: fwd,
+                        pitch: 50,
+                        altitude: 168,
+                      },
+                  { duration }
+                );
+              } else {
+                animateRegionSafe(
+                  {
+                    latitude: lat,
+                    longitude: lon,
+                    ...CLOSE_ZOOM_DELTA,
+                  },
+                  420
+                );
+              }
+            };
+
             if (mapRef.current && followNavigationRef.current) {
-              const dt = nowTs - lastFollowCameraAtRef.current;
-              const movedSinceCam = lastFollowCameraCenterRef.current
-                ? haversineDistanceMeters(pt, lastFollowCameraCenterRef.current)
-                : 9999;
-              const prevCamFwd = lastCameraAnimFwdRef.current;
-              const dh =
-                prevCamFwd != null
-                  ? smallestHeadingDeltaDeg(prevCamFwd, fwd)
-                  : 999;
-
-              const crowFar = crowStraight > MAX_ROUTE_CROW_METERS;
-              const noPolyline = full.length < 2;
-              const shouldFollowCam =
-                crowFar ||
-                noPolyline ||
-                dt > 1680 ||
-                (dt > 780 && (movedSinceCam > 13 || dh > 9));
-
-              if (shouldFollowCam) {
-                lastFollowCameraAtRef.current = nowTs;
-                lastFollowCameraCenterRef.current = {
-                  latitude: lat,
-                  longitude: lon,
-                };
-
-                if (crowFar) {
-                  animateRegionSafe(
-                    {
-                      latitude: targetLat,
-                      longitude: targetLon,
-                      latitudeDelta: 0.06,
-                      longitudeDelta: 0.06,
-                    },
-                    360
-                  );
-                } else if (
-                  full.length >= 2 &&
-                  typeof mapRef.current.animateCamera === 'function'
+              if (!hasAutoCenteredOnFirstFixRef.current) {
+                hasAutoCenteredOnFirstFixRef.current = true;
+                runFollowCamera();
+              } else if (crowFar) {
+                if (
+                  nowTs - lastCrowTargetCameraAtRef.current >=
+                  MIN_MS_BETWEEN_CROW_TARGET_CAM
                 ) {
-                  const duration = 340 + Math.min(620, Math.round(dh * 3.8));
-                  lastProgrammaticCameraAtRef.current = Date.now();
-                  suppressClampUntilRef.current = Date.now() + duration + 900;
-                  mapRef.current.animateCamera(
-                    Platform.OS === 'android'
-                      ? {
-                          center: pt,
-                          heading: fwd,
-                          pitch: 50,
-                          zoom: 19.65,
-                        }
-                      : {
-                          center: pt,
-                          heading: fwd,
-                          pitch: 50,
-                          altitude: 168,
-                        },
-                    { duration }
-                  );
-                  lastCameraAnimFwdRef.current = fwd;
-                } else {
-                  animateRegionSafe(
-                    {
-                      latitude: lat,
-                      longitude: lon,
-                      ...CLOSE_ZOOM_DELTA,
-                    },
-                    360
-                  );
+                  runFollowCamera();
+                }
+              } else if (!noPolyline) {
+                const dt = nowTs - lastFollowCameraAtRef.current;
+                const movedSinceCam = lastFollowCameraCenterRef.current
+                  ? haversineDistanceMeters(pt, lastFollowCameraCenterRef.current)
+                  : Number.POSITIVE_INFINITY;
+                if (
+                  dt >= MIN_MS_BETWEEN_AUTO_FOLLOW_CAM &&
+                  movedSinceCam >= MIN_METERS_MOVED_FOR_AUTO_FOLLOW_CAM
+                ) {
+                  runFollowCamera();
                 }
               }
             }
@@ -784,16 +936,6 @@ export default function NavigationScreen({ route, navigation }) {
             }
           }
         );
-
-        headingSub = await Location.watchHeadingAsync((event) => {
-          if (cancelled) return;
-          const nextHeading =
-            Number.isFinite(event.trueHeading) && event.trueHeading >= 0
-              ? event.trueHeading
-              : Number.isFinite(event.magHeading) ? event.magHeading : 0;
-          headingDegRef.current = nextHeading;
-          setHeadingDeg(nextHeading);
-        });
       } catch {
         if (!cancelled) {
           Alert.alert('Սխալ', 'Չհաջողվեց ստանալ տեղադրությունը։');
@@ -806,7 +948,6 @@ export default function NavigationScreen({ route, navigation }) {
       cancelled = true;
       if (routeRequestRef.current) routeRequestRef.current.abort();
       if (locSub && typeof locSub.remove === 'function') locSub.remove();
-      if (headingSub && typeof headingSub.remove === 'function') headingSub.remove();
     };
   }, [
     hasTargetCoords,
@@ -823,233 +964,125 @@ export default function NavigationScreen({ route, navigation }) {
 
   if (!hasTargetCoords) {
     return (
-      <View
-        style={[
-          styles.root,
-          { paddingTop: insets.top + 12, paddingHorizontal: 16 },
-        ]}
-      >
-        <Text style={{ color: '#e5e7eb', fontWeight: '700' }}>Անվավեր կոորդինատներ</Text>
+      <View style={[uiStyles.root, { paddingTop: insets.top }]}>
+        <View style={uiStyles.invalidWrap}>
+          <Ionicons name="alert-circle-outline" size={48} color={colors.textMuted} />
+          <Text style={[uiStyles.invalidText, { marginTop: 16 }]}>
+            {t('navInvalidCoords')}
+          </Text>
+        </View>
       </View>
     );
   }
 
   return (
-    <View
-      style={[
-        styles.root,
-        { paddingTop: insets.top, paddingBottom: insets.bottom },
-      ]}
-    >
-      <View style={styles.topHud}>
-        <Text style={styles.targetTitle}>{targetName ?? 'Target'}</Text>
-        <Text style={styles.distanceText}>
-          {hudMetersRounded == null ? '—' : `${hudMetersRounded} մ`}
-        </Text>
-      </View>
-
-      <View
-        pointerEvents="box-none"
-        style={[styles.mapWrap, { height: mapBlockHeight }]}
-      >
-        <View style={styles.mapSlot}>
-          <MapView
-            {...getDarkMapProps()}
-            ref={mapRef}
-            style={styles.map}
-            showsCompass
-            showsScale
-            showsMyLocationButton={false}
-            showsUserLocation={userCoords == null}
-            followsUserLocation={false}
-            scrollEnabled={true}
-            zoomEnabled
-            zoomTapEnabled
-            rotateEnabled
-            pitchEnabled
-            initialRegion={initialSnappedRegion}
-            onRegionChangeComplete={handleRegionChangeComplete}
-          >
-            {hasTargetCoords ? (
-              <Marker
-                coordinate={{ latitude: targetLat, longitude: targetLon }}
-                title={targetName || 'Target'}
-                pinColor={ROUTE_STROKE}
+    <View style={[uiStyles.root, { paddingTop: insets.top }]}>
+      <View style={uiStyles.mapSection}>
+        <MapView
+          {...getMapAppearanceProps(resolvedScheme)}
+          ref={mapRef}
+          style={StyleSheet.absoluteFillObject}
+          showsCompass
+          showsScale
+          showsMyLocationButton={false}
+          showsUserLocation={userCoords == null}
+          followsUserLocation={false}
+          scrollEnabled
+          zoomEnabled
+          zoomTapEnabled
+          rotateEnabled
+          pitchEnabled
+          initialRegion={initialSnappedRegion}
+          onPanDrag={handleUserMovedMap}
+          onRegionChangeComplete={handleRegionChangeComplete}
+        >
+          {hasTargetCoords ? (
+            <Marker
+              coordinate={{ latitude: targetLat, longitude: targetLon }}
+              title={targetName || 'Target'}
+              pinColor={routeStrokeColor}
+            />
+          ) : null}
+          {displayPolylineCoords.length >= 2 ? (
+            <>
+              <Polyline
+                coordinates={displayPolylineCoords}
+                strokeColor={routeOutlineColor}
+                strokeWidth={10}
               />
-            ) : null}
-            {displayPolylineCoords.length >= 2 ? (
-              <>
-                <Polyline
-                  coordinates={displayPolylineCoords}
-                  strokeColor={ROUTE_DIM}
-                  strokeWidth={9}
+              <Polyline
+                coordinates={displayPolylineCoords}
+                strokeColor={routeStrokeColor}
+                strokeWidth={4}
+              />
+            </>
+          ) : null}
+          {userCoords ? (
+            <Marker
+              coordinate={userCoords}
+              anchor={{ x: 0.5, y: 0.82 }}
+              zIndex={100}
+              flat
+              rotation={routeFollowBearingDeg}
+              tracksViewChanges={false}
+            >
+              <View style={uiStyles.tigranMarkerBox} pointerEvents="none">
+                <Image
+                  source={TIGRAN_NAV_BACK}
+                  style={uiStyles.tigranMarkerImg}
+                  resizeMode="contain"
                 />
-                <Polyline
-                  coordinates={displayPolylineCoords}
-                  strokeColor={ROUTE_STROKE}
-                  strokeWidth={4}
-                />
-              </>
-            ) : null}
-            {userCoords ? (
-              <Marker
-                coordinate={userCoords}
-                anchor={{ x: 0.5, y: 0.82 }}
-                zIndex={100}
-                flat
-                rotation={routeFollowBearingDeg}
-                tracksViewChanges={false}
-              >
-                <View style={styles.tigranMarkerBox} pointerEvents="none">
-                  <Image
-                    source={TIGRAN_NAV_BACK}
-                    style={styles.tigranMarkerImg}
-                    resizeMode="contain"
-                  />
-                </View>
-              </Marker>
-            ) : null}
-          </MapView>
+              </View>
+            </Marker>
+          ) : null}
+        </MapView>
+
+        <View style={uiStyles.floatingCard} pointerEvents="none">
+          <Text style={uiStyles.floatingLabel}>{t('navHeadingTo')}</Text>
+          <Text style={uiStyles.floatingTitle} numberOfLines={2}>
+            {targetName ?? '—'}
+          </Text>
+          <Text style={uiStyles.floatingDistance}>
+            {hudMetersRounded == null
+              ? '—'
+              : t('distanceMeters', { n: hudMetersRounded })}
+          </Text>
         </View>
       </View>
 
-      <View style={styles.center}>
-        <Pressable
-          accessibilityLabel="Իմ վրա"
-          style={({ pressed }) => [
-            styles.followFab,
-            mapFollowUser ? styles.followFabOn : styles.followFabOff,
-            pressed && { opacity: 0.88 },
-          ]}
-          onPress={handleFollowTracksPress}
-        >
-          <Image
-            source={FOOTPRINT_ICON}
-            style={styles.followFabIcon}
-            resizeMode="contain"
-          />
-        </Pressable>
-        <Text style={styles.turnText}>
-          {isRunning ? turnHint.title : 'Սկսում ենք…'}
-        </Text>
-      </View>
-
-      <View style={styles.bottomBar}>
-        <Pressable
-          style={({ pressed }) => [styles.stopBtn, pressed && { opacity: 0.85 }]}
-          onPress={() => navigation.goBack()}
-        >
-          <Text style={styles.stopBtnText}>Դադարեցնել</Text>
-        </Pressable>
+      <View
+        style={[
+          uiStyles.bottomSheet,
+          { paddingBottom: Math.max(insets.bottom, 16) },
+        ]}
+      >
+        <View style={uiStyles.actionsRow}>
+          <Pressable
+            accessibilityLabel={t('navFollowRouteHint')}
+            style={({ pressed }) => [
+              uiStyles.followFab,
+              mapFollowUser ? uiStyles.followFabActive : uiStyles.followFabIdle,
+              pressed && { opacity: 0.88 },
+            ]}
+            onPress={handleFollowTracksPress}
+          >
+            <Image
+              source={FOOTPRINT_ICON}
+              style={uiStyles.followFabIcon}
+              resizeMode="contain"
+            />
+          </Pressable>
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel={t('navEndNavigation')}
+            style={({ pressed }) => [uiStyles.endBtn, pressed && { opacity: 0.9 }]}
+            onPress={() => navigation.goBack()}
+          >
+            <Ionicons name="stop-circle-outline" size={22} color={colors.primary} />
+            <Text style={uiStyles.endBtnText}>{t('navEndNavigation')}</Text>
+          </Pressable>
+        </View>
       </View>
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  root: {
-    flex: 1,
-    backgroundColor: '#0a0a0a',
-  },
-  topHud: {
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: '#1f1f1f',
-  },
-  targetTitle: {
-    color: '#ffffff',
-    fontSize: 22,
-    fontWeight: '900',
-  },
-  distanceText: {
-    marginTop: 4,
-    color: ROUTE_STROKE,
-    fontSize: 38,
-    fontWeight: '900',
-  },
-  center: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    minHeight: 120,
-  },
-  mapSlot: {
-    flex: 1,
-    borderRadius: 16,
-    overflow: 'hidden',
-    position: 'relative',
-  },
-  tigranMarkerBox: {
-    width: 52,
-    height: 68,
-    alignItems: 'center',
-    justifyContent: 'flex-end',
-  },
-  tigranMarkerImg: {
-    width: 48,
-    height: 64,
-  },
-  followFab: {
-    width: 58,
-    height: 58,
-    borderRadius: 29,
-    marginBottom: 14,
-    backgroundColor: '#141414',
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderWidth: 2,
-    elevation: 8,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.35,
-    shadowRadius: 5,
-  },
-  followFabOn: {
-    borderColor: ROUTE_STROKE,
-  },
-  followFabOff: {
-    borderColor: 'rgba(201,160,32,0.35)',
-    opacity: 0.92,
-  },
-  followFabIcon: {
-    width: 30,
-    height: 30,
-    tintColor: ROUTE_STROKE,
-  },
-  turnText: {
-    marginTop: 14,
-    color: '#e5e7eb',
-    fontSize: 20,
-    fontWeight: '800',
-    textAlign: 'center',
-    paddingHorizontal: 12,
-  },
-  mapWrap: {
-    paddingHorizontal: 12,
-    paddingTop: 6,
-    paddingBottom: 8,
-    width: '100%',
-    backgroundColor: '#000000',
-  },
-  map: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: '#000000',
-  },
-  bottomBar: {
-    paddingHorizontal: 16,
-    paddingBottom: 18,
-  },
-  stopBtn: {
-    backgroundColor: '#1f2937',
-    borderRadius: 14,
-    paddingVertical: 12,
-    alignItems: 'center',
-  },
-  stopBtnText: {
-    color: '#ffffff',
-    fontSize: 16,
-    fontWeight: '900',
-  },
-});
-
