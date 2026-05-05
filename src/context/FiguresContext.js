@@ -201,6 +201,24 @@ export function FiguresProvider({ children }) {
     ).catch(() => {});
   }, [discoveryHistory, unlockedLoaded]);
 
+  const resetCollectionProgress = useCallback(async () => {
+    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+    setUnlockedIds(new Set());
+    setUnlocked3dIds(new Set());
+    setUnlockedPulpulakIds(new Set());
+    setDiscoveryHistory([]);
+    try {
+      await AsyncStorage.multiRemove([
+        STORAGE_KEY,
+        STORAGE_3D_KEY,
+        STORAGE_PULP_KEY,
+        DISCOVERY_HISTORY_KEY,
+      ]);
+    } catch {
+      /* ignore */
+    }
+  }, []);
+
   const appendDiscovery = useCallback((mode, rawId, displayName) => {
     const id = String(rawId);
     const name = displayName || id;
@@ -541,6 +559,7 @@ export function FiguresProvider({ children }) {
       storageLoaded: unlockedLoaded && statuesLoaded,
       statuesRefreshing,
       refreshStatues,
+      resetCollectionProgress,
     }),
     [
       figures,
@@ -566,6 +585,7 @@ export function FiguresProvider({ children }) {
       statuesLoaded,
       statuesRefreshing,
       refreshStatues,
+      resetCollectionProgress,
     ]
   );
 

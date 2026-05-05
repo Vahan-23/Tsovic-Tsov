@@ -14,12 +14,14 @@ import {
 import * as Location from 'expo-location';
 import MapView, { Marker, Polyline } from 'react-native-maps';
 import { POSITION_MAX_ACCURACY, WATCH_MODAL_MAP } from '../constants/gpsAccuracy';
+import { UNLOCK_RADIUS_METERS } from '../constants/unlockRadius';
 import { getDarkMapProps } from '../constants/mapAppearance';
 import { useLanguage } from '../context/LanguageContext';
 import { useFigures } from '../context/FiguresContext';
 import { useSettings } from '../context/SettingsContext';
 import { useSearchTarget } from '../context/SearchTargetContext';
 import { haversineDistanceMeters } from '../utils/haversine';
+import UnlockCelebrationOverlay from './UnlockCelebrationOverlay';
 
 const FOOTPRINT_ICON = require('../../assets/footprints_21766.png');
 const SEARCH_ICONS = [
@@ -29,7 +31,6 @@ const SEARCH_ICONS = [
   require('../../assets/search_ico/dav.png'),
 ];
 
-const UNLOCK_DISTANCE_METERS = 50;
 const MIN_SEARCH_MS = 1800;
 
 /** Idle: very slow gentle 3D turn (rotateY) left→center→right→center; small angle keeps face visible. */
@@ -92,6 +93,7 @@ export default function DiscoverNearbyBlock({ navigation: navigationProp }) {
   const [liveUserCoords, setLiveUserCoords] = React.useState(null);
   const [liveDistanceMeters, setLiveDistanceMeters] = React.useState(null);
   const [liveAzimuthDeg, setLiveAzimuthDeg] = React.useState(null);
+  const [unlockCelebration, setUnlockCelebration] = React.useState(null);
   const liveUserCoordsRef = useRef(null);
   liveUserCoordsRef.current = liveUserCoords;
   const modalMapRef = useRef(null);
@@ -312,7 +314,7 @@ export default function DiscoverNearbyBlock({ navigation: navigationProp }) {
         const userLat = location.coords.latitude;
         const userLon = location.coords.longitude;
         const userLatRad = (userLat * Math.PI) / 180;
-        const latDeltaMax = UNLOCK_DISTANCE_METERS / 111000;
+        const latDeltaMax = UNLOCK_RADIUS_METERS / 111000;
         const cosLat = Math.cos(userLatRad);
         const lonDeltaMax = cosLat > 1e-6 ? latDeltaMax / cosLat : Infinity;
 
@@ -331,7 +333,7 @@ export default function DiscoverNearbyBlock({ navigation: navigationProp }) {
             { latitude: userLat, longitude: userLon },
             { latitude: figure.latitude, longitude: figure.longitude }
           );
-          return distance < UNLOCK_DISTANCE_METERS;
+          return distance < UNLOCK_RADIUS_METERS;
         });
 
         if (nearbyLockedStatues.length === 0) {
@@ -414,11 +416,15 @@ export default function DiscoverNearbyBlock({ navigation: navigationProp }) {
             };
             setGuidance(null);
           } else {
-            const message =
+            const lines =
               discovered.length === 1
-                ? t('foundOne', { name: discovered[0] })
-                : discovered.map((name) => t('foundManyLine', { name })).join('\n');
-            outcome = { type: 'success', title: t('unlockedTitle'), message };
+                ? [t('foundOne', { name: discovered[0] })]
+                : discovered.map((name) => t('foundManyLine', { name }));
+            outcome = {
+              type: 'success',
+              title: t('unlockedTitle'),
+              lines,
+            };
             setGuidance(null);
           }
         }
@@ -431,6 +437,12 @@ export default function DiscoverNearbyBlock({ navigation: navigationProp }) {
 
       if (outcome.type === 'modal') {
         setMapVisible(true);
+      } else if (outcome.type === 'success') {
+        setUnlockCelebration({
+          title: outcome.title,
+          lines: outcome.lines,
+          variant: 'success',
+        });
       } else if (outcome.type !== 'none') {
         Alert.alert(outcome.title, outcome.message);
       }
@@ -743,6 +755,14 @@ export default function DiscoverNearbyBlock({ navigation: navigationProp }) {
           </View>
         </View>
       </Modal>
+
+      <UnlockCelebrationOverlay
+        visible={unlockCelebration != null}
+        onDismiss={() => setUnlockCelebration(null)}
+        title={unlockCelebration?.title ?? ''}
+        lines={unlockCelebration?.lines ?? []}
+        variant={unlockCelebration?.variant ?? 'success'}
+      />
     </View>
   );
 }

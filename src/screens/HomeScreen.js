@@ -1,5 +1,7 @@
 import React, { useMemo } from 'react';
 import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import CollectionEntryCard from '../components/CollectionEntryCard';
 import DiscoverNearbyBlock from '../components/DiscoverNearbyBlock';
 import { useLanguage } from '../context/LanguageContext';
 import { useFigures } from '../context/FiguresContext';
@@ -7,6 +9,7 @@ import { useSettings } from '../context/SettingsContext';
 import { useSearchTarget } from '../context/SearchTargetContext';
 
 export default function HomeScreen() {
+  const navigation = useNavigation();
   const { t } = useLanguage();
   const { storageLoaded, countsForSearchMode } = useFigures();
   const { searchMode } = useSearchTarget();
@@ -43,16 +46,6 @@ export default function HomeScreen() {
           textAlign: 'center',
           lineHeight: 30,
         },
-        progressLine: {
-          marginTop: 12,
-          fontSize: 16,
-          fontWeight: '600',
-          color: colors.textSecondary,
-          textAlign: 'center',
-          lineHeight: 24,
-          maxWidth: 360,
-          alignSelf: 'center',
-        },
       }),
     [colors]
   );
@@ -71,12 +64,11 @@ export default function HomeScreen() {
     <View style={styles.root}>
       <View style={[styles.header, { paddingHorizontal: 22 }]}>
         <Text style={styles.headline}>{t('homeHeadline')}</Text>
-        <Text style={styles.progressLine}>
-          {t('homeProgressContext', {
-            unlocked: unlockedCount,
-            total: totalCount,
-          })}
-        </Text>
+        <CollectionEntryCard
+          unlocked={unlockedCount}
+          total={totalCount}
+          onPress={() => navigation.navigate('Collection')}
+        />
       </View>
       <View style={styles.radarFill}>
         <DiscoverNearbyBlock />

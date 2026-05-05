@@ -11,6 +11,7 @@ import {
   View,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { UNLOCK_RADIUS_METERS } from '../constants/unlockRadius';
 import { useLanguage } from '../context/LanguageContext';
 import { labelForBrowseLocale } from '../utils/alphabetBrowse';
 import { useFigures } from '../context/FiguresContext';
@@ -225,10 +226,10 @@ export default function StatueDetailScreen({ route, navigation }) {
         <Text style={styles.title}>{titleText}</Text>
         <Text style={styles.hint}>
           {collectionKind === 'pulpulaks'
-            ? t('statueLockedHint')
+            ? t('statueLockedHint', { n: UNLOCK_RADIUS_METERS })
             : collectionKind === 'statues3d'
-              ? t('statue3dLockedHint')
-              : t('statueLockedHint')}
+              ? t('statue3dLockedHint', { n: UNLOCK_RADIUS_METERS })
+              : t('statueLockedHint', { n: UNLOCK_RADIUS_METERS })}
         </Text>
         {canNavigateToTarget ? (
           <Pressable

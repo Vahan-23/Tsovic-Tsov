@@ -1,38 +1,82 @@
 import { Platform } from 'react-native';
 
 /**
- * JSON map style — **применяется только на Android (Google Maps)**.
- * На iOS Apple MapKit игнорирует `customMapStyle`, поэтому там используем `mapType="mutedStandard"`.
+ * Чёрная «база города» под яркий маршрут (полилиния рисуется поверх).
+ * Работает на **Android (Google Maps)** через `customMapStyle`.
+ *
+ * На **iOS** Apple MapKit не применяет `customMapStyle` — остаётся `mutedStandard`
+ * (сероватый вид). Для той же чёрной карты на iOS нужен Google Maps + ключ в нативной сборке.
  */
-export const DARK_MAP_ANDROID_STYLE = [
+export const BLACK_CITY_ANDROID_STYLE = [
   { elementType: 'geometry', stylers: [{ color: '#000000' }] },
-  { elementType: 'geometry.fill', stylers: [{ color: '#000000' }] },
+  { elementType: 'labels', stylers: [{ visibility: 'off' }] },
   { elementType: 'labels.icon', stylers: [{ visibility: 'off' }] },
-  { elementType: 'labels.text.fill', stylers: [{ color: '#5c5c5c' }] },
-  { elementType: 'labels.text.stroke', stylers: [{ color: '#000000' }] },
   {
     featureType: 'administrative',
     elementType: 'geometry',
     stylers: [{ color: '#000000' }],
   },
+  {
+    featureType: 'administrative',
+    elementType: 'geometry.stroke',
+    stylers: [{ color: '#000000' }],
+  },
   { featureType: 'administrative.land_parcel', stylers: [{ visibility: 'off' }] },
-  { featureType: 'landscape', stylers: [{ color: '#000000' }] },
-  { featureType: 'landscape.natural', stylers: [{ color: '#000000' }] },
+  {
+    featureType: 'landscape',
+    elementType: 'geometry',
+    stylers: [{ color: '#000000' }],
+  },
+  {
+    featureType: 'landscape.man_made',
+    elementType: 'geometry',
+    stylers: [{ color: '#000000' }],
+  },
+  {
+    featureType: 'landscape.natural',
+    elementType: 'geometry',
+    stylers: [{ color: '#000000' }],
+  },
   { featureType: 'poi', stylers: [{ visibility: 'off' }] },
   {
     featureType: 'road',
     elementType: 'geometry',
-    stylers: [{ color: '#121212' }],
+    stylers: [{ color: '#000000' }],
+  },
+  {
+    featureType: 'road',
+    elementType: 'geometry.fill',
+    stylers: [{ color: '#000000' }],
   },
   {
     featureType: 'road',
     elementType: 'geometry.stroke',
-    stylers: [{ color: '#0a0a0a' }],
+    stylers: [{ color: '#000000' }],
   },
   {
     featureType: 'road.highway',
     elementType: 'geometry',
-    stylers: [{ color: '#0d0d0d' }],
+    stylers: [{ color: '#000000' }],
+  },
+  {
+    featureType: 'road.highway',
+    elementType: 'geometry.fill',
+    stylers: [{ color: '#000000' }],
+  },
+  {
+    featureType: 'road.highway',
+    elementType: 'geometry.stroke',
+    stylers: [{ color: '#000000' }],
+  },
+  {
+    featureType: 'road.arterial',
+    elementType: 'geometry',
+    stylers: [{ color: '#000000' }],
+  },
+  {
+    featureType: 'road.local',
+    elementType: 'geometry',
+    stylers: [{ color: '#000000' }],
   },
   { featureType: 'transit', stylers: [{ visibility: 'off' }] },
   {
@@ -41,6 +85,15 @@ export const DARK_MAP_ANDROID_STYLE = [
     stylers: [{ color: '#000000' }],
   },
 ];
+
+/** @deprecated используйте BLACK_CITY_ANDROID_STYLE */
+export const DARK_MAP_ANDROID_STYLE = BLACK_CITY_ANDROID_STYLE;
+
+/**
+ * Google Maps на Android: угол наклона (3D) подсвечивает здания и визуально убивает тёмный customMapStyle
+ * — превью 2D остаётся «чёрным», а навигация после animateCamera выглядит серой. Для навигации используем 0.
+ */
+export const ANDROID_BLACK_MAP_CAMERA_PITCH = 0;
 
 export function getDarkMapProps() {
   if (Platform.OS === 'ios') {
@@ -52,13 +105,18 @@ export function getDarkMapProps() {
   if (Platform.OS === 'android') {
     return {
       mapType: 'standard',
-      customMapStyle: DARK_MAP_ANDROID_STYLE,
+      customMapStyle: BLACK_CITY_ANDROID_STYLE,
     };
   }
   return { mapType: 'standard', customMapStyle: undefined };
 }
 
-/** Light = standard map; dark = same styling as radar / legacy navigation. */
+/** Карта навигации: всегда чёрный город + жёлтая линия задаётся полилинией в экране. */
+export function getBlackCityMapProps() {
+  return getDarkMapProps();
+}
+
+/** Light = обычная карта; dark = чёрный город (Android). */
 export function getMapAppearanceProps(resolvedScheme) {
   if (resolvedScheme === 'dark') {
     return getDarkMapProps();

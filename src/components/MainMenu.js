@@ -1,5 +1,6 @@
 import React, { useMemo } from 'react';
 import {
+  Alert,
   Dimensions,
   Modal,
   Pressable,
@@ -52,7 +53,7 @@ export default function MainMenu() {
     setThemePreference,
     colors,
   } = useSettings();
-  const { discoveryHistory } = useFigures();
+  const { discoveryHistory, resetCollectionProgress } = useFigures();
   const [open, setOpen] = React.useState(false);
 
   const styles = useMemo(
@@ -183,6 +184,29 @@ export default function MainMenu() {
           lineHeight: 17,
           color: colors.textSubtle,
         },
+        dangerBlock: {
+          marginTop: 6,
+          paddingVertical: 14,
+          paddingHorizontal: 14,
+          borderRadius: 14,
+          backgroundColor: colors.bgMuted,
+          borderWidth: StyleSheet.hairlineWidth,
+          borderColor: colors.borderMuted,
+        },
+        dangerTitle: {
+          fontSize: 16,
+          fontWeight: '700',
+          color: colors.text,
+        },
+        dangerHint: {
+          marginTop: 6,
+          fontSize: 13,
+          lineHeight: 18,
+          color: colors.textMuted,
+        },
+        dangerPressed: {
+          opacity: 0.88,
+        },
         historyEmpty: {
           fontSize: 14,
           color: colors.textSubtle,
@@ -221,6 +245,24 @@ export default function MainMenu() {
   );
 
   const close = React.useCallback(() => setOpen(false), []);
+
+  const onResetCollection = React.useCallback(() => {
+    Alert.alert(
+      t('resetCollectionConfirmTitle'),
+      t('resetCollectionConfirmMessage'),
+      [
+        { text: t('resetCollectionCancel'), style: 'cancel' },
+        {
+          text: t('resetCollectionConfirmDestructive'),
+          style: 'destructive',
+          onPress: () => {
+            void resetCollectionProgress();
+            close();
+          },
+        },
+      ]
+    );
+  }, [close, resetCollectionProgress, t]);
 
   return (
     <>
@@ -399,6 +441,24 @@ export default function MainMenu() {
                   }
                 />
               </View>
+
+              <Text style={[styles.sectionLabel, styles.sectionSpaced]}>
+                {t('settingsDataSection')}
+              </Text>
+              <Pressable
+                onPress={onResetCollection}
+                style={({ pressed }) => [
+                  styles.dangerBlock,
+                  pressed && styles.dangerPressed,
+                ]}
+                accessibilityRole="button"
+                accessibilityLabel={t('settingResetCollection')}
+              >
+                <Text style={styles.dangerTitle}>{t('settingResetCollection')}</Text>
+                <Text style={styles.dangerHint}>
+                  {t('settingResetCollectionHint')}
+                </Text>
+              </Pressable>
 
               <Text style={styles.footerNote}>{t('settingsFooterNote')}</Text>
             </ScrollView>

@@ -1,14 +1,15 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { Alert, Animated, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Animated, Pressable, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import * as Location from 'expo-location';
 
 import { POSITION_MAX_ACCURACY } from '../constants/gpsAccuracy';
+import { UNLOCK_RADIUS_METERS } from '../constants/unlockRadius';
+import { useLanguage } from '../context/LanguageContext';
 import { useFigures } from '../context/FiguresContext';
 import { useSettings } from '../context/SettingsContext';
 import { haversineDistanceMeters } from '../utils/haversine';
-
-const UNLOCK_DISTANCE_METERS = 50;
+import UnlockCelebrationOverlay from '../components/UnlockCelebrationOverlay';
 
 export default function ScanScreen({ navigation }) {
   const insets = useSafeAreaInsets();
@@ -108,8 +109,10 @@ export default function ScanScreen({ navigation }) {
       }),
     [colors]
   );
+  const { t } = useLanguage();
   const { figures, unlockById } = useFigures();
   const [isChecking, setIsChecking] = useState(false);
+  const [unlockCelebration, setUnlockCelebration] = useState(null);
   const [statusText, setStatusText] = useState('');
   const pulseAnim = useRef(new Animated.Value(0)).current;
 
@@ -161,7 +164,7 @@ export default function ScanScreen({ navigation }) {
             longitude: figure.longitude,
           }
         );
-        return distance < UNLOCK_DISTANCE_METERS;
+        return distance < UNLOCK_RADIUS_METERS;
       });
 
       if (nearbyLockedStatues.length === 0) {
@@ -182,27 +185,28 @@ export default function ScanScreen({ navigation }) {
         return;
       }
 
-      const message =
+      const lines =
         discoveredNames.length === 1
-          ? `Դու հայտնաբերեցիր ${discoveredNames[0]}-ը։`
-          : discoveredNames.map((name) => `Դու հայտնաբերեցիր ${name}-ը։`).join('\n');
-      Alert.alert('Բացվեց', message, [
-        { text: 'Լավ', onPress: () => navigation.goBack() },
-      ]);
+          ? [t('foundOne', { name: discoveredNames[0] })]
+          : discoveredNames.map((name) => t('foundManyLine', { name }));
+      setUnlockCelebration({
+        title: t('unlockedTitle'),
+        lines,
+        variant: 'success',
+      });
     } catch {
       setStatusText('Չհաջողվեց ստանալ տեղադրությունը։ Փորձիր կրկին։');
     } finally {
       setIsChecking(false);
     }
-  }, [figures, isChecking, navigation, unlockById]);
+  }, [figures, isChecking, t, unlockById]);
 
   return (
     <View style={[styles.root, { paddingTop: insets.top + 24 }]}>
       <View style={styles.content}>
         <Text style={styles.title}>Մոտակայքի արձաններ</Text>
         <Text style={styles.body}>
-          Սեղմիր կլոր կոճակը, որ բացվեն այն արձանները, որոնք քո ներկայիս
-          տեղադրությունից 50 մետր շառավղում են։
+          {t('scanRadiusUnlockBody', { n: UNLOCK_RADIUS_METERS })}
         </Text>
 
         <Pressable
@@ -267,6 +271,17 @@ export default function ScanScreen({ navigation }) {
       <Pressable style={styles.secondaryBtn} onPress={() => navigation.goBack()}>
         <Text style={styles.secondaryBtnText}>Փակել</Text>
       </Pressable>
+
+      <UnlockCelebrationOverlay
+        visible={unlockCelebration != null}
+        onDismiss={() => {
+          setUnlockCelebration(null);
+          navigation.goBack();
+        }}
+        title={unlockCelebration?.title ?? ''}
+        lines={unlockCelebration?.lines ?? []}
+        variant={unlockCelebration?.variant ?? 'success'}
+      />
     </View>
   );
 }

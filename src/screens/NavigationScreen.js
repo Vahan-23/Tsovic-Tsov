@@ -16,10 +16,16 @@ import { useFigures } from '../context/FiguresContext';
 import { useLanguage } from '../context/LanguageContext';
 import { useSettings } from '../context/SettingsContext';
 import { WATCH_NAVIGATION } from '../constants/gpsAccuracy';
-import { getMapAppearanceProps } from '../constants/mapAppearance';
+import { UNLOCK_RADIUS_METERS } from '../constants/unlockRadius';
+import {
+  ANDROID_BLACK_MAP_CAMERA_PITCH,
+  BLACK_CITY_ANDROID_STYLE,
+  getBlackCityMapProps,
+} from '../constants/mapAppearance';
 import { fetchOsrmFootRoute } from '../services/osrmRouter';
 import { getWalkingRoute } from '../services/yandexRouter';
 import { haversineDistanceMeters } from '../utils/haversine';
+import UnlockCelebrationOverlay from '../components/UnlockCelebrationOverlay';
 
 const FOOTPRINT_ICON = require('../../assets/footprints_21766.png');
 const TIGRAN_NAV_BACK = require('../../assets/Tigran_Mets_Back.png');
@@ -304,7 +310,7 @@ function regionNeedsSnap(before, after) {
 
 export default function NavigationScreen({ route, navigation }) {
   const insets = useSafeAreaInsets();
-  const { colors, resolvedScheme } = useSettings();
+  const { colors } = useSettings();
   const { t } = useLanguage();
   const params = route.params || {};
   const collectionKind = params.collectionKind || 'statues';
@@ -347,6 +353,7 @@ export default function NavigationScreen({ route, navigation }) {
   });
   const routeRequestRef = useRef(null);
   const crowTooFarAlertedRef = useRef(false);
+  const [unlockCelebration, setUnlockCelebration] = useState(null);
 
   const remainingAlongRouteMeters = useMemo(
     () => sumPolylineLengthMeters(routeCoords),
@@ -367,18 +374,9 @@ export default function NavigationScreen({ route, navigation }) {
     return Math.max(0, Math.round(distanceMeters));
   }, [distanceMeters, remainingAlongRouteMeters, routeCoords.length]);
 
-  const routeStrokeColor = useMemo(
-    () => (resolvedScheme === 'dark' ? ROUTE_STROKE : colors.primary),
-    [resolvedScheme, colors.primary]
-  );
-
-  const routeOutlineColor = useMemo(
-    () =>
-      resolvedScheme === 'dark'
-        ? ROUTE_DIM
-        : 'rgba(91, 99, 232, 0.38)',
-    [resolvedScheme]
-  );
+  /** На чёрной карте маршрут всегда янтарно-жёлтый. */
+  const routeStrokeColor = ROUTE_STROKE;
+  const routeOutlineColor = ROUTE_DIM;
 
   const uiStyles = useMemo(
     () =>
@@ -612,7 +610,8 @@ export default function NavigationScreen({ route, navigation }) {
     suppressClampUntilRef.current = Date.now() + 3200;
     lastProgrammaticCameraAtRef.current = Date.now();
 
-    const pitch = 52;
+    const pitch =
+      Platform.OS === 'android' ? ANDROID_BLACK_MAP_CAMERA_PITCH : 52;
     const camera =
       Platform.OS === 'android'
         ? { center, heading, pitch, zoom: 20 }
@@ -866,7 +865,7 @@ export default function NavigationScreen({ route, navigation }) {
                     ? {
                         center: pt,
                         heading: fwd,
-                        pitch: 50,
+                        pitch: ANDROID_BLACK_MAP_CAMERA_PITCH,
                         zoom: 19.65,
                       }
                     : {
@@ -919,20 +918,30 @@ export default function NavigationScreen({ route, navigation }) {
               requestRoadRoute({ latitude: lat, longitude: lon }, true);
             }
 
-            if (!didUnlockRef.current && dist < 50) {
+            if (!didUnlockRef.current && dist < UNLOCK_RADIUS_METERS) {
               didUnlockRef.current = true;
               if (targetId != null) {
                 const result = unlockForSearchMode(collectionKind, targetId);
-                Alert.alert(
-                  'Բացվեց',
+                setUnlockCelebration(
                   result.ok
-                    ? `Դու հայտնաբերեցիր ${targetName}։`
-                    : `Գտանք քեզ մոտ, բայց չհաջողվեց բացել (${targetName})։`
+                    ? {
+                        title: t('unlockedTitle'),
+                        lines: [t('foundOne', { name: targetName ?? '' })],
+                        variant: 'success',
+                      }
+                    : {
+                        title: t('noticeTitle'),
+                        lines: [t('unlockFailedNear', { name: targetName ?? '' })],
+                        variant: 'soft',
+                      }
                 );
               } else {
-                Alert.alert('Մոտ ես', `Դու արդեն հասել ես ${targetName}։`);
+                setUnlockCelebration({
+                  title: t('navArrivedTitle'),
+                  lines: [t('navReachedLine', { name: targetName ?? '—' })],
+                  variant: 'success',
+                });
               }
-              navigation.goBack();
             }
           }
         );
@@ -960,6 +969,7 @@ export default function NavigationScreen({ route, navigation }) {
     unlockForSearchMode,
     requestRoadRoute,
     animateRegionSafe,
+    t,
   ]);
 
   if (!hasTargetCoords) {
@@ -979,7 +989,10 @@ export default function NavigationScreen({ route, navigation }) {
     <View style={[uiStyles.root, { paddingTop: insets.top }]}>
       <View style={uiStyles.mapSection}>
         <MapView
-          {...getMapAppearanceProps(resolvedScheme)}
+          {...getBlackCityMapProps()}
+          customMapStyle={
+            Platform.OS === 'android' ? BLACK_CITY_ANDROID_STYLE : undefined
+          }
           ref={mapRef}
           style={StyleSheet.absoluteFillObject}
           showsCompass
@@ -1083,6 +1096,17 @@ export default function NavigationScreen({ route, navigation }) {
           </Pressable>
         </View>
       </View>
+
+      <UnlockCelebrationOverlay
+        visible={unlockCelebration != null}
+        onDismiss={() => {
+          setUnlockCelebration(null);
+          navigation.goBack();
+        }}
+        title={unlockCelebration?.title ?? ''}
+        lines={unlockCelebration?.lines ?? []}
+        variant={unlockCelebration?.variant ?? 'success'}
+      />
     </View>
   );
 }
