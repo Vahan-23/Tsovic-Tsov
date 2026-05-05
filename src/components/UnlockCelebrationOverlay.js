@@ -133,6 +133,8 @@ function FireworkParticle({ index }) {
 export default function UnlockCelebrationOverlay({
   visible,
   onDismiss,
+  /** «Посмотреть» — карточка объекта; только при success и если передан */
+  onViewPress,
   title,
   lines = [],
   /** success = конфетти + трофей; soft = спокойная карточка (почти открылось / приехал) */
@@ -147,6 +149,7 @@ export default function UnlockCelebrationOverlay({
   const shockwave = useRef(new Animated.Value(0)).current;
 
   const isSuccess = variant === 'success';
+  const showViewButton = isSuccess && typeof onViewPress === 'function';
 
   const shockScale = shockwave.interpolate({
     inputRange: [0, 1],
@@ -315,7 +318,30 @@ export default function UnlockCelebrationOverlay({
           maxHeight: Math.min(220, H * 0.28),
           marginBottom: 8,
         },
+        ctaRow: {
+          marginTop: 18,
+          flexDirection: 'row',
+          alignItems: 'stretch',
+          gap: 12,
+        },
         cta: {
+          flex: 1,
+          borderRadius: 16,
+          paddingVertical: 16,
+          alignItems: 'center',
+          justifyContent: 'center',
+          backgroundColor: colors.primary,
+          ...Platform.select({
+            ios: {
+              shadowColor: colors.primary,
+              shadowOffset: { width: 0, height: 8 },
+              shadowOpacity: 0.38,
+              shadowRadius: 14,
+            },
+            android: { elevation: 8 },
+          }),
+        },
+        ctaSingle: {
           marginTop: 18,
           borderRadius: 16,
           paddingVertical: 16,
@@ -331,10 +357,25 @@ export default function UnlockCelebrationOverlay({
             android: { elevation: 8 },
           }),
         },
+        ctaSecondary: {
+          flex: 1,
+          borderRadius: 16,
+          paddingVertical: 16,
+          alignItems: 'center',
+          justifyContent: 'center',
+          borderWidth: 2,
+          borderColor: isSuccess ? '#F5C84C' : colors.border,
+          backgroundColor: 'transparent',
+        },
         ctaText: {
           fontSize: 17,
           fontWeight: '800',
           color: resolvedScheme === 'dark' ? '#141824' : '#FFFFFF',
+        },
+        ctaSecondaryText: {
+          fontSize: 17,
+          fontWeight: '800',
+          color: isSuccess ? '#F5C84C' : colors.primary,
         },
       }),
     [colors, isSuccess, resolvedScheme]
@@ -409,13 +450,40 @@ export default function UnlockCelebrationOverlay({
               ))}
             </ScrollView>
 
-            <Pressable
-              style={({ pressed }) => [styles.cta, pressed && { opacity: 0.9 }]}
-              onPress={onDismiss}
-              accessibilityRole="button"
-            >
-              <Text style={styles.ctaText}>{t('celebrationDismiss')}</Text>
-            </Pressable>
+            {showViewButton ? (
+              <View style={styles.ctaRow}>
+                <Pressable
+                  style={({ pressed }) => [
+                    styles.ctaSecondary,
+                    pressed && { opacity: 0.88 },
+                  ]}
+                  onPress={onViewPress}
+                  accessibilityRole="button"
+                  accessibilityLabel={t('celebrationView')}
+                >
+                  <Text style={styles.ctaSecondaryText}>{t('celebrationView')}</Text>
+                </Pressable>
+                <Pressable
+                  style={({ pressed }) => [styles.cta, pressed && { opacity: 0.9 }]}
+                  onPress={onDismiss}
+                  accessibilityRole="button"
+                  accessibilityLabel={t('celebrationContinue')}
+                >
+                  <Text style={styles.ctaText}>{t('celebrationContinue')}</Text>
+                </Pressable>
+              </View>
+            ) : (
+              <Pressable
+                style={({ pressed }) => [
+                  styles.ctaSingle,
+                  pressed && { opacity: 0.9 },
+                ]}
+                onPress={onDismiss}
+                accessibilityRole="button"
+              >
+                <Text style={styles.ctaText}>{t('celebrationContinue')}</Text>
+              </Pressable>
+            )}
           </View>
         </Animated.View>
       </View>

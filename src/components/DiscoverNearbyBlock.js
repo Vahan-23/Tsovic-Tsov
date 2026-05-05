@@ -401,10 +401,12 @@ export default function DiscoverNearbyBlock({ navigation: navigationProp }) {
           }
         } else {
           const discovered = [];
+          const discoveredIds = [];
           nearbyLockedStatues.forEach((figure) => {
             const result = unlockForSearchMode(searchMode, figure.id);
             if (result.ok && !result.alreadyHad) {
               discovered.push(figure.displayName ?? figure.name);
+              discoveredIds.push(figure.id);
             }
           });
 
@@ -424,6 +426,8 @@ export default function DiscoverNearbyBlock({ navigation: navigationProp }) {
               type: 'success',
               title: t('unlockedTitle'),
               lines,
+              detailStatueId: discoveredIds[0],
+              collectionKind: searchMode,
             };
             setGuidance(null);
           }
@@ -442,6 +446,8 @@ export default function DiscoverNearbyBlock({ navigation: navigationProp }) {
           title: outcome.title,
           lines: outcome.lines,
           variant: 'success',
+          detailStatueId: outcome.detailStatueId,
+          collectionKind: outcome.collectionKind,
         });
       } else if (outcome.type !== 'none') {
         Alert.alert(outcome.title, outcome.message);
@@ -759,6 +765,19 @@ export default function DiscoverNearbyBlock({ navigation: navigationProp }) {
       <UnlockCelebrationOverlay
         visible={unlockCelebration != null}
         onDismiss={() => setUnlockCelebration(null)}
+        onViewPress={
+          unlockCelebration?.detailStatueId != null
+            ? () => {
+                const id = unlockCelebration.detailStatueId;
+                const kind = unlockCelebration.collectionKind ?? 'statues';
+                setUnlockCelebration(null);
+                navigation.navigate('StatueDetail', {
+                  statueId: id,
+                  collectionKind: kind,
+                });
+              }
+            : undefined
+        }
         title={unlockCelebration?.title ?? ''}
         lines={unlockCelebration?.lines ?? []}
         variant={unlockCelebration?.variant ?? 'success'}

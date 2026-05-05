@@ -928,6 +928,8 @@ export default function NavigationScreen({ route, navigation }) {
                         title: t('unlockedTitle'),
                         lines: [t('foundOne', { name: targetName ?? '' })],
                         variant: 'success',
+                        detailStatueId: targetId,
+                        collectionKind,
                       }
                     : {
                         title: t('noticeTitle'),
@@ -1103,6 +1105,19 @@ export default function NavigationScreen({ route, navigation }) {
           setUnlockCelebration(null);
           navigation.goBack();
         }}
+        onViewPress={
+          unlockCelebration?.detailStatueId != null
+            ? () => {
+                const id = unlockCelebration.detailStatueId;
+                const kind = unlockCelebration.collectionKind ?? 'statues';
+                setUnlockCelebration(null);
+                navigation.navigate('StatueDetail', {
+                  statueId: id,
+                  collectionKind: kind,
+                });
+              }
+            : undefined
+        }
         title={unlockCelebration?.title ?? ''}
         lines={unlockCelebration?.lines ?? []}
         variant={unlockCelebration?.variant ?? 'success'}

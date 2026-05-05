@@ -173,10 +173,12 @@ export default function ScanScreen({ navigation }) {
       }
 
       const discoveredNames = [];
+      const unlockedStatueIds = [];
       nearbyLockedStatues.forEach((figure) => {
         const result = unlockById(figure.id);
         if (result.ok && !result.alreadyHad) {
           discoveredNames.push(figure.displayName ?? figure.name);
+          unlockedStatueIds.push(figure.id);
         }
       });
 
@@ -193,6 +195,8 @@ export default function ScanScreen({ navigation }) {
         title: t('unlockedTitle'),
         lines,
         variant: 'success',
+        detailStatueId: unlockedStatueIds[0],
+        collectionKind: 'statues',
       });
     } catch {
       setStatusText('Չհաջողվեց ստանալ տեղադրությունը։ Փորձիր կրկին։');
@@ -278,6 +282,19 @@ export default function ScanScreen({ navigation }) {
           setUnlockCelebration(null);
           navigation.goBack();
         }}
+        onViewPress={
+          unlockCelebration?.detailStatueId != null
+            ? () => {
+                const id = unlockCelebration.detailStatueId;
+                const kind = unlockCelebration.collectionKind ?? 'statues';
+                setUnlockCelebration(null);
+                navigation.navigate('StatueDetail', {
+                  statueId: id,
+                  collectionKind: kind,
+                });
+              }
+            : undefined
+        }
         title={unlockCelebration?.title ?? ''}
         lines={unlockCelebration?.lines ?? []}
         variant={unlockCelebration?.variant ?? 'success'}
