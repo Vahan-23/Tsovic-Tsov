@@ -157,8 +157,9 @@ const tsitsernakaberd = {
       'Ծիծեռնակաբերդի բլրի վրա՝ ցեղասպանության զոհերի հիշատակին նվիրված 12 հեկտարանոց պուրակում, որտեղ ամեն տարի ապրիլի 24-ին հավաքվում են հազարավոր մարդիկ։',
     card_tsitsernakaberd_story:
       'Հուշահամալիրը ներառում է 44-մետրանոց ստելա, թանգարան և հուշարձաններ․ կառուցվել է 1967 թվականին՝ հիշելու 1915 թվականի ողբերգությունը և պահպանելու հիշողությունը սերունդների համար։',
-    card_tsitsernakaberd_fact_author: 'Հուշահամալիրի ճարտարապետներ',
-    card_tsitsernakaberd_fact_commissioned: 'Խորհրդային Հայաստան, հիշողության պետական ծրագիր',
+    card_tsitsernakaberd_fact_author: 'Արթուր Թարխանյան, Սաշուր Քալաշյան',
+    card_tsitsernakaberd_fact_commissioned:
+      'Խորհրդային Հայաստանի պետություն, մրցույթ 1965 թ.',
     card_tsitsernakaberd_fact_scale: '44 մ ստելա',
     card_tsitsernakaberd_fact_unveiled: '1967',
   },
@@ -168,8 +169,9 @@ const tsitsernakaberd = {
       'На холме Цицернакаберд в 12-гектарном парке памяти; 24 апреля сюда приходят тысячи людей.',
     card_tsitsernakaberd_story:
       'Комплекс включает 44-метровую стелу, музей и монументы; открыт в 1967 году, чтобы сохранить память о трагедии 1915 года для будущих поколений.',
-    card_tsitsernakaberd_fact_author: 'Архитекторы мемориала',
-    card_tsitsernakaberd_fact_commissioned: 'Советская Армения, государственная программа памяти',
+    card_tsitsernakaberd_fact_author: 'Артур Тарханян, Сашур Калашян',
+    card_tsitsernakaberd_fact_commissioned:
+      'Государство Армянской ССР, конкурс 1965 г.',
     card_tsitsernakaberd_fact_scale: 'Стела 44 м',
     card_tsitsernakaberd_fact_unveiled: '1967',
   },
@@ -179,8 +181,9 @@ const tsitsernakaberd = {
       'On Tsitsernakaberd hill in a 12-hectare remembrance park; thousands gather each April 24.',
     card_tsitsernakaberd_story:
       'The complex includes a 44 m stele, museum, and monuments; opened in 1967 to preserve memory of the 1915 tragedy for future generations.',
-    card_tsitsernakaberd_fact_author: 'Memorial architects',
-    card_tsitsernakaberd_fact_commissioned: 'Soviet Armenia, state remembrance program',
+    card_tsitsernakaberd_fact_author: 'Arthur Tarkhanyan, Sashur Kalashyan',
+    card_tsitsernakaberd_fact_commissioned:
+      'Armenian SSR government, 1965 design competition',
     card_tsitsernakaberd_fact_scale: '44 m stele',
     card_tsitsernakaberd_fact_unveiled: '1967',
   },
@@ -192,67 +195,153 @@ const republic = {
     card_republic_square_why:
       'Քաղաքի գլխավոր հրապարակն է՝ կառուցապատված 1920-ականներից, շրջապատված կառավարական շենքերով, շատրվանով և ցնցուղային արձաններով։',
     card_republic_square_story:
-      'Հրապարակը հավաքում է տոնականգները, համերգները և հանրային արարողությունները․ արձանները և ցնցուղները դարձել են քաղաքի տեսարանային կենտրոնը։',
-    card_republic_square_fact_author: 'Տարբեր հեղինակներ (XX դար)',
-    card_republic_square_fact_commissioned: 'Երևանի քաղաքային կառուցապատում',
-    card_republic_square_fact_scale: 'Գլխավոր հրապարակ',
-    card_republic_square_fact_unveiled: 'XX դար',
+      'Ալեքսանդր Թամանյանի գլխավոր գաղափարով 1926–1977 թթ. ձևավորված համալիրը ներառում է կառավարական շենքեր, Գեղարվեստի թանգարանը և երաժշտական շատրվաններ (վերականգնվել են 2007 թ.)․ այստեղ անցնում են տոնականգները և հանրային արարողությունները։',
+    card_republic_square_fact_author: 'Ալեքսանդր Թամանյան և հետագա հեղինակներ',
+    card_republic_square_fact_commissioned: 'Երևանի գլխավոր քաղաքապատման պլան',
+    card_republic_square_fact_scale: '3 հա, 5 շենքերի համալիր',
+    card_republic_square_fact_unveiled: '1977 (ամբողջական համալիր)',
   },
   ru: {
     card_republic_square_lead: 'Сердце Еревана — площадь Республики.',
     card_republic_square_why:
       'Главная площадь с 1920-х годов: правительственные здания, фонтаны и скульптуры вокруг.',
     card_republic_square_story:
-      'Здесь проходят праздники, концерты и народные события; ансамбль площади стал визитной карточкой города.',
-    card_republic_square_fact_author: 'Разные авторы (XX век)',
-    card_republic_square_fact_commissioned: 'Градостроительство Еревана',
-    card_republic_square_fact_scale: 'Главная площадь',
-    card_republic_square_fact_unveiled: 'XX век',
+      'Ансамбль по проекту Александра Таманяна (1926–1977) включает правительственные здания, галерею и музыкальные фонтаны (обновлены в 2007). Здесь проходят праздники и массовые события.',
+    card_republic_square_fact_author: 'Александр Таманян и др.',
+    card_republic_square_fact_commissioned: 'Генплан Еревана',
+    card_republic_square_fact_scale: '3 га, ансамбль из 5 зданий',
+    card_republic_square_fact_unveiled: '1977 (завершение ансамбля)',
   },
   en: {
     card_republic_square_lead: 'The heart of Yerevan — Republic Square.',
     card_republic_square_why:
       'The main square since the 1920s, framed by government buildings, fountains, and sculptures.',
     card_republic_square_story:
-      'Hosts holidays, concerts, and public events; the square’s ensemble is the city’s iconic center.',
-    card_republic_square_fact_author: 'Various artists (20th c.)',
-    card_republic_square_fact_commissioned: 'Yerevan urban planning',
-    card_republic_square_fact_scale: 'Main square',
-    card_republic_square_fact_unveiled: '20th century',
+      'Alexander Tamanyan’s master plan (1926–1977) shaped the government buildings, museums, and musical fountains (renovated 2007). The square hosts national holidays and public gatherings.',
+    card_republic_square_fact_author: 'Alexander Tamanyan et al.',
+    card_republic_square_fact_commissioned: 'Yerevan master plan',
+    card_republic_square_fact_scale: '3 ha, five-building ensemble',
+    card_republic_square_fact_unveiled: '1977 (ensemble completed)',
   },
 };
 
 const revived = {
   hy: {
-    card_revived_armenia_lead: 'Ժամանակակից քանդակ՝ նոր Հայաստանի մասին։',
+    card_revived_armenia_lead:
+      '«Վերածնված Հայաստան» սյունը՝ 1967 թվականի հուշարձան, որից հետո կառուցվեց Կասկադը։',
     card_revived_armenia_why:
-      'Կասկադի մոտակայքում՝ տեսանելի վայր քաղաքացիների և զբոսաշրջիչների համար։',
+      'Կանակերի սարավերցում, Կասկադի վերին հարթակում․ տեսարան դեպի Արարատ և ամբողջ Երևան։',
     card_revived_armenia_story:
-      '«Վերածնված Հայաստան» արձանը խորհրդանշում է կյանքի շարունակությունը և կառուցողականությունը անկախության շրջանում։',
-    card_revived_armenia_fact_author: 'Ժամանակակից հեղինակ',
-    card_revived_armenia_fact_commissioned: 'Հանրային արվեստի ծրագիր',
-    card_revived_armenia_fact_scale: 'Քաղաքային քանդակ',
-    card_revived_armenia_fact_unveiled: '2010',
+      '1967 թվականին բացվել է Սարգիս Գուրզադյանի և Ջիմ Թորոսյանի սյունը (~50 մ)՝ ավարտելով քաղաքի հյուսիս-հարավ առանցքը։ Դրանից հետո մտածեցին սանդուղքով կապել կենտրոնը հուշարձանի հետ․ Կասկադի կառուցումը սկսվեց 1970-ականներին։ 2009 թվականին բացվեց «Կաֆեսջյան» արվեստի կենտրոնը՝ արդեն որպես ամբողջ համալիրի մաս։',
+    card_revived_armenia_fact_author: 'Սարգիս Գուրզադյան, Ջիմ Թորոսյան',
+    card_revived_armenia_fact_commissioned:
+      'Խորհրդային Հայաստան, քաղաքային հուշարձանային ծրագիր',
+    card_revived_armenia_fact_scale: 'Սյուն ~50 մ (համալիր ~65 մ)',
+    card_revived_armenia_fact_unveiled: '1967',
   },
   ru: {
-    card_revived_armenia_lead: 'Современная скульптура о новой Армении.',
-    card_revived_armenia_why: 'Рядом с Каскадом — заметное место для прогулок.',
+    card_revived_armenia_lead:
+      'Обелиск «Возрождённая Армения» — памятник 1967 года, после которого строили Каскад.',
+    card_revived_armenia_why:
+      'На плато Канакера, на вершине Каскада — панорама на Арарат и Ереван.',
     card_revived_armenia_story:
-      '«Возрождённая Армения» символизирует продолжение жизни и созидание в эпоху независимости.',
-    card_revived_armenia_fact_author: 'Современный автор',
-    card_revived_armenia_fact_commissioned: 'Городская скульптура',
-    card_revived_armenia_fact_scale: 'Городская скульптура',
-    card_revived_armenia_fact_unveiled: '2010',
+      'В 1967 г. открыт обелиск Гурзадяна и Торосяна (~50 м), завершивший главную ось города. Затем решили связать центр лестницей с монументом — строительство Каскада началось в 1970‑х. В 2009 г. открылся центр Кафесджян как часть уже готового комплекса, а не как дата открытия самого обелиска.',
+    card_revived_armenia_fact_author: 'Саркис Гурзадян, Джим Торосян',
+    card_revived_armenia_fact_commissioned:
+      'Советская Армения, городская мемориальная программа',
+    card_revived_armenia_fact_scale: 'Обелиск ~50 м (комплекс ~65 м)',
+    card_revived_armenia_fact_unveiled: '1967',
   },
   en: {
-    card_revived_armenia_lead: 'A contemporary symbol of a new Armenia.',
-    card_revived_armenia_why: 'Near the Cascade — visible to walkers and visitors.',
+    card_revived_armenia_lead:
+      'The “Revived Armenia” obelisk — unveiled in 1967, before the Cascade was built below it.',
+    card_revived_armenia_why:
+      'On the Kanaker plateau at the top of the Cascade, with views of Ararat and Yerevan.',
     card_revived_armenia_story:
-      '“Revived Armenia” expresses continuity and building in the independence era.',
-    card_revived_armenia_fact_author: 'Contemporary artist',
-    card_revived_armenia_fact_commissioned: 'Public art program',
-    card_revived_armenia_fact_scale: 'Urban sculpture',
-    card_revived_armenia_fact_unveiled: '2010',
+      'The obelisk by Sargis Gurzadyan and Jim Torosyan was unveiled in 1967 (~50 m), completing the city’s main north–south axis. The idea of a stairway to the monument led to the Cascade (construction from the 1970s). The Cafesjian Center opened in 2009 as part of the restored complex — not the obelisk’s unveiling date.',
+    card_revived_armenia_fact_author: 'Sargis Gurzadyan, Jim Torosyan',
+    card_revived_armenia_fact_commissioned:
+      'Soviet Armenia, urban memorial program',
+    card_revived_armenia_fact_scale: 'Obelisk ~50 m (ensemble ~65 m)',
+    card_revived_armenia_fact_unveiled: '1967',
+  },
+};
+
+const ironFountain = {
+  hy: {
+    card_iron_fountain_lead:
+      'Գյումրիի «Երկաթե շատրվանը» — սովետական մոդեռնի խորհրդանիշ և քաղաքի կենսունակության պատկեր։',
+    card_iron_fountain_why:
+      'Գյումրիի կենտրոնից դուրս, Շիրակի մարզում․ հայտնի է որպես «ՈՒՕ-շատրվան» և «Ընկերության շատրվան»։',
+    card_iron_fountain_story:
+      '1982 թվականին Արթուր Թարխանյանի նախագծով կառուցված մետաղական կառույցը հիշեցնում է թիթեռի թևեր բացող տիեզերական նավ․ 1988 թվականի երկրաշարժից հետո շատրվանը դադարեց աշխատել, բայց կանգնեց և դարձավ քաղաքի հիշողության կետ։',
+    card_iron_fountain_fact_author: 'Արթուր Թարխանյան',
+    card_iron_fountain_fact_commissioned: 'Գյումրիի քաղաքային ծրագիր',
+    card_iron_fountain_fact_scale: 'Մետաղ և բետոն, ~14 մ',
+    card_iron_fountain_fact_unveiled: '1982',
+  },
+  ru: {
+    card_iron_fountain_lead:
+      '«Железный фонтан» в Гюмри — символ советского модерна и стойкости города.',
+    card_iron_fountain_why:
+      'На окраине Гюмри, Ширакская область; известен как «НЛО-фонтан» и «Фонтан дружбы».',
+    card_iron_fountain_story:
+      'Металлический фонтан по проекту Артура Тарханяна (1982) напоминает космический корабль с раскрывающимися «крыльями». После землетрясения 1988 г. перестал работать, но устоял и стал местом памяти и гордости жителей.',
+    card_iron_fountain_fact_author: 'Артур Тарханян',
+    card_iron_fountain_fact_commissioned: 'Градостроительная программа Гюмри',
+    card_iron_fountain_fact_scale: 'Металл и бетон, ~14 м',
+    card_iron_fountain_fact_unveiled: '1982',
+  },
+  en: {
+    card_iron_fountain_lead:
+      'Gyumri’s Iron Fountain — a Soviet modernist icon and symbol of endurance.',
+    card_iron_fountain_why:
+      'On the edge of Gyumri, Shirak Province; nicknamed the “UFO” or Friendship Fountain.',
+    card_iron_fountain_story:
+      'Built in 1982 to Artur Tarkhanyan’s design, the metal structure unfolds like butterfly wings around a “spaceship.” It stopped working after the 1988 earthquake but survived and became a beloved memorial landmark.',
+    card_iron_fountain_fact_author: 'Artur Tarkhanyan',
+    card_iron_fountain_fact_commissioned: 'Gyumri urban development program',
+    card_iron_fountain_fact_scale: 'Metal & concrete, ~14 m',
+    card_iron_fountain_fact_unveiled: '1982',
+  },
+};
+
+const vardanMamikonyan = {
+  hy: {
+    card_vardan_mamikonyan_lead:
+      'Վարդան Մամիկոնյանի հեծյալ արձանը՝ V դարի մարտն Ավարայրի ճակատամարտի հերոսի պատիվ։',
+    card_vardan_mamikonyan_why:
+      'Կլորայնի պուրակում, Վարդանանց փողոցի մոտ՝ քաղաքի կենտրոնական զբոսայգում։',
+    card_vardan_mamikonyan_story:
+      '1975 թվականին բացվել է Երվանդ Քոչարի և Ստեփան Քյուրկչյանի ստեղծած հուշարձանը․ բրոնզե հեծյալ արձանը (~17 մ) պատկերում է Մամիկոնյանին հարձակման պահին։ Հուշարձանը հիշեցնում է 451 թ. Ավարայրի ճակատամարտը և հայ հոգևոր ազատագրության պայքարը։',
+    card_vardan_mamikonyan_fact_author: 'Երվանդ Քոչար (քանդակ), Ստեփան Քյուրկչյան',
+    card_vardan_mamikonyan_fact_commissioned: 'Խորհրդային Հայաստանի պետություն',
+    card_vardan_mamikonyan_fact_scale: 'Բրոնզ և ավազակար, ~17 մ',
+    card_vardan_mamikonyan_fact_unveiled: '1975',
+  },
+  ru: {
+    card_vardan_mamikonyan_lead:
+      'Конный памятник Вардану Мамиконяну — герою битвы при Аварайре (451).',
+    card_vardan_mamikonyan_why:
+      'В Кольцевом парке у ул. Вардананц — в центральной городской зоне отдыха.',
+    card_vardan_mamikonyan_story:
+      'Открыт в 1975 г., скульптор Ерванд Кочар, архитектор Степан Кюркчян. Бронзовый всадник (~17 м) изображает полководца в момент атаки. Памятник напоминает о битве при Аварайре и борьбе за духовную свободу Армении.',
+    card_vardan_mamikonyan_fact_author: 'Ерванд Кочар, Степан Кюркчян',
+    card_vardan_mamikonyan_fact_commissioned: 'Советская Армения',
+    card_vardan_mamikonyan_fact_scale: 'Бронза и песчаник, ~17 м',
+    card_vardan_mamikonyan_fact_unveiled: '1975',
+  },
+  en: {
+    card_vardan_mamikonyan_lead:
+      'Equestrian monument to Vardan Mamikonyan — hero of the 451 Battle of Avarayr.',
+    card_vardan_mamikonyan_why:
+      'In Circular Park near Vardanants Street — a central green space in Yerevan.',
+    card_vardan_mamikonyan_story:
+      'Unveiled in 1975, sculpted by Yervand Kochar with architect Stepan Kyurkchyan. The ~17 m bronze rider shows Mamikonyan charging into battle, honoring the 451 Battle of Avarayr and Armenia’s fight for spiritual freedom.',
+    card_vardan_mamikonyan_fact_author: 'Yervand Kochar, Stepan Kyurkchyan',
+    card_vardan_mamikonyan_fact_commissioned: 'Soviet Armenian republic',
+    card_vardan_mamikonyan_fact_scale: 'Bronze & sandstone, ~17 m',
+    card_vardan_mamikonyan_fact_unveiled: '1975',
   },
 };
 
@@ -260,125 +349,179 @@ const curatedCards = {
   hy: {
     card_abovyan_lead: 'Խաչատուր Աբովյան — լուսավորիչ գրող, դպրոցի և գրականության հիմնադիր։',
     card_abovyan_why:
-      'Փողոցի սկիզբում, որը կրում է նրա անունը․ կապված է դպրոցական և մշակութային ավանդույթի հետ։',
+      'Աբովյան այգում, Աբովյան փողոցի սկզբում․ կենտրոնական հանրային այգի և հիշատակման վայր։',
     card_abovyan_story:
-      'Հուշարձանը հիշեցնում է, որ նոր հայ գրականությունը սկսվել է մանկական կրթությունից և հասարակական խոսքից։',
-    card_abovyan_fact_author: 'Քանդակագործական անհատականություն',
-    card_abovyan_fact_commissioned: 'Երևանի հանրություն',
+      '1950 թվականին Սուրեն Ստեփանյանի և Գևորգ Թամանյանի ստեղծած բրոնզե-գրանիտ հուշարձանը (9 մ) հիշեցնում է «Վերք Հայաստանի» վեպի և հայերեն դասական դպրոցական բարեփոխման հեղինակին։',
+    card_abovyan_fact_author: 'Սուրեն Ստեփանյան, Գևորգ Թամանյան',
+    card_abovyan_fact_commissioned: 'Երևանի քաղաքապետարան',
+    card_abovyan_fact_unveiled: '1950',
     card_abovyan_fact_life: '1809–1848',
-    card_komitas_lead: 'Կոմիտաս — հայ երաժշտության հիմնադիր և հավաքող։',
-    card_komitas_why: 'Օպերայի թատրոնի հրապարակում՝ մշակութային կենտրոնում։',
+    card_komitas_lead: 'Կոմիտաս — հայ երաժշտության հիմնադիր և ժողովրդական երգերի հավաքող։',
+    card_komitas_why:
+      'Կոնսերվատորիայի և օպերայի թատրոնի մոտ՝ Ազատության հրապարակի մշակութային գոտում։',
     card_komitas_story:
-      'Հուշարձանը պահպանում է հիշողությունը մեծ երաժշտագետի մասին, ով փրկեց հազարավոր ժողովրդական երգեր։',
-    card_komitas_fact_author: 'Քանդակագործ',
-    card_komitas_fact_commissioned: 'Խորհրդային Հայաստան',
+      '1988 թվականին բացված Արա Հարությունյանի բրոնզե հուշարձանը պատկերում է Կոմիտասին կանգնած կիսաբաց ծիրանենու տակ՝ մտորենք ցավի և հիշողության մեջ։ Հարգանք է երաժշտագետին, ով փրկեց հազարավոր հայկական մեղեդիներ։',
+    card_komitas_fact_author: 'Արա Հարությունյան, Ֆենիկս Դարբինյան',
+    card_komitas_fact_commissioned: 'Խորհրդային Հայաստանի մշակույթի նախարարություն',
     card_komitas_fact_life: '1869–1935',
-    card_komitas_fact_unveiled: '1969',
+    card_komitas_fact_unveiled: '1988',
     card_tumanyan_lead: 'Հովհաննես Թումանյան — «ողջ ժողովրդի բանաստեղծ»։',
-    card_tumanyan_why: 'Կարապի լճի մոտ՝ սիրելի զբոսայգի։',
+    card_tumanyan_why:
+      'Ազատության հրապարակում, Կարապի լճի մոտ՝ օպերայի թատրոնի դիմաց։',
     card_tumanyan_story:
-      'Քանդակը հիշեցնում է բանաստեղոծի դերը հայ մշակույթում և Երևանի գրական կյանքում։',
-    card_tumanyan_fact_author: 'Քանդակագործ',
-    card_tumanyan_fact_commissioned: 'Հանրային նախաձեռնություն',
+      '1957 թվականի նոյեմբերի 17-ին բացվել է Արա Սարգսյանի և Գրիգոր Աղաբաբյանի ստեղծած բրոնզե արձանը (8,55 մ)․ Թումանյանը նստած է գրքով ծունկերին։ «Անուշ» և հեքիաթները մինչև այսօր կարդացվում են այս հրապարակի մոտ։',
+    card_tumanyan_fact_author: 'Արա Սարգսյան, Գրիգոր Աղաբաբյան',
+    card_tumanyan_fact_commissioned: 'Երևանի գրական և հանրային միջոցառումներ',
     card_tumanyan_fact_life: '1869–1923',
-    card_sayat_nova_lead: 'Սայաթ-Նովա — աշուղ և բանաստեղծ։',
-    card_sayat_nova_why: 'Շատրվանի և համերգային տարածքի մոտ։',
+    card_tumanyan_fact_unveiled: '1957',
+    card_sayat_nova_lead: 'Սայաթ-Նովա — աշուղ, բանաստեղծ, բազմալեզու ստեղծագործ։',
+    card_sayat_nova_why:
+      'Մեսրոպ Մաշտոցի պող. 46, Սայաթ-Նովայի անվան երաժշտական դպրոցի դիմաց։',
     card_sayat_nova_story:
-      'Հուշարձանը կապում է հրապարակի երաժշտական կյանքը 18-րդ դարի աշուղական ավանդույթի հետ։',
-    card_sayat_nova_fact_author: 'Քանդակագործ',
+      '1963 թվականին Արա Հարությունյանի և Էդուարդ Սարապյանի հուշարձան-շատրվանը մարմարե պատի վրա կերտված է բանաստեղոծի դիմանկարը և նրա տողերը․ 1964 թվականին արվեստաբանը ստացել է ԽՍՀՄ Գեղարվեստի ակադեմիայի արծաթե մեդալ։',
+    card_sayat_nova_fact_author: 'Արա Հարությունյան, Էդուարդ Սարապյան',
     card_sayat_nova_fact_commissioned: 'Երևանի քաղաքապետարան',
     card_sayat_nova_fact_life: '1712–1795',
-    card_charents_lead: 'Եղիշե Չարենց — XX դարի վաղ բանաստեղծ։',
-    card_charents_why: 'Մաշտոցի պողոտայի գրական միջավայրում։',
+    card_sayat_nova_fact_unveiled: '1963',
+    card_charents_lead: 'Եղիշե Չարենց — XX դարի վաղ շրջանի մեծ բանաստեղծ։',
+    card_charents_why:
+      'Կլորայնի պուրակում՝ Սայաթ-Նովայի, Խանջյանի և Ալեք Մանուկյանի փողոցների խաչմերուկում։',
     card_charents_story:
-      'Հուշարձանը պահպանում է խոսքը այն բանաստեղծի մասին, ով միավորեց մոդեռնիզմն ու քաղաքացիականությունը։',
-    card_charents_fact_author: 'Քանդակագործ',
-    card_charents_fact_commissioned: 'Հանրային հիշատակ',
+      '1985 թվականի հոկտեմբերի 9-ին բացվել է Նիկողայոս Նիկողոսյանի և Ջիմ Թորոսյանի 18,5 մ բրոնզե համալիրը․ 40 աղբյուր՝ 40 կյանքի տարիներ, հավերժական կրակ և Չարենցի տողեր սյունակի վրա։',
+    card_charents_fact_author: 'Նիկողայոս Նիկողոսյան, Ջիմ Թորոսյան',
+    card_charents_fact_commissioned: 'Խորհրդային Հայաստանի մշակույթի նախարարություն',
     card_charents_fact_life: '1897–1937',
+    card_charents_fact_unveiled: '1985',
   },
   ru: {
     card_abovyan_lead: 'Хачатур Абовян — писатель-просветитель, основатель школы и литературы.',
-    card_abovyan_why: 'У начала одноимённой улицы, связанной со школьной традицией.',
+    card_abovyan_why: 'В парке Абовяна у начала одноимённой улицы — центральная зона отдыха.',
     card_abovyan_story:
-      'Памятник напоминает, что новая армянская литература началась с образования и гражданского слова.',
-    card_abovyan_fact_author: 'Скульптор',
-    card_abovyan_fact_commissioned: 'Общество Еревана',
+      'Бронзово-гранитный памятник (9 м) Сурена Степаняна и Геворга Таманяна открыт в 1950 г. Чествует автора «Раны Армении» и реформатора армянского школьного образования.',
+    card_abovyan_fact_author: 'Сурен Степанян, Геворг Таманян',
+    card_abovyan_fact_commissioned: 'Ереванский горсовет',
+    card_abovyan_fact_unveiled: '1950',
     card_abovyan_fact_life: '1809–1848',
     card_komitas_lead: 'Комитас — основатель армянской музыки и собиратель песен.',
-    card_komitas_why: 'У площади оперного театра — в культурном центре.',
+    card_komitas_why: 'У консерватории и оперного театра, на площади Свободы.',
     card_komitas_story:
-      'Памятник хранит память о музыканте, спасшем тысячи народных мелодий.',
-    card_komitas_fact_author: 'Скульптор',
-    card_komitas_fact_commissioned: 'Советская Армения',
+      'Бронзовый памятник Ары Арутюняна (1988) изображает Комитаса под цветущим абрикосом. Память о музыканте, сохранившем тысячи армянских мелодий.',
+    card_komitas_fact_author: 'Ара Арутюнян, Феникс Дарбинян',
+    card_komitas_fact_commissioned: 'Министерство культуры Армянской ССР',
     card_komitas_fact_life: '1869–1935',
-    card_komitas_fact_unveiled: '1969',
+    card_komitas_fact_unveiled: '1988',
     card_tumanyan_lead: 'Ованес Туманян — «всенародный поэт».',
-    card_tumanyan_why: 'У озера Кареп — любимый парк.',
+    card_tumanyan_why: 'На площади Свободы у Лебединого озера, напротив оперы.',
     card_tumanyan_story:
-      'Скульптура о роли поэта в армянской культуре и литературной жизни Еревана.',
-    card_tumanyan_fact_author: 'Скульптор',
-    card_tumanyan_fact_commissioned: 'Общественная инициатива',
+      '17 ноября 1957 г. открыта бронзовая скульптура Ары Саргсяна (8,55 м): поэт сидит с книгой на коленях. «Ануш» и сказки до сих пор читают у этого места.',
+    card_tumanyan_fact_author: 'Ара Саргсян, Григор Агабабян',
+    card_tumanyan_fact_commissioned: 'Ереванские литературные и общественные органы',
     card_tumanyan_fact_life: '1869–1923',
-    card_sayat_nova_lead: 'Саят-Нова — ашуг и поэт.',
-    card_sayat_nova_why: 'У театрально-концертной зоны.',
+    card_tumanyan_fact_unveiled: '1957',
+    card_sayat_nova_lead: 'Саят-Нова — ашуг, поэт, автор на нескольких языках.',
+    card_sayat_nova_why: 'пр. Маштоца, 46, у музыкальной школы имени Саят-Новы.',
     card_sayat_nova_story:
-      'Памятник связывает музыкальную жизнь площади с ашугской традицией XVIII века.',
-    card_sayat_nova_fact_author: 'Скульптор',
+      'Мемориальный фонтан Ары Арутюняна и Эдуарда Сарапяна (1963) с барельефом и строками поэта; в 1964 г. скульптор получил серебряную медаль Академии художеств СССР.',
+    card_sayat_nova_fact_author: 'Ара Арутюнян, Эдуард Сарапян',
     card_sayat_nova_fact_commissioned: 'Город Ереван',
     card_sayat_nova_fact_life: '1712–1795',
-    card_charents_lead: 'Егише Чаренц — поэт раннего XX века.',
-    card_charents_why: 'На проспекте Маштоца — литературная среда.',
+    card_sayat_nova_fact_unveiled: '1963',
+    card_charents_lead: 'Егише Чаренц — крупный поэт раннего XX века.',
+    card_charents_why:
+      'В Кольцевом парке на перекрёстке пр. Саят-Новы, ул. Ханджяна и А. Манукяна.',
     card_charents_story:
-      'Памятник о поэте, соединившем модернизм и гражданственность.',
-    card_charents_fact_author: 'Скульптор',
-    card_charents_fact_commissioned: 'Общественная память',
+      '9 октября 1985 г. открыт бронзовый ансамбль Никогайоса Никогайосяна и Джима Торосяна (18,5 м): 40 источников — 40 лет жизни, вечный огонь и строки Чаренца на колонне.',
+    card_charents_fact_author: 'Никогайос Никогайосян, Джим Торосян',
+    card_charents_fact_commissioned: 'Министерство культуры Армянской ССР',
     card_charents_fact_life: '1897–1937',
+    card_charents_fact_unveiled: '1985',
   },
   en: {
     card_abovyan_lead: 'Khachatur Abovyan — educator-writer, founder of modern schooling and literature.',
-    card_abovyan_why: 'At the start of the street named for him, tied to school tradition.',
+    card_abovyan_why: 'In Abovyan Park at the start of his namesake street — a central public garden.',
     card_abovyan_story:
-      'The monument recalls that modern Armenian literature grew from education and public speech.',
-    card_abovyan_fact_author: 'Sculptor',
-    card_abovyan_fact_commissioned: 'Civic Yerevan',
+      'The 9 m bronze-and-granite monument by Suren Stepanyan and Gevorg Tamanyan was unveiled in 1950, honoring the author of Wounds of Armenia and Armenian school reform.',
+    card_abovyan_fact_author: 'Suren Stepanyan, Gevorg Tamanyan',
+    card_abovyan_fact_commissioned: 'Yerevan city council',
+    card_abovyan_fact_unveiled: '1950',
     card_abovyan_fact_life: '1809–1848',
-    card_komitas_lead: 'Komitas — founder of Armenian music and collector of songs.',
-    card_komitas_why: 'By the opera house square — a cultural center.',
+    card_komitas_lead: 'Komitas — founder of Armenian music and collector of folk songs.',
+    card_komitas_why: 'By the conservatory and opera house on Freedom Square.',
     card_komitas_story:
-      'Honors the musician who preserved thousands of folk melodies.',
-    card_komitas_fact_author: 'Sculptor',
-    card_komitas_fact_commissioned: 'Soviet Armenia',
+      'Ara Harutyunyan’s 1988 bronze shows Komitas beneath a blossoming apricot tree in contemplation. It honors the scholar who saved thousands of Armenian melodies.',
+    card_komitas_fact_author: 'Ara Harutyunyan, Feniks Darbinyan',
+    card_komitas_fact_commissioned: 'Armenian SSR Ministry of Culture',
     card_komitas_fact_life: '1869–1935',
-    card_komitas_fact_unveiled: '1969',
+    card_komitas_fact_unveiled: '1988',
     card_tumanyan_lead: 'Hovhannes Tumanyan — the “all-people’s poet”.',
-    card_tumanyan_why: 'By Swan Lake — a beloved park.',
+    card_tumanyan_why: 'On Freedom Square by Swan Lake, facing the opera house.',
     card_tumanyan_story:
-      'The statue reflects the poet’s place in Armenian culture and Yerevan’s literary life.',
-    card_tumanyan_fact_author: 'Sculptor',
-    card_tumanyan_fact_commissioned: 'Public initiative',
+      'Unveiled 17 November 1957: Ara Sargsyan’s 8.55 m bronze shows the poet seated with a book. Anush and his fairy tales are still read near this square.',
+    card_tumanyan_fact_author: 'Ara Sargsyan, Grigor Aghababyan',
+    card_tumanyan_fact_commissioned: 'Yerevan literary and civic institutions',
     card_tumanyan_fact_life: '1869–1923',
-    card_sayat_nova_lead: 'Sayat-Nova — ashug and poet.',
-    card_sayat_nova_why: 'Near the theater and concert area.',
+    card_tumanyan_fact_unveiled: '1957',
+    card_sayat_nova_lead: 'Sayat-Nova — ashug, poet, multilingual songwriter.',
+    card_sayat_nova_why: '46 Mesrop Mashtots Ave., by Sayat-Nova Music School No. 2.',
     card_sayat_nova_story:
-      'Links the square’s musical life to the 18th-century ashug tradition.',
-    card_sayat_nova_fact_author: 'Sculptor',
+      'The 1963 memorial fountain by Ara Harutyunyan and Eduard Sarapyan features his portrait and verses in marble; Harutyunyan won a USSR Academy of Arts silver medal in 1964.',
+    card_sayat_nova_fact_author: 'Ara Harutyunyan, Eduard Sarapyan',
     card_sayat_nova_fact_commissioned: 'City of Yerevan',
     card_sayat_nova_fact_life: '1712–1795',
-    card_charents_lead: 'Yeghishe Charents — poet of the early 20th century.',
-    card_charents_why: 'On Mashtots Avenue — literary setting.',
+    card_sayat_nova_fact_unveiled: '1963',
+    card_charents_lead: 'Yeghishe Charents — major poet of the early 20th century.',
+    card_charents_why:
+      'Circular Park at Sayat-Nova Ave., Khanjyan St., and Alek Manukyan St.',
     card_charents_story:
-      'Remembers the poet who united modernism and civic voice.',
-    card_charents_fact_author: 'Sculptor',
-    card_charents_fact_commissioned: 'Public remembrance',
+      'Opened 9 October 1985: Nikoghayos Nikoghosyan and Jim Torosyan’s 18.5 m bronze ensemble with 40 springs for 40 years of life, an eternal flame, and Charents’s verse on the column.',
+    card_charents_fact_author: 'Nikoghayos Nikoghosyan, Jim Torosyan',
+    card_charents_fact_commissioned: 'Armenian SSR Ministry of Culture',
     card_charents_fact_life: '1897–1937',
+    card_charents_fact_unveiled: '1985',
   },
 };
 
 function mergeLocales(...parts) {
   return {
-    hy: Object.assign({}, UI.hy, motherArmenia.hy, sasuntsi.hy, tsitsernakaberd.hy, republic.hy, revived.hy, curatedCards.hy, ...parts.map((p) => p.hy)),
-    ru: Object.assign({}, UI.ru, motherArmenia.ru, sasuntsi.ru, tsitsernakaberd.ru, republic.ru, revived.ru, curatedCards.ru, ...parts.map((p) => p.ru)),
-    en: Object.assign({}, UI.en, motherArmenia.en, sasuntsi.en, tsitsernakaberd.en, republic.en, revived.en, curatedCards.en, ...parts.map((p) => p.en)),
+    hy: Object.assign(
+      {},
+      UI.hy,
+      motherArmenia.hy,
+      sasuntsi.hy,
+      tsitsernakaberd.hy,
+      republic.hy,
+      revived.hy,
+      ironFountain.hy,
+      vardanMamikonyan.hy,
+      curatedCards.hy,
+      ...parts.map((p) => p.hy)
+    ),
+    ru: Object.assign(
+      {},
+      UI.ru,
+      motherArmenia.ru,
+      sasuntsi.ru,
+      tsitsernakaberd.ru,
+      republic.ru,
+      revived.ru,
+      ironFountain.ru,
+      vardanMamikonyan.ru,
+      curatedCards.ru,
+      ...parts.map((p) => p.ru)
+    ),
+    en: Object.assign(
+      {},
+      UI.en,
+      motherArmenia.en,
+      sasuntsi.en,
+      tsitsernakaberd.en,
+      republic.en,
+      revived.en,
+      ironFountain.en,
+      vardanMamikonyan.en,
+      curatedCards.en,
+      ...parts.map((p) => p.en)
+    ),
   };
 }
 

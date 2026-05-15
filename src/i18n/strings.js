@@ -48,7 +48,7 @@ export const strings = {
     curatedMonumentStory_abovyan:
       'Հուշարձանը կանգնեցված է Երևանի կենտրոնում՝ Խաչատուր Աբովյանի անունը կրող փողոցի մուտքի մոտ․ տեղը կապված է գրողի անվամբ ինստիտուտի և դպրոցական ավանդույթի հետ։ Հանրային այս կետը հաճախ օգտագործվում է հիշատակման ծեսերի և զբոսաշրջային կանգառների համար։',
     curatedMonumentStory_komitas:
-      'Կոմիտասին նվիրված բրոնզե արձանը տեղադրված է Ա. Սպենդիարյանի անվան օպերայի և բալետի թատրոնին կից հրապարակում՝ որպես քաղաքային մշակութային կենտրոնի տեսարժան վայր։ Հուշարձանը բացվել է խորհրդային շրջանում և խորհրդանշում է հայ երաժշտության համաշխարհային ներկայությունը։',
+      'Արա Հարությունյանի բրոնզե հուշարձանը (1988) կանգնած է կոնսերվատորիայի և օպերայի թատրոնի մոտ՝ Ազատության հրապարակում։ Կոմիտասը պատկերված է կիսաբաց ծիրանենու տակ՝ որպես հիշողության և ցավի խորհրդանիշ։',
     curatedMonumentStory_tumanyan:
       'Թումանյանի հուշարձանը գտնվում է Կարապի լճի մոտ՝ քաղաքացիների սիրելի զբոսավայրում․ այստեղից բացվում է տեսարան դեպի շրջակա փողոցները։ Իբրև հանրային քանդակ այն հիշեցնում է հայ բանաստեղծության դիրքը նոր ժամանակների մշակույթում։',
     curatedMonumentStory_sayat_nova:
@@ -58,13 +58,13 @@ export const strings = {
     curatedBio_abovyan:
       'Խաչատուր Աբովյանը (1809–1848) հայ գրող և լուսավորիչ էր․ նրա վեպերը և դպրոցական բարեփոխումները կարևոր դեր ունեցան նոր հայ գրականության կազմավորման մեջ։ Երևանի այս հուշարձանը կանգնեցված է նրա անունը կրող փողոցի սկզբում՝ որպես հարգանքի նշան դեպի դասական դպրոց և ինստիտուտ, որոնք նույնպես կրում են նրա անունը։',
     curatedBio_komitas:
-      'Սողոմոն Գևորգյան՝ Կոմիտաս (1869–1935), կոմպոզիտոր և հայ երաժշտության հետազոտող․ հավաքել և համակարգել է հայ ժողովրդական երգերը։ Հուշարձանը (առաջին բացումը՝ մոտ 1969 թ.) գտնվում է օպերայի և բալետի թատրոնի մոտ՝ որպես կենդանի հիշատակում նրա ներդրումը համաշխարհային երաժշտության մեջ։',
+      'Սողոմոն Գևորգյան՝ Կոմիտաս (1869–1935), կոմպոզիտոր և հայ երաժշտության հետազոտող․ հավաքել և համակարգել է հայ ժողովրդական երգերը։ 1988 թվականին բացված հուշարձանը գտնվում է օպերայի և կոնսերվատորիայի մոտ՝ որպես կենդանի հիշատակում նրա ներդրումը համաշխարհային երաժշտության մեջ։',
     curatedBio_tumanyan:
-      'Հովհաննես Թումանյանը (1869–1923) հայ գրականության ամենահայտնի բանաստեղծներից մեկն է․ հայտնի են «Անուշ» պոյմանը, հեքիաթները և հասարակական գործունեությունը։ Այս հուշարձանը հարգանքի նշան է նրա՝ որպես «ողջ ժողովրդի բանաստեղծ» դիրքի։',
+      'Հովհաննես Թումանյանը (1869–1923) հայ գրականության ամենահայտնի բանաստեղծներից մեկն է․ հայտնի են «Անուշ» պոյմանը, հեքիաթները և հասարակական գործունեությունը։ 1957 թվականին բացված արձանը Ազատության հրապարակում հարգանք է նրա՝ որպես «ողջ ժողովրդի բանաստեղծ» դիրքի։',
     curatedBio_sayat_nova:
-      'Սայաթ-Նովան (1712–1795) հայ աշուղ էր և բանաստեղծ․ խողովակային երգ («աշուղական») ժանրի խոշոր գործիչ։ Հուշարձանը գտնվում է Սայաթ-Նովայի անունը կրող շատրվանի ու համերգային տարածքի մոտ՝ նշելով նրա տեղը հայ երաժշտական մշակույթում։',
+      'Սայաթ-Նովան (1712–1795) հայ աշուղ էր և բանաստեղծ․ խողովակային երգ («աշուղական») ժանրի խոշոր գործիչ։ 1963 թվականին բացված հուշարձան-շատրվանը Մաշտոցի պողոտայում նշում է նրա տեղը հայ երաժշտական մշակույթում։',
     curatedBio_charents:
-      'Եղիշե Չարենցը (1897–1937) XX դարի վաղ շրջանի հայ բանաստեղծ էր․ ստեղծագործություններում համատեղել է մոդեռնիզմը և քաղաքացիական թեմաները։ Մաշտոցի պողոտայի այս հուշարձանը կոչված է պահպանել նրա գաղափարական ժառանգությունը ու ընթերցողներին մոտեցնել գրողին։',
+      'Եղիշե Չարենցը (1897–1937) XX դարի վաղ շրջանի հայ բանաստեղծ էր․ ստեղծագործություններում համատեղել է մոդեռնիզմը և քաղաքացիական թեմաները։ 1985 թվականին բացված հուշահամալիրը Կլորայնի պուրակում պահպանում է նրա գաղափարական ժառանգությունը։',
     permissionTitle: 'Թույլտվություն',
     permissionMessage: 'Խնդրում ենք թույլատրել տեղադրության հասանելիությունը։',
     emptyStatueTitle: 'Արձան չգտնվեց',
@@ -267,7 +267,7 @@ export const strings = {
     curatedMonumentStory_abovyan:
       'Памятник стоит у начала улицы Абовяна в центре Еревана — там, где имя писателя связано с институтом и школами. Это популярная городская точка для памятных акций и туристических остановок.',
     curatedMonumentStory_komitas:
-      'Скульптура Комитаса установлена у здания театра оперы и балета имени Спендиарова — в сердце культурного квартала. Памятник открыт в советский период и подчёркивает связь армянской музыки с мировой сценой.',
+      'Бронзовый памятник Ары Арутюняна (1988) у консерватории и оперного театра на площади Свободы. Комитас изображён под цветущим абрикосом — символ памяти и скорби.',
     curatedMonumentStory_tumanyan:
       'Монумент Туманяну расположен у Лебединого озера — любимого места прогулок; открываются виды на окрестные улицы. Как городская скульптура он подчёркивает роль поэта в новой армянской культуре.',
     curatedMonumentStory_sayat_nova:
@@ -277,13 +277,13 @@ export const strings = {
     curatedBio_abovyan:
       'Хачатур Абовян (1809–1848) — писатель и просветитель, один из основоположников новой армянской литературы; автор «Записок отчего человека» и участник школьной реформы. Памятник у подножия улицы Абовяна в Ереване соотнесён с его именем и с институтом, напоминая о вкладе в культуру и образование.',
     curatedBio_komitas:
-      'Комитас (Согомон Геворкян, 1869–1935) — композитор и этномузыколог, собиратель армянского фольклора. Скульптура у оперного театра (часто указывают открытие около 1969 года) символизирует его роль в сохранении и популяризации армянской музыки.',
+      'Комитас (Согомон Геворкян, 1869–1935) — композитор и этномузыколог, собиратель армянского фольклора. Памятник 1988 года у оперы и консерватории символизирует его роль в сохранении армянской музыки.',
     curatedBio_tumanyan:
-      'Ованес Туманян (1869–1923) — поэт, автор «Ануша», сказок и эпоса. Памятник у Лебединого озера отражает его значение как «всенародного поэта» в новой армянской литературе.',
+      'Ованес Туманян (1869–1923) — поэт, автор «Ануша», сказок и эпоса. Памятник 1957 года на площади Свободы отражает его значение как «всенародного поэта».',
     curatedBio_sayat_nova:
-      'Саят-Нова (1712–1795) — ашуг и поэт, мастер любовной лирики. Мемориал у музыкального комплекса его имени отмечает его место в истории армянской и кавказской музыкальной традиции.',
+      'Саят-Нова (1712–1795) — ашуг и поэт, мастер любовной лирики. Мемориальный фонтан 1963 года на пр. Маштоца отмечает его место в армянской музыкальной традиции.',
     curatedBio_charents:
-      'Егише Чаренц (1897–1937) — поэт XX века, сочетавший модернизм и гражданскую тематику. Памятник на проспекте Месропа Маштоца связывает жителей города с его литературным наследием.',
+      'Егише Чаренц (1897–1937) — поэт XX века, сочетавший модернизм и гражданскую тематику. Мемориальный комплекс 1985 года в Кольцевом парке связывает город с его литературным наследием.',
     permissionTitle: 'Доступ',
     permissionMessage: 'Разрешите доступ к геолокации.',
     emptyStatueTitle: 'Нет памятников',
@@ -486,7 +486,7 @@ export const strings = {
     curatedMonumentStory_abovyan:
       'The monument stands at the foot of Abovyan Street in central Yerevan, tied to the writer’s name through nearby schools and institutes. It is a familiar civic spot for remembrance gatherings and walking tours.',
     curatedMonumentStory_komitas:
-      'Komitas’s bronze statue sits beside the Spendiaryan Opera and Ballet Theatre — a landmark of the city’s arts quarter. Unveiled in the Soviet era, it marks Armenian music’s place on the world stage.',
+      'Ara Harutyunyan’s 1988 bronze stands by the conservatory and opera on Freedom Square. Komitas is shown beneath a blossoming apricot tree — a symbol of memory and sorrow.',
     curatedMonumentStory_tumanyan:
       'Tumanyan’s memorial is set near Swan Lake, a busy leisure area with views into surrounding streets. As public sculpture it highlights the poet’s role in modern Armenian letters.',
     curatedMonumentStory_sayat_nova:
@@ -496,13 +496,13 @@ export const strings = {
     curatedBio_abovyan:
       'Khachatur Abovyan (1809–1848) was an Armenian writer and educator who helped shape modern Armenian literature and promoted schooling reforms. The monument stands near Abovyan Street and institutions bearing his name, honoring his cultural legacy.',
     curatedBio_komitas:
-      'Komitas (Soghomon Gevorkian, 1869–1935) was a composer and pioneering collector of Armenian folk music. The statue by the opera house (often dated around its 1969 unveiling) celebrates his worldwide influence on Armenian music.',
+      'Komitas (Soghomon Gevorkian, 1869–1935) was a composer and pioneering collector of Armenian folk music. The 1988 monument by the opera and conservatory celebrates his worldwide influence on Armenian music.',
     curatedBio_tumanyan:
-      'Hovhannes Tumanyan (1869–1923) is Armenia’s beloved poet, known for Anush, fairy tales, and civic poetry. The monument by Swan Lake reflects his role as a national storyteller.',
+      'Hovhannes Tumanyan (1869–1923) is Armenia’s beloved poet, known for Anush, fairy tales, and civic poetry. The 1957 monument on Freedom Square reflects his role as a national storyteller.',
     curatedBio_sayat_nova:
-      'Sayat-Nova (1712–1795) was an ashugh — poet-musician — central to Armenian lyrical tradition. The memorial near the music fountain named for him marks his place in regional musical heritage.',
+      'Sayat-Nova (1712–1795) was an ashugh — poet-musician — central to Armenian lyrical tradition. The 1963 memorial fountain on Mashtots Avenue marks his place in musical heritage.',
     curatedBio_charents:
-      'Yeghishe Charents (1897–1937) was a leading poet of the early 20th century, blending modernism with civic themes. The Mashtots Avenue monument keeps his literary legacy visible in the city.',
+      'Yeghishe Charents (1897–1937) was a leading poet of the early 20th century, blending modernism with civic themes. The 1985 memorial ensemble in Circular Park keeps his literary legacy visible in the city.',
     permissionTitle: 'Permission',
     permissionMessage: 'Please allow location access.',
     emptyStatueTitle: 'No statue found',
