@@ -321,7 +321,7 @@ export default function NavigationScreen({ route, navigation }) {
   const fixed = fixLikelyLatLonSwap(rawLat, rawLng);
   const targetLat = fixed.latitude;
   const targetLon = fixed.longitude;
-  const { unlockForSearchMode } = useFigures();
+  const { unlockForSearchMode, commitHudCollectionProgress } = useFigures();
   const mapRef = useRef(null);
   const hasTargetCoords =
     Number.isFinite(targetLat) && Number.isFinite(targetLon);
@@ -1103,6 +1103,7 @@ export default function NavigationScreen({ route, navigation }) {
         visible={unlockCelebration != null}
         onDismiss={() => {
           setUnlockCelebration(null);
+          commitHudCollectionProgress();
           navigation.goBack();
         }}
         onViewPress={

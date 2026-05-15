@@ -58,7 +58,7 @@ export default function MapScreen() {
   const insets = useSafeAreaInsets();
   const { colors } = useSettings();
   const { t, locale } = useLanguage();
-  const { figures, storageLoaded } = useFigures();
+  const { figures, storageLoaded, commitHudCollectionProgress } = useFigures();
 
   const routeRequestRef = useRef(null);
   const selectedIdRef = useRef(null);
@@ -650,7 +650,10 @@ export default function MapScreen() {
 
       <UnlockCelebrationOverlay
         visible={unlockCelebration != null}
-        onDismiss={() => setUnlockCelebration(null)}
+        onDismiss={() => {
+          setUnlockCelebration(null);
+          commitHudCollectionProgress();
+        }}
         onViewPress={
           unlockCelebration?.detailStatueId != null
             ? () => {

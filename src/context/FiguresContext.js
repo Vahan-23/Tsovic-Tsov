@@ -4,6 +4,7 @@ import React, {
   useContext,
   useEffect,
   useMemo,
+  useRef,
   useState,
 } from 'react';
 import { LayoutAnimation, Platform, UIManager } from 'react-native';
@@ -91,6 +92,9 @@ export function FiguresProvider({ children }) {
   const [statuesLoaded, setStatuesLoaded] = useState(false);
   const [statuesRefreshing, setStatuesRefreshing] = useState(false);
   const [discoveryHistory, setDiscoveryHistory] = useState([]);
+  /** Header chip — updates on load and after celebration «Continue», not on unlock. */
+  const [hudUnlockedCount, setHudUnlockedCount] = useState(0);
+  const hudInitialSyncedRef = useRef(false);
 
   const refreshStatues = useCallback(async () => {
     setStatuesRefreshing(true);
@@ -207,6 +211,8 @@ export function FiguresProvider({ children }) {
     setUnlocked3dIds(new Set());
     setUnlockedPulpulakIds(new Set());
     setDiscoveryHistory([]);
+    setHudUnlockedCount(0);
+    hudInitialSyncedRef.current = true;
     try {
       await AsyncStorage.multiRemove([
         STORAGE_KEY,
@@ -360,6 +366,17 @@ export function FiguresProvider({ children }) {
     [figures]
   );
   const totalCount = figures.length;
+  const storageLoaded = unlockedLoaded && statuesLoaded;
+
+  useEffect(() => {
+    if (!storageLoaded || hudInitialSyncedRef.current) return;
+    hudInitialSyncedRef.current = true;
+    setHudUnlockedCount(unlockedCount);
+  }, [storageLoaded, unlockedCount]);
+
+  const commitHudCollectionProgress = useCallback(() => {
+    setHudUnlockedCount(figures.filter((f) => f.unlocked).length);
+  }, [figures]);
 
   const isUnlockableId = useCallback(
     (rawId) => {
@@ -545,6 +562,8 @@ export function FiguresProvider({ children }) {
       pulpulaksForGrid,
       unlockedCount,
       totalCount,
+      hudUnlockedCount,
+      commitHudCollectionProgress,
       unlockById,
       unlockById3d,
       unlockPulpulakById,
@@ -556,7 +575,7 @@ export function FiguresProvider({ children }) {
       isUnlockableId,
       discoveryHistory,
       unlockedOnlyGridForMode,
-      storageLoaded: unlockedLoaded && statuesLoaded,
+      storageLoaded,
       statuesRefreshing,
       refreshStatues,
       resetCollectionProgress,
@@ -570,6 +589,8 @@ export function FiguresProvider({ children }) {
       pulpulaksForGrid,
       unlockedCount,
       totalCount,
+      hudUnlockedCount,
+      commitHudCollectionProgress,
       unlockById,
       unlockById3d,
       unlockPulpulakById,
@@ -581,8 +602,7 @@ export function FiguresProvider({ children }) {
       resolveCollectionItem,
       isUnlockableId,
       discoveryHistory,
-      unlockedLoaded,
-      statuesLoaded,
+      storageLoaded,
       statuesRefreshing,
       refreshStatues,
       resetCollectionProgress,

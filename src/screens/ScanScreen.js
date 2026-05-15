@@ -110,7 +110,7 @@ export default function ScanScreen({ navigation }) {
     [colors]
   );
   const { t } = useLanguage();
-  const { figures, unlockById } = useFigures();
+  const { figures, unlockById, commitHudCollectionProgress } = useFigures();
   const [isChecking, setIsChecking] = useState(false);
   const [unlockCelebration, setUnlockCelebration] = useState(null);
   const [statusText, setStatusText] = useState('');
@@ -280,6 +280,7 @@ export default function ScanScreen({ navigation }) {
         visible={unlockCelebration != null}
         onDismiss={() => {
           setUnlockCelebration(null);
+          commitHudCollectionProgress();
           navigation.goBack();
         }}
         onViewPress={

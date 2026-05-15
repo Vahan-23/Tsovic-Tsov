@@ -5,6 +5,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import MainBottomTabBar from '../components/MainBottomTabBar';
 import MainMenu from '../components/MainMenu';
 import WalkBankHudPill from '../components/WalkBankHudPill';
+import CollectionHudPill from '../components/CollectionHudPill';
 import { useLanguage } from '../context/LanguageContext';
 import { useSettings } from '../context/SettingsContext';
 import HomeScreen from '../screens/HomeScreen';
@@ -50,8 +51,9 @@ export default function MainTabNavigator() {
         hudRow: {
           flexDirection: 'row',
           alignItems: 'center',
+          flexWrap: 'wrap',
           marginTop: 6,
-          gap: 10,
+          gap: 8,
         },
         menuSlot: {
           marginLeft: 8,
@@ -70,6 +72,7 @@ export default function MainTabNavigator() {
             <Text style={styles.brand}>{t('appTitle')}</Text>
             <View style={styles.hudRow}>
               <WalkBankHudPill />
+              <CollectionHudPill />
             </View>
           </View>
           <View style={styles.menuSlot}>

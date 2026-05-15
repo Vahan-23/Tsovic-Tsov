@@ -42,6 +42,31 @@ const WOBBLE_Y_DEG = 6;
 
 const BTN = 200;
 const CORE = 158;
+const RING_FADE_IN_MS = 420;
+const RING_FADE_OUT_MS = 560;
+
+const RADAR_LAYOUT = {
+  default: {
+    wrapMarginTop: -26,
+    radarScaleMin: 0.58,
+    radarScaleMax: 1.42,
+    pulseOuterMax: 1.12,
+    pulseInnerMax: 1.08,
+    radarBorderMax: 5,
+    useStage: false,
+    stageSize: 0,
+  },
+  home: {
+    wrapMarginTop: 0,
+    radarScaleMin: 0.58,
+    radarScaleMax: 1.28,
+    pulseOuterMax: 1.08,
+    pulseInnerMax: 1.05,
+    radarBorderMax: 5,
+    useStage: false,
+    stageSize: 0,
+  },
+};
 
 function wait(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
@@ -71,12 +96,18 @@ function getDirectionLabel(bearing, directions) {
   return directions[index];
 }
 
-export default function DiscoverNearbyBlock({ navigation: navigationProp }) {
+export default function DiscoverNearbyBlock({
+  navigation: navigationProp,
+  layout = 'default',
+}) {
+  const radarLayout = RADAR_LAYOUT[layout] ?? RADAR_LAYOUT.default;
   const navigationFallback = useNavigation();
   const navigation = navigationProp ?? navigationFallback;
   const { t, stringsForLocale } = useLanguage();
   const { colors } = useSettings();
   const pulseAnim = useRef(new Animated.Value(0)).current;
+  /** 0 = idle rings, 1 = active radar sweep — crossfades both layers. */
+  const ringMode = useRef(new Animated.Value(0)).current;
   /** 0 → −deg, 0.5 → face-on, 1 → +deg — slow vertical-axis drift (before & after search). */
   const idleWobble = useRef(new Animated.Value(0)).current;
   const burstSpin = useRef(new Animated.Value(0)).current;
@@ -97,7 +128,12 @@ export default function DiscoverNearbyBlock({ navigation: navigationProp }) {
   const liveUserCoordsRef = useRef(null);
   liveUserCoordsRef.current = liveUserCoords;
   const modalMapRef = useRef(null);
-  const { radarTargetsForMode, storageLoaded, unlockForSearchMode } = useFigures();
+  const {
+    radarTargetsForMode,
+    storageLoaded,
+    unlockForSearchMode,
+    commitHudCollectionProgress,
+  } = useFigures();
   const { searchMode } = useSearchTarget();
 
   const targets = useMemo(
@@ -106,25 +142,54 @@ export default function DiscoverNearbyBlock({ navigation: navigationProp }) {
   );
 
   const directions = stringsForLocale.directions;
+  const radarActive = isChecking || windingUp;
 
   useEffect(() => {
+    Animated.timing(ringMode, {
+      toValue: radarActive ? 1 : 0,
+      duration: radarActive ? RING_FADE_IN_MS : RING_FADE_OUT_MS,
+      easing: Easing.inOut(Easing.cubic),
+      useNativeDriver: false,
+    }).start();
+  }, [radarActive, ringMode]);
+
+  const idleRingOpacity = useMemo(
+    () =>
+      ringMode.interpolate({
+        inputRange: [0, 0.4, 1],
+        outputRange: [1, 0.12, 0],
+      }),
+    [ringMode]
+  );
+
+  const activeRingOpacity = useMemo(
+    () =>
+      ringMode.interpolate({
+        inputRange: [0, 0.18, 1],
+        outputRange: [0, 0.55, 1],
+      }),
+    [ringMode]
+  );
+
+  useEffect(() => {
+    if (radarActive) return undefined;
     const loop = Animated.loop(
       Animated.sequence([
         Animated.timing(pulseAnim, {
           toValue: 1,
           duration: 850,
-          useNativeDriver: true,
+          useNativeDriver: false,
         }),
         Animated.timing(pulseAnim, {
           toValue: 0,
           duration: 850,
-          useNativeDriver: true,
+          useNativeDriver: false,
         }),
       ])
     );
     loop.start();
     return () => loop.stop();
-  }, [pulseAnim]);
+  }, [radarActive, pulseAnim]);
 
   /** Idle: smooth slow rotateY sway — pauses only during tap flip / radar. */
   useEffect(() => {
@@ -157,31 +222,44 @@ export default function DiscoverNearbyBlock({ navigation: navigationProp }) {
   }, [isChecking, windingUp, idleWobble]);
 
   useEffect(() => {
-    if (!isChecking) {
-      radarLoopsRef.current.forEach((loop) => loop.stop());
-      radarLoopsRef.current = [];
-      radarAnims.forEach((value) => value.setValue(0));
-      return;
-    }
+    if (!radarActive) return undefined;
 
+    radarLoopsRef.current.forEach((loop) => loop.stop());
     radarLoopsRef.current = radarAnims.map((value, index) =>
       Animated.loop(
         Animated.timing(value, {
           toValue: 1,
           duration: 1500,
           delay: index * 140,
+          easing: Easing.out(Easing.quad),
           useNativeDriver: false,
         })
       )
     );
-
     radarLoopsRef.current.forEach((loop) => loop.start());
 
-    return () => {
+    return undefined;
+  }, [radarActive, radarAnims]);
+
+  useEffect(() => {
+    if (radarActive) return undefined;
+
+    const timeout = setTimeout(() => {
       radarLoopsRef.current.forEach((loop) => loop.stop());
       radarLoopsRef.current = [];
-    };
-  }, [isChecking, radarAnims]);
+      radarAnims.forEach((value) => value.setValue(0));
+    }, RING_FADE_OUT_MS);
+
+    return () => clearTimeout(timeout);
+  }, [radarActive, radarAnims]);
+
+  useEffect(
+    () => () => {
+      radarLoopsRef.current.forEach((loop) => loop.stop());
+      radarLoopsRef.current = [];
+    },
+    []
+  );
 
   useEffect(() => {
     if (!isChecking) return undefined;
@@ -528,130 +606,146 @@ export default function DiscoverNearbyBlock({ navigation: navigationProp }) {
     return null;
   }
 
-  return (
-    <View style={styles.wrap}>
-      <Pressable
-        style={({ pressed }) => [
-          styles.scanButton,
-          pressed && styles.scanButtonPressed,
-        ]}
-        onPress={onMedallionPress}
-        disabled={isChecking || windingUp}
-      >
-        {/* Flat rings — always perfect circles, geometric center = button center */}
-        <View style={styles.ringLayer} pointerEvents="none">
-          {isChecking ? (
-            <>
-              {radarAnims.map((radar, idx) => (
-                <Animated.View
-                  key={`radar-${idx}`}
-                  style={[
-                    styles.radarWave,
-                    {
-                      borderWidth: radar.interpolate({
-                        inputRange: [0, 1],
-                        outputRange: [1, 5],
-                      }),
-                      opacity: radar.interpolate({
-                        inputRange: [0, 0.7, 1],
-                        outputRange: [0.75, 0.38, 0],
-                      }),
-                      transform: [
-                        {
-                          scale: radar.interpolate({
-                            inputRange: [0, 1],
-                            outputRange: [0.58, 1.42],
-                          }),
-                        },
+  const wrapStyle = [
+    styles.wrap,
+    { marginTop: radarLayout.wrapMarginTop },
+    radarLayout.useStage && styles.wrapHome,
+  ];
+  const medallion = (
+    <Pressable
+      style={({ pressed }) => [
+        styles.scanButton,
+        pressed && styles.scanButtonPressed,
+      ]}
+      onPress={onMedallionPress}
+      disabled={isChecking || windingUp}
+    >
+      <View style={styles.ringLayer} pointerEvents="none">
+        <Animated.View
+          pointerEvents="none"
+          style={[
+            styles.pulseRingOuter,
+            { borderColor: colors.primary },
+            {
+              opacity: Animated.multiply(
+                pulseAnim.interpolate({
+                  inputRange: [0, 1],
+                  outputRange: [0.45, 0.15],
+                }),
+                idleRingOpacity
+              ),
+              transform: [
+                {
+                  scale: pulseAnim.interpolate({
+                    inputRange: [0, 1],
+                    outputRange: [1, radarLayout.pulseOuterMax],
+                  }),
+                },
+              ],
+            },
+          ]}
+        />
+        <Animated.View
+          pointerEvents="none"
+          style={[
+            styles.pulseRingInner,
+            { borderColor: colors.primaryMuted },
+            {
+              opacity: Animated.multiply(
+                pulseAnim.interpolate({
+                  inputRange: [0, 1],
+                  outputRange: [0.55, 0.22],
+                }),
+                idleRingOpacity
+              ),
+              transform: [
+                {
+                  scale: pulseAnim.interpolate({
+                    inputRange: [0, 1],
+                    outputRange: [1, radarLayout.pulseInnerMax],
+                  }),
+                },
+              ],
+            },
+          ]}
+        />
+        {radarAnims.map((radar, idx) => (
+          <Animated.View
+            key={`radar-${idx}`}
+            style={[
+              styles.radarWave,
+              {
+                borderWidth: radar.interpolate({
+                  inputRange: [0, 1],
+                  outputRange: [1, radarLayout.radarBorderMax],
+                }),
+                opacity: Animated.multiply(
+                  radar.interpolate({
+                    inputRange: [0, 0.7, 1],
+                    outputRange: [0.75, 0.38, 0],
+                  }),
+                  activeRingOpacity
+                ),
+                transform: [
+                  {
+                    scale: radar.interpolate({
+                      inputRange: [0, 1],
+                      outputRange: [
+                        radarLayout.radarScaleMin,
+                        radarLayout.radarScaleMax,
                       ],
-                    },
-                  ]}
-                />
-              ))}
-            </>
-          ) : (
-            <>
-              <Animated.View
-                pointerEvents="none"
-                style={[
-                  styles.pulseRingOuter,
-                  { borderColor: colors.primary },
-                  {
-                    opacity: pulseAnim.interpolate({
-                      inputRange: [0, 1],
-                      outputRange: [0.45, 0.15],
                     }),
-                    transform: [
-                      {
-                        scale: pulseAnim.interpolate({
-                          inputRange: [0, 1],
-                          outputRange: [1, 1.12],
-                        }),
-                      },
-                    ],
                   },
-                ]}
-              />
-              <Animated.View
-                pointerEvents="none"
-                style={[
-                  styles.pulseRingInner,
-                  { borderColor: colors.primaryMuted },
-                  {
-                    opacity: pulseAnim.interpolate({
-                      inputRange: [0, 1],
-                      outputRange: [0.55, 0.22],
-                    }),
-                    transform: [
-                      {
-                        scale: pulseAnim.interpolate({
-                          inputRange: [0, 1],
-                          outputRange: [1, 1.08],
-                        }),
-                      },
-                    ],
-                  },
-                ]}
-              />
-            </>
-          )}
-        </View>
+                ],
+              },
+            ]}
+          />
+        ))}
+      </View>
 
-        {/* Core only: idle wobble + tap = full 3D rotateY flip */}
-        <Animated.View style={[styles.core3DHost, coreOuter3DStyle]}>
-          <Animated.View style={coreInnerBurstStyle}>
-            <View
-              style={[
-                styles.scanButtonCore,
-                { backgroundColor: colors.radarCore },
-              ]}
-            >
-              {isChecking ? (
-                <Animated.Image
-                  source={SEARCH_ICONS[searchIconIndex]}
-                  style={[styles.searchCycleIcon, { opacity: searchIconOpacity }]}
-                />
-              ) : (
-                <Text
-                  style={[
-                    styles.scanButtonIcon,
-                    { color: colors.radarTextOnCore },
-                  ]}
-                >
-                  ⌕
-                </Text>
-              )}
-              {!isChecking ? (
-                <Text style={[styles.scanButtonText, { color: colors.radarTextOnCore }]}>
-                  {t('discoverSearch')}
-                </Text>
-              ) : null}
-            </View>
-          </Animated.View>
+      <Animated.View style={[styles.core3DHost, coreOuter3DStyle]}>
+        <Animated.View style={coreInnerBurstStyle}>
+          <View
+            style={[
+              styles.scanButtonCore,
+              { backgroundColor: colors.radarCore },
+            ]}
+          >
+            {isChecking ? (
+              <Animated.Image
+                source={SEARCH_ICONS[searchIconIndex]}
+                style={[styles.searchCycleIcon, { opacity: searchIconOpacity }]}
+              />
+            ) : (
+              <Text
+                style={[
+                  styles.scanButtonIcon,
+                  { color: colors.radarTextOnCore },
+                ]}
+              >
+                ⌕
+              </Text>
+            )}
+            {!isChecking ? (
+              <Text style={[styles.scanButtonText, { color: colors.radarTextOnCore }]}>
+                {t('discoverSearch')}
+              </Text>
+            ) : null}
+          </View>
         </Animated.View>
-      </Pressable>
+      </Animated.View>
+    </Pressable>
+  );
+
+  return (
+    <View style={wrapStyle}>
+      {medallion}
       <Text
-        style={[styles.scanHint, { color: colors.textSecondary }]}
+        style={[
+          styles.scanHint,
+          radarLayout.useStage && styles.scanHintHome,
+          { color: colors.textSecondary },
+        ]}
       >
         {isChecking
           ? t('discoverSearching')
@@ -764,7 +858,10 @@ export default function DiscoverNearbyBlock({ navigation: navigationProp }) {
 
       <UnlockCelebrationOverlay
         visible={unlockCelebration != null}
-        onDismiss={() => setUnlockCelebration(null)}
+        onDismiss={() => {
+          setUnlockCelebration(null);
+          commitHudCollectionProgress();
+        }}
         onViewPress={
           unlockCelebration?.detailStatueId != null
             ? () => {
@@ -790,7 +887,9 @@ const styles = StyleSheet.create({
   wrap: {
     alignItems: 'center',
     width: '100%',
-    marginTop: -26,
+  },
+  wrapHome: {
+    justifyContent: 'center',
   },
   scanButton: {
     width: BTN,
@@ -885,11 +984,16 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   scanHint: {
-    marginTop: 14,
-    color: '#4B5563',
-    fontSize: 13,
+    marginTop: 8,
+    fontSize: 14,
+    fontWeight: '700',
     textAlign: 'center',
-    paddingHorizontal: 12,
+    paddingHorizontal: 28,
+    lineHeight: 20,
+  },
+  scanHintHome: {
+    marginTop: 28,
+    maxWidth: 280,
   },
   modalBackdrop: {
     flex: 1,
