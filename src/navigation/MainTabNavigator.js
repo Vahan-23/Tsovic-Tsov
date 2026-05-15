@@ -4,6 +4,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import MainBottomTabBar from '../components/MainBottomTabBar';
 import MainMenu from '../components/MainMenu';
+import WalkBankHudPill from '../components/WalkBankHudPill';
 import { useLanguage } from '../context/LanguageContext';
 import { useSettings } from '../context/SettingsContext';
 import HomeScreen from '../screens/HomeScreen';
@@ -25,20 +26,37 @@ export default function MainTabNavigator() {
           backgroundColor: colors.bg,
         },
         topBar: {
-          flexDirection: 'row',
-          alignItems: 'center',
-          justifyContent: 'space-between',
           paddingHorizontal: 14,
           paddingBottom: 10,
           backgroundColor: colors.bg,
           borderBottomWidth: StyleSheet.hairlineWidth,
           borderBottomColor: colors.border,
         },
+        topRow: {
+          flexDirection: 'row',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+        },
+        brandCol: {
+          flex: 1,
+          minWidth: 0,
+        },
         brand: {
           fontSize: 19,
           fontWeight: '800',
           color: colors.text,
           letterSpacing: -0.3,
+        },
+        hudRow: {
+          flexDirection: 'row',
+          alignItems: 'center',
+          marginTop: 6,
+          gap: 10,
+        },
+        menuSlot: {
+          marginLeft: 8,
+          alignSelf: 'flex-start',
+          paddingTop: 2,
         },
       }),
     [colors]
@@ -47,8 +65,17 @@ export default function MainTabNavigator() {
   return (
     <View style={styles.root}>
       <View style={[styles.topBar, { paddingTop: insets.top + 6 }]}>
-        <Text style={styles.brand}>{t('appTitle')}</Text>
-        <MainMenu />
+        <View style={styles.topRow}>
+          <View style={styles.brandCol}>
+            <Text style={styles.brand}>{t('appTitle')}</Text>
+            <View style={styles.hudRow}>
+              <WalkBankHudPill />
+            </View>
+          </View>
+          <View style={styles.menuSlot}>
+            <MainMenu />
+          </View>
+        </View>
       </View>
       <Tab.Navigator
         tabBar={(props) => <MainBottomTabBar {...props} />}

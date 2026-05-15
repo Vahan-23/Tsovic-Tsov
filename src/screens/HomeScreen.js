@@ -3,6 +3,7 @@ import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import CollectionEntryCard from '../components/CollectionEntryCard';
 import DiscoverNearbyBlock from '../components/DiscoverNearbyBlock';
+import WalkBankCard from '../components/WalkBankCard';
 import { useLanguage } from '../context/LanguageContext';
 import { useFigures } from '../context/FiguresContext';
 import { useSettings } from '../context/SettingsContext';
@@ -46,6 +47,10 @@ export default function HomeScreen() {
           textAlign: 'center',
           lineHeight: 30,
         },
+        bankWrap: {
+          marginTop: 12,
+          marginBottom: 4,
+        },
       }),
     [colors]
   );
@@ -64,6 +69,9 @@ export default function HomeScreen() {
     <View style={styles.root}>
       <View style={[styles.header, { paddingHorizontal: 22 }]}>
         <Text style={styles.headline}>{t('homeHeadline')}</Text>
+        <View style={styles.bankWrap}>
+          <WalkBankCard />
+        </View>
         <CollectionEntryCard
           unlocked={unlockedCount}
           total={totalCount}

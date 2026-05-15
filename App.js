@@ -10,6 +10,7 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import { FiguresProvider } from './src/context/FiguresContext';
+import { WalkBankProvider } from './src/context/WalkBankContext';
 import { LanguageProvider } from './src/context/LanguageContext';
 import { SettingsProvider, useSettings } from './src/context/SettingsContext';
 import { SearchTargetProvider } from './src/context/SearchTargetContext';
@@ -104,7 +105,9 @@ export default function App() {
           <SettingsProvider>
             <SearchTargetProvider>
               <FiguresProvider>
-                <RootStack />
+                <WalkBankProvider>
+                  <RootStack />
+                </WalkBankProvider>
               </FiguresProvider>
             </SearchTargetProvider>
           </SettingsProvider>

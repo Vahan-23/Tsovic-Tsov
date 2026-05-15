@@ -14,6 +14,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { SUPPORTED_LOCALES } from '../i18n/strings';
 import { useFigures } from '../context/FiguresContext';
+import { useWalkBank } from '../context/WalkBankContext';
 import { useLanguage } from '../context/LanguageContext';
 import {
   useSettings,
@@ -54,6 +55,7 @@ export default function MainMenu() {
     colors,
   } = useSettings();
   const { discoveryHistory, resetCollectionProgress } = useFigures();
+  const { resetWalkBank, grantTestWalkMeters } = useWalkBank();
   const [open, setOpen] = React.useState(false);
 
   const styles = useMemo(
@@ -257,12 +259,13 @@ export default function MainMenu() {
           style: 'destructive',
           onPress: () => {
             void resetCollectionProgress();
+            void resetWalkBank();
             close();
           },
         },
       ]
     );
-  }, [close, resetCollectionProgress, t]);
+  }, [close, resetCollectionProgress, resetWalkBank, t]);
 
   return (
     <>
@@ -445,6 +448,25 @@ export default function MainMenu() {
               <Text style={[styles.sectionLabel, styles.sectionSpaced]}>
                 {t('settingsDataSection')}
               </Text>
+              <Pressable
+                onPress={() => {
+                  grantTestWalkMeters();
+                  Alert.alert(t('walkBankTestGrantDoneTitle'), t('walkBankTestGrantDoneMessage'));
+                }}
+                style={({ pressed }) => [
+                  styles.langRow,
+                  pressed && styles.langRowPressed,
+                ]}
+                accessibilityRole="button"
+                accessibilityLabel={t('walkBankTestGrant')}
+              >
+                <Ionicons name="footsteps" size={22} color="#C9A020" />
+                <View style={[styles.settingTextBlock, { flex: 1 }]}>
+                  <Text style={styles.settingTitle}>{t('walkBankTestGrant')}</Text>
+                  <Text style={styles.settingHint}>{t('walkBankTestGrantHint')}</Text>
+                </View>
+                <Ionicons name="add-circle" size={22} color={colors.primary} />
+              </Pressable>
               <Pressable
                 onPress={onResetCollection}
                 style={({ pressed }) => [

@@ -20,7 +20,6 @@ import {
   MAX_ROUTE_CROW_METERS,
 } from '../constants/mapRoute';
 import { getDarkMapProps } from '../constants/mapAppearance';
-import { UNLOCK_RADIUS_METERS } from '../constants/unlockRadius';
 import { useFigures } from '../context/FiguresContext';
 import { useLanguage } from '../context/LanguageContext';
 import { useSettings } from '../context/SettingsContext';
@@ -28,6 +27,8 @@ import { fetchWalkingRouteToTarget } from '../services/fetchWalkingRouteToTarget
 import { labelForBrowseLocale } from '../utils/alphabetBrowse';
 import { haversineDistanceMeters } from '../utils/haversine';
 import { simplifyPolylineForMap } from '../utils/simplifyPolyline';
+import MapWalkBankUnlock from '../components/MapWalkBankUnlock';
+import UnlockCelebrationOverlay from '../components/UnlockCelebrationOverlay';
 
 const DEFAULT_REGION = {
   latitude: 40.1792,
@@ -70,6 +71,7 @@ export default function MapScreen() {
   const [crowMeters, setCrowMeters] = useState(null);
   const [routeLoading, setRouteLoading] = useState(false);
   const [routeErrorKey, setRouteErrorKey] = useState(null);
+  const [unlockCelebration, setUnlockCelebration] = useState(null);
 
   const markers = useMemo(
     () =>
@@ -217,7 +219,7 @@ export default function MapScreen() {
     () =>
       markers.map((f) => (
         <Marker
-          key={String(f.id)}
+          key={`${f.id}-${f.unlocked ? 'o' : 'l'}`}
           identifier={String(f.id)}
           coordinate={{
             latitude: f.latitude,
@@ -387,16 +389,16 @@ export default function MapScreen() {
         },
         hintBar: {
           position: 'absolute',
-          left: 16,
-          right: 16,
-          paddingVertical: 10,
-          paddingHorizontal: 14,
-          borderRadius: 12,
-          backgroundColor: 'rgba(15,23,42,0.82)',
+          left: 20,
+          right: 20,
+          paddingVertical: 8,
+          paddingHorizontal: 12,
+          borderRadius: 10,
+          backgroundColor: 'rgba(15,23,42,0.32)',
         },
         hintText: {
-          fontSize: 13,
-          color: 'rgba(255,255,255,0.88)',
+          fontSize: 12,
+          color: 'rgba(255,255,255,0.52)',
           textAlign: 'center',
         },
         legend: {
@@ -438,17 +440,13 @@ export default function MapScreen() {
   );
 
   const sheetBottom = TAB_BAR_SCROLL_SPACER + Math.max(insets.bottom, 8) + 8;
-  const legendTop = insets.top + 12;
+  const legendTop = 8;
+  const hintBottom =
+    TAB_BAR_SCROLL_SPACER + Math.max(insets.bottom, 8) - 28;
 
   const titleText = selectedFigure
     ? labelForBrowseLocale(selectedFigure, locale)
     : '';
-
-  const withinUnlock =
-    selectedFigure &&
-    !selectedFigure.unlocked &&
-    crowMeters != null &&
-    crowMeters < UNLOCK_RADIUS_METERS;
 
   const routeErrorMessage =
     routeErrorKey === 'permission'
@@ -514,7 +512,7 @@ export default function MapScreen() {
 
       {!selectedFigure ? (
         <View
-          style={[styles.hintBar, { bottom: sheetBottom }]}
+          style={[styles.hintBar, { bottom: Math.max(52, hintBottom) }]}
           pointerEvents="none"
         >
           <Text style={styles.hintText}>{t('mapTapHint')}</Text>
@@ -597,11 +595,18 @@ export default function MapScreen() {
             </Text>
           ) : null}
 
-          {withinUnlock ? (
-            <Text style={styles.nearbyHint}>
-              {t('mapRouteNearbyUnlock', { n: UNLOCK_RADIUS_METERS })}
-            </Text>
-          ) : null}
+          <MapWalkBankUnlock
+            figure={selectedFigure}
+            crowMeters={crowMeters}
+            onUnlocked={() => {
+              setUnlockCelebration({
+                title: t('unlockedTitle'),
+                lines: [t('foundOne', { name: titleText })],
+                detailStatueId: selectedFigure.id,
+                collectionKind: COLLECTION_KIND,
+              });
+            }}
+          />
 
           <View style={styles.actions}>
             <Pressable
@@ -642,6 +647,26 @@ export default function MapScreen() {
           </View>
         </View>
       ) : null}
+
+      <UnlockCelebrationOverlay
+        visible={unlockCelebration != null}
+        onDismiss={() => setUnlockCelebration(null)}
+        onViewPress={
+          unlockCelebration?.detailStatueId != null
+            ? () => {
+                const id = unlockCelebration.detailStatueId;
+                setUnlockCelebration(null);
+                navigation.navigate('StatueDetail', {
+                  statueId: id,
+                  collectionKind: COLLECTION_KIND,
+                });
+              }
+            : undefined
+        }
+        title={unlockCelebration?.title ?? ''}
+        lines={unlockCelebration?.lines ?? []}
+        variant={unlockCelebration?.variant ?? 'success'}
+      />
     </View>
   );
 }
