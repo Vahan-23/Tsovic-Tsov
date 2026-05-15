@@ -208,6 +208,9 @@ export const strings = {
     hudCollectionLeft: '{n} մնաց',
     hudCollectionA11y:
       'Բացված {unlocked} {total}-ից, մնացել {left}',
+    rarityTier1: 'Սովորական',
+    rarityTier2: 'Անվանական',
+    rarityTier3: 'Հայտնի',
     walkBankDailyWhy:
       'Օրվա սահմանը միայն կուտակման համար է (~25 կմ/օր)՝ չարաշահումից պաշտպանվելու համար։ Ծախսել կարող ես ցանկացած ժամանակ։',
     walkBankTestGrant: 'Տեսական քայլեր (+10 կմ)',
@@ -421,6 +424,9 @@ export const strings = {
     hudCollectionLeft: '{n} осталось',
     hudCollectionA11y:
       'Открыто {unlocked} из {total}, осталось {left}',
+    rarityTier1: 'Обычный',
+    rarityTier2: 'С именем',
+    rarityTier3: 'Знаменитый',
     walkBankDailyWhy:
       'Дневной лимит только на накопление (~25 км/день), чтобы нельзя было накрутить GPS. Тратить из запаса можно когда угодно.',
     walkBankTestGrant: 'Тестовые шаги (+10 км)',
@@ -634,6 +640,9 @@ export const strings = {
     hudCollectionLeft: '{n} left',
     hudCollectionA11y:
       '{unlocked} of {total} unlocked, {left} remaining',
+    rarityTier1: 'Common',
+    rarityTier2: 'Named',
+    rarityTier3: 'Famous',
     walkBankDailyWhy:
       'The daily cap applies only to earning (~25 km/day), not spending. It limits GPS cheating and keeps the game fair.',
     walkBankTestGrant: 'Test walk (+10 km)',

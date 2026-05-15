@@ -17,6 +17,7 @@ import { labelForBrowseLocale } from '../utils/alphabetBrowse';
 import { useFigures } from '../context/FiguresContext';
 import { useSettings } from '../context/SettingsContext';
 import { getStatueCollectionImageSource } from '../data/statueCollectionImages';
+import RarityBadge from '../components/RarityBadge';
 
 /** Текст про сам объект: где стоит, зачем поставлен, примечательности (см. i18n curatedMonumentStory_* или OSM/Yandex description). */
 function resolveMonumentStoryBody(figure, t) {
@@ -248,7 +249,12 @@ export default function StatueDetailScreen({ route, navigation }) {
         discoveredChipRow: {
           flexDirection: 'row',
           alignItems: 'center',
+          flexWrap: 'wrap',
+          gap: 8,
           marginBottom: 18,
+        },
+        rarityRow: {
+          marginBottom: 10,
         },
         chipPill: {
           flexDirection: 'row',
@@ -374,6 +380,11 @@ export default function StatueDetailScreen({ route, navigation }) {
           <Text style={[styles.kind, styles.kind3d]}>{t('statue3dKindLabel')}</Text>
         ) : null}
         <Text style={styles.title}>{titleText}</Text>
+        {collectionKind === 'statues' && figure.rarity ? (
+          <View style={styles.rarityRow}>
+            <RarityBadge tier={figure.rarity} />
+          </View>
+        ) : null}
         <Text style={styles.hint}>
           {collectionKind === 'pulpulaks'
             ? t('statueLockedHint', { n: UNLOCK_RADIUS_METERS })
@@ -439,39 +450,45 @@ export default function StatueDetailScreen({ route, navigation }) {
               <Text style={styles.heroTitle} numberOfLines={3}>
                 {titleText}
               </Text>
-              <View style={styles.heroChip}>
-                <Ionicons name="checkmark-circle" size={18} color="#FFFFFF" />
-                <Text style={styles.heroChipText}>{t('statueDiscovered')}</Text>
-              </View>
+            <View style={styles.heroChip}>
+              <Ionicons name="checkmark-circle" size={18} color="#FFFFFF" />
+              <Text style={styles.heroChipText}>{t('statueDiscovered')}</Text>
             </View>
-          </View>
-        ) : (
-          <>
-            <Text style={styles.title}>{titleText}</Text>
-            <View style={styles.discoveredChipRow}>
-              <View style={styles.chipPill}>
-                <Ionicons name="checkmark-circle" size={18} color={colors.accentGreen} />
-                <Text style={styles.chipText}>{t('statueDiscovered')}</Text>
+            {figure.rarity ? (
+              <View style={{ marginTop: 10 }}>
+                <RarityBadge tier={figure.rarity} />
               </View>
-            </View>
-          </>
-        )}
-        {hasMonumentStory || hasLifeBio ? (
-          <View style={styles.detailSheet}>
-            {hasMonumentStory ? (
-              <MonumentStorySection figure={figure} t={t} styles={styles} />
-            ) : null}
-            {hasMonumentStory && hasLifeBio ? (
-              <View style={styles.detailDivider} />
-            ) : null}
-            {hasLifeBio ? (
-              <CuratedStatueCopy figure={figure} t={t} styles={styles} />
             ) : null}
           </View>
-        ) : null}
-      </ScrollView>
-    );
-  }
+        </View>
+      ) : (
+        <>
+          <Text style={styles.title}>{titleText}</Text>
+          <View style={styles.discoveredChipRow}>
+            <View style={styles.chipPill}>
+              <Ionicons name="checkmark-circle" size={18} color={colors.accentGreen} />
+              <Text style={styles.chipText}>{t('statueDiscovered')}</Text>
+            </View>
+            {figure.rarity ? <RarityBadge tier={figure.rarity} /> : null}
+          </View>
+        </>
+      )}
+      {hasMonumentStory || hasLifeBio ? (
+        <View style={styles.detailSheet}>
+          {hasMonumentStory ? (
+            <MonumentStorySection figure={figure} t={t} styles={styles} />
+          ) : null}
+          {hasMonumentStory && hasLifeBio ? (
+            <View style={styles.detailDivider} />
+          ) : null}
+          {hasLifeBio ? (
+            <CuratedStatueCopy figure={figure} t={t} styles={styles} />
+          ) : null}
+        </View>
+      ) : null}
+    </ScrollView>
+  );
+}
 
   return (
     <ScrollView contentContainerStyle={styles.scroll}>

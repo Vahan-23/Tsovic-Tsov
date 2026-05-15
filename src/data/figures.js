@@ -144,6 +144,10 @@ function mapYandexRecordToFigure(row) {
     collectedSource: 'yandex',
     hasQR: row.hasQR === true,
     collectedAt: row.collectedAt ?? null,
+    rating: Number.isFinite(Number(row.rating)) ? Number(row.rating) : null,
+    rating_count: Number.isFinite(Number(row.rating_count))
+      ? Number(row.rating_count)
+      : null,
   };
 }
 

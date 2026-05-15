@@ -27,6 +27,8 @@ import {
   getStatueCollectionImageSource,
   hasStatueCollectionImage,
 } from '../data/statueCollectionImages';
+import RarityBadge from '../components/RarityBadge';
+import { rarityBorderColor } from '../utils/statueRarity';
 
 const UNLOCKED_ONLY_FILTER_KEY = '@tsovic_tsov/collection_unlocked_only';
 
@@ -74,6 +76,8 @@ function CollectionFigureTile({
   const localThumb = getStatueCollectionImageSource(item);
   const initial = (title || '?').trim().charAt(0).toUpperCase() || '•';
   const tint = placeholderTint(item.id, resolvedScheme === 'dark');
+  const tier = item.rarity ?? 1;
+  const rarityBorder = rarityBorderColor(tier, colors);
 
   return (
     <Pressable
@@ -86,7 +90,16 @@ function CollectionFigureTile({
         pressed && styles.tilePressed,
       ]}
     >
-      <View style={[styles.tileCard, !item.unlocked && styles.tileCardLocked]}>
+      <View
+        style={[
+          styles.tileCard,
+          { borderColor: rarityBorder, borderWidth: tier === 3 ? 2 : 1 },
+          !item.unlocked && styles.tileCardLocked,
+        ]}
+      >
+        <View style={styles.rarityBadgePos}>
+          <RarityBadge tier={tier} compact />
+        </View>
         <View style={styles.tileImageSection}>
           {localThumb ? (
             <Image source={localThumb} style={styles.tileImage} resizeMode="cover" />
@@ -225,12 +238,17 @@ export default function CollectionScreen({ navigation }) {
           opacity: 0.94,
           transform: [{ scale: 0.988 }],
         },
+        rarityBadgePos: {
+          position: 'absolute',
+          top: 8,
+          left: 8,
+          zIndex: 4,
+        },
         tileCard: {
           borderRadius: 18,
           overflow: 'hidden',
           backgroundColor: colors.bgElevated,
-          borderWidth: 1,
-          borderColor: colors.tileEnabledBorder,
+          position: 'relative',
           shadowColor: colors.shadow,
           shadowOffset: { width: 0, height: 6 },
           shadowOpacity: 0.12,

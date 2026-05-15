@@ -29,6 +29,8 @@ import { haversineDistanceMeters } from '../utils/haversine';
 import { simplifyPolylineForMap } from '../utils/simplifyPolyline';
 import MapWalkBankUnlock from '../components/MapWalkBankUnlock';
 import UnlockCelebrationOverlay from '../components/UnlockCelebrationOverlay';
+import RarityBadge from '../components/RarityBadge';
+import { RARITY_TIER2, RARITY_TIER3 } from '../utils/statueRarity';
 
 const DEFAULT_REGION = {
   latitude: 40.1792,
@@ -42,6 +44,19 @@ const COLLECTION_KIND = 'statues';
 /** Native pins only — green = opened, gray = locked (never changes on tap). */
 const PIN_OPEN = 'green';
 const PIN_LOCKED = '#64748B';
+const PIN_TIER2_LOCKED = '#3B82F6';
+const PIN_TIER3_LOCKED = '#CA8A04';
+
+function pinColorForFigure(figure) {
+  if (figure.unlocked) return PIN_OPEN;
+  const tier = figure.rarity ?? 1;
+  if (tier === RARITY_TIER3) return PIN_TIER3_LOCKED;
+  if (tier === RARITY_TIER2) return PIN_TIER2_LOCKED;
+  return PIN_LOCKED;
+}
+
+/** Max distance (m) from tap to pin when the map omits marker id (Android). */
+const MARKER_PRESS_SLACK_METERS = 120;
 
 function formatDurationMinutes(seconds, t) {
   const totalMin = Math.max(1, Math.round(seconds / 60));
@@ -182,28 +197,58 @@ export default function MapScreen() {
     }
   }, []);
 
-  const handleMapMarkerPress = useCallback(
-    (event) => {
-      const markerId =
-        event?.nativeEvent?.id ?? event?.nativeEvent?.identifier;
-      if (markerId == null || markerId === '') return;
+  const resolveMarkerFigure = useCallback((event) => {
+    const markerId =
+      event?.nativeEvent?.id ?? event?.nativeEvent?.identifier;
+    if (markerId != null && markerId !== '') {
+      const byId = markersByIdRef.current.get(String(markerId));
+      if (byId) return byId;
+    }
 
-      const figure = markersByIdRef.current.get(String(markerId));
-      if (!figure) return;
-
-      const id = String(figure.id);
-      if (selectedIdRef.current === id) {
-        clearSelection();
-        return;
+    const coord = event?.nativeEvent?.coordinate;
+    if (
+      coord &&
+      Number.isFinite(coord.latitude) &&
+      Number.isFinite(coord.longitude)
+    ) {
+      let best = null;
+      let bestM = Infinity;
+      for (const figure of markersByIdRef.current.values()) {
+        const d = haversineDistanceMeters(
+          { latitude: coord.latitude, longitude: coord.longitude },
+          { latitude: figure.latitude, longitude: figure.longitude }
+        );
+        if (d < bestM) {
+          bestM = d;
+          best = figure;
+        }
       }
+      if (best && bestM <= MARKER_PRESS_SLACK_METERS) return best;
+    }
 
+    return null;
+  }, []);
+
+  const openFigure = useCallback(
+    (figure) => {
+      if (!figure) return;
+      const id = String(figure.id);
       selectedIdRef.current = id;
       setSelectedId(id);
       setCrowMeters(null);
       setRouteCoords([]);
+      setRouteErrorKey(null);
       void loadRouteForFigure(figure);
     },
-    [clearSelection, loadRouteForFigure]
+    [loadRouteForFigure]
+  );
+
+  const handleMapMarkerPress = useCallback(
+    (event) => {
+      const figure = resolveMarkerFigure(event);
+      if (figure) openFigure(figure);
+    },
+    [resolveMarkerFigure, openFigure]
   );
 
   useEffect(
@@ -219,17 +264,18 @@ export default function MapScreen() {
     () =>
       markers.map((f) => (
         <Marker
-          key={`${f.id}-${f.unlocked ? 'o' : 'l'}`}
+          key={String(f.id)}
           identifier={String(f.id)}
           coordinate={{
             latitude: f.latitude,
             longitude: f.longitude,
           }}
-          pinColor={f.unlocked ? PIN_OPEN : PIN_LOCKED}
+          pinColor={pinColorForFigure(f)}
           tracksViewChanges={false}
+          onPress={() => openFigure(f)}
         />
       )),
-    [markers]
+    [markers, openFigure]
   );
 
   const styles = useMemo(
@@ -508,6 +554,10 @@ export default function MapScreen() {
           <View style={[styles.legendDot, { backgroundColor: '#64748B' }]} />
           <Text style={styles.legendText}>{t('mapLegendLocked')}</Text>
         </View>
+        <View style={styles.legendItem}>
+          <View style={[styles.legendDot, { backgroundColor: PIN_TIER3_LOCKED }]} />
+          <Text style={styles.legendText}>{t('rarityTier3')}</Text>
+        </View>
       </View>
 
       {!selectedFigure ? (
@@ -522,9 +572,14 @@ export default function MapScreen() {
       {selectedFigure ? (
         <View style={[styles.sheet, { bottom: sheetBottom }]}>
           <View style={styles.sheetHeader}>
-            <Text style={styles.sheetTitle} numberOfLines={2}>
-              {titleText}
-            </Text>
+            <View style={{ flex: 1, gap: 6 }}>
+              <Text style={styles.sheetTitle} numberOfLines={2}>
+                {titleText}
+              </Text>
+              {selectedFigure.rarity ? (
+                <RarityBadge tier={selectedFigure.rarity} compact />
+              ) : null}
+            </View>
             <Pressable
               accessibilityRole="button"
               accessibilityLabel={t('mapClose')}
@@ -599,6 +654,7 @@ export default function MapScreen() {
             figure={selectedFigure}
             crowMeters={crowMeters}
             onUnlocked={() => {
+              commitHudCollectionProgress();
               setUnlockCelebration({
                 title: t('unlockedTitle'),
                 lines: [t('foundOne', { name: titleText })],

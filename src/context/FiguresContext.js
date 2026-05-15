@@ -20,6 +20,7 @@ import { useLanguage } from './LanguageContext';
 import { PULPULAK_POINTS } from '../data/pulpulaks';
 import { STATUES_3D_ENTRIES } from '../data/statues3d';
 import { finalizeCuratedStatueList } from '../data/curatedStatueProfiles';
+import { computeStatueRarity } from '../utils/statueRarity';
 import {
   convertOverpassJsonToStatues,
   fetchOverpassData,
@@ -239,6 +240,7 @@ export function FiguresProvider({ children }) {
     (s) => ({
       ...s,
       displayName: labelForBrowseLocale(s, locale),
+      rarity: computeStatueRarity(s),
     }),
     [locale]
   );
