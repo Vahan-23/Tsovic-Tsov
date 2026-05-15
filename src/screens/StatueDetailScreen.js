@@ -16,17 +16,40 @@ import { useLanguage } from '../context/LanguageContext';
 import { labelForBrowseLocale } from '../utils/alphabetBrowse';
 import { useFigures } from '../context/FiguresContext';
 import { useSettings } from '../context/SettingsContext';
+import { getStatueCollectionImageSource } from '../data/statueCollectionImages';
 
+/** Текст про сам объект: где стоит, зачем поставлен, примечательности (см. i18n curatedMonumentStory_* или OSM/Yandex description). */
+function resolveMonumentStoryBody(figure, t) {
+  if (figure?.curatedKey) {
+    const k = `curatedMonumentStory_${figure.curatedKey}`;
+    const text = t(k);
+    if (text && text !== k) return text;
+  }
+  const d = typeof figure?.description === 'string' ? figure.description.trim() : '';
+  return d || null;
+}
+
+function MonumentStorySection({ figure, t, styles }) {
+  const body = resolveMonumentStoryBody(figure, t);
+  if (!body) return null;
+  return (
+    <View style={styles.storySection}>
+      <Text style={styles.storyHeading}>{t('statueStoryHeading')}</Text>
+      <Text style={styles.storyBody}>{body}</Text>
+    </View>
+  );
+}
+
+/** Биография персоны (курированные тексты); описание памятника перенесено в MonumentStorySection. */
 function CuratedStatueCopy({ figure, t, styles }) {
   if (!figure?.curatedKey) {
-    return figure?.description ? (
-      <Text style={styles.body}>{figure.description}</Text>
-    ) : null;
+    return null;
   }
   const bioKey = `curatedBio_${figure.curatedKey}`;
   const bio = t(bioKey);
   return (
     <>
+      <Text style={styles.sectionHeading}>{t('statueLifeHeading')}</Text>
       <Text style={styles.metaMuted}>{t('statueMetaLife', { born: figure.born, died: figure.died })}</Text>
       {figure.monumentUnveiled != null ? (
         <Text style={[styles.metaMuted, styles.metaSpaced]}>
@@ -102,6 +125,27 @@ export default function StatueDetailScreen({ route, navigation }) {
         bioBlock: {
           marginTop: 14,
         },
+        sectionHeading: {
+          fontSize: 17,
+          fontWeight: '800',
+          color: colors.text,
+          marginBottom: 10,
+          marginTop: 4,
+        },
+        storySection: {
+          marginBottom: 0,
+        },
+        storyHeading: {
+          fontSize: 17,
+          fontWeight: '800',
+          color: colors.text,
+          marginBottom: 10,
+        },
+        storyBody: {
+          fontSize: 16,
+          lineHeight: 24,
+          color: colors.iconMuted,
+        },
         coords: {
           fontSize: 14,
           color: colors.textMuted,
@@ -148,6 +192,92 @@ export default function StatueDetailScreen({ route, navigation }) {
           marginBottom: 16,
           backgroundColor: colors.placeholderBg,
         },
+        heroWrap: {
+          borderRadius: 22,
+          overflow: 'hidden',
+          marginBottom: 18,
+          backgroundColor: colors.placeholderBg,
+          ...Platform.select({
+            ios: {
+              shadowColor: '#000',
+              shadowOffset: { width: 0, height: 8 },
+              shadowOpacity: 0.15,
+              shadowRadius: 16,
+            },
+            android: { elevation: 6 },
+          }),
+        },
+        heroImage: {
+          width: '100%',
+          height: 256,
+          backgroundColor: colors.placeholderBg,
+        },
+        heroBottom: {
+          position: 'absolute',
+          left: 0,
+          right: 0,
+          bottom: 0,
+          paddingHorizontal: 18,
+          paddingVertical: 18,
+          backgroundColor: 'rgba(15, 23, 42, 0.58)',
+        },
+        heroTitle: {
+          fontSize: 24,
+          fontWeight: '900',
+          color: '#FFFFFF',
+          letterSpacing: -0.6,
+          marginBottom: 10,
+          lineHeight: 30,
+        },
+        heroChip: {
+          flexDirection: 'row',
+          alignItems: 'center',
+          gap: 8,
+          alignSelf: 'flex-start',
+          paddingHorizontal: 12,
+          paddingVertical: 7,
+          borderRadius: 999,
+          backgroundColor: 'rgba(255,255,255,0.22)',
+        },
+        heroChipText: {
+          fontSize: 13,
+          fontWeight: '800',
+          color: '#FFFFFF',
+          letterSpacing: 0.2,
+        },
+        discoveredChipRow: {
+          flexDirection: 'row',
+          alignItems: 'center',
+          marginBottom: 18,
+        },
+        chipPill: {
+          flexDirection: 'row',
+          alignItems: 'center',
+          gap: 8,
+          paddingHorizontal: 14,
+          paddingVertical: 10,
+          borderRadius: 999,
+          backgroundColor: colors.chipBg,
+          borderWidth: StyleSheet.hairlineWidth,
+          borderColor: colors.borderMuted,
+        },
+        chipText: {
+          fontSize: 14,
+          fontWeight: '800',
+          color: colors.accentGreen,
+        },
+        detailSheet: {
+          padding: 18,
+          borderRadius: 20,
+          backgroundColor: colors.bgElevated,
+          borderWidth: StyleSheet.hairlineWidth,
+          borderColor: colors.border,
+        },
+        detailDivider: {
+          height: StyleSheet.hairlineWidth,
+          backgroundColor: colors.borderMuted,
+          marginVertical: 16,
+        },
       }),
     [colors]
   );
@@ -161,6 +291,26 @@ export default function StatueDetailScreen({ route, navigation }) {
   );
 
   const titleText = figure ? labelForBrowseLocale(figure, locale) : '';
+
+  /** Локальный asset из bundle имеет приоритет над URL из данных. */
+  const heroResolvedImageSource = useMemo(() => {
+    if (!figure) return null;
+    const local = getStatueCollectionImageSource(figure);
+    if (local != null) return local;
+    if (figure.image && typeof figure.image === 'string') {
+      const u = figure.image.trim();
+      if (u.startsWith('http://') || u.startsWith('https://')) {
+        return { uri: u };
+      }
+    }
+    return null;
+  }, [figure]);
+
+  const hasMonumentStory = useMemo(
+    () => (figure ? Boolean(resolveMonumentStoryBody(figure, t)) : false),
+    [figure, t]
+  );
+  const hasLifeBio = Boolean(figure?.curatedKey);
 
   const canNavigateToTarget =
     figure != null &&
@@ -277,41 +427,93 @@ export default function StatueDetailScreen({ route, navigation }) {
     return (
       <ScrollView contentContainerStyle={styles.scroll}>
         <Text style={[styles.kind, styles.kind3d]}>{t('statue3dKindLabel')}</Text>
-        <Text style={styles.title}>{titleText}</Text>
         <Text style={styles.subLine}>{t('statue3dUnlockedLine')}</Text>
-        {figure.image ? (
-          <Image
-            source={
-              typeof figure.image === 'string'
-                ? { uri: figure.image }
-                : figure.image
-            }
-            style={styles.image}
-            resizeMode="cover"
-          />
+        {heroResolvedImageSource ? (
+          <View style={styles.heroWrap}>
+            <Image
+              source={heroResolvedImageSource}
+              style={styles.heroImage}
+              resizeMode="cover"
+            />
+            <View style={styles.heroBottom}>
+              <Text style={styles.heroTitle} numberOfLines={3}>
+                {titleText}
+              </Text>
+              <View style={styles.heroChip}>
+                <Ionicons name="checkmark-circle" size={18} color="#FFFFFF" />
+                <Text style={styles.heroChipText}>{t('statueDiscovered')}</Text>
+              </View>
+            </View>
+          </View>
+        ) : (
+          <>
+            <Text style={styles.title}>{titleText}</Text>
+            <View style={styles.discoveredChipRow}>
+              <View style={styles.chipPill}>
+                <Ionicons name="checkmark-circle" size={18} color={colors.accentGreen} />
+                <Text style={styles.chipText}>{t('statueDiscovered')}</Text>
+              </View>
+            </View>
+          </>
+        )}
+        {hasMonumentStory || hasLifeBio ? (
+          <View style={styles.detailSheet}>
+            {hasMonumentStory ? (
+              <MonumentStorySection figure={figure} t={t} styles={styles} />
+            ) : null}
+            {hasMonumentStory && hasLifeBio ? (
+              <View style={styles.detailDivider} />
+            ) : null}
+            {hasLifeBio ? (
+              <CuratedStatueCopy figure={figure} t={t} styles={styles} />
+            ) : null}
+          </View>
         ) : null}
-        <Text style={styles.discovered}>{t('statueDiscovered')}</Text>
-        <CuratedStatueCopy figure={figure} t={t} styles={styles} />
       </ScrollView>
     );
   }
 
   return (
     <ScrollView contentContainerStyle={styles.scroll}>
-      <Text style={styles.title}>{titleText}</Text>
-      {figure.image ? (
-        <Image
-          source={
-            typeof figure.image === 'string'
-              ? { uri: figure.image }
-              : figure.image
-          }
-          style={styles.image}
-          resizeMode="cover"
-        />
+      {heroResolvedImageSource ? (
+        <View style={styles.heroWrap}>
+          <Image
+            source={heroResolvedImageSource}
+            style={styles.heroImage}
+            resizeMode="cover"
+          />
+          <View style={styles.heroBottom}>
+            <Text style={styles.heroTitle} numberOfLines={3}>
+              {titleText}
+            </Text>
+            <View style={styles.heroChip}>
+              <Ionicons name="checkmark-circle" size={18} color="#FFFFFF" />
+              <Text style={styles.heroChipText}>{t('statueDiscovered')}</Text>
+            </View>
+          </View>
+        </View>
+      ) : (
+        <>
+          <Text style={styles.title}>{titleText}</Text>
+          <View style={styles.discoveredChipRow}>
+            <View style={styles.chipPill}>
+              <Ionicons name="checkmark-circle" size={18} color={colors.accentGreen} />
+              <Text style={styles.chipText}>{t('statueDiscovered')}</Text>
+            </View>
+          </View>
+        </>
+      )}
+      {hasMonumentStory || hasLifeBio ? (
+        <View style={styles.detailSheet}>
+          {hasMonumentStory ? (
+            <MonumentStorySection figure={figure} t={t} styles={styles} />
+          ) : null}
+          {hasMonumentStory && hasLifeBio ? (
+            <View style={styles.detailDivider} />
+          ) : null}
+          {hasLifeBio ? <CuratedStatueCopy figure={figure} t={t} styles={styles} /> : null}
+        </View>
       ) : null}
-      <Text style={styles.discovered}>{t('statueDiscovered')}</Text>
-      <CuratedStatueCopy figure={figure} t={t} styles={styles} />
     </ScrollView>
   );
 }

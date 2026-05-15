@@ -21,6 +21,18 @@ export const strings = {
     quickInfoOk: 'Լավ',
     statueMetaLife: 'Կյանք․ {born}–{died}',
     statueMetaMonument: 'Հուշարձան՝ մոտավորապես {year} թ.',
+    statueStoryHeading: 'Հուշարձանի պատմությունը',
+    statueLifeHeading: 'Ով է հիշատակվել',
+    curatedMonumentStory_abovyan:
+      'Հուշարձանը կանգնեցված է Երևանի կենտրոնում՝ Խաչատուր Աբովյանի անունը կրող փողոցի մուտքի մոտ․ տեղը կապված է գրողի անվամբ ինստիտուտի և դպրոցական ավանդույթի հետ։ Հանրային այս կետը հաճախ օգտագործվում է հիշատակման ծեսերի և զբոսաշրջային կանգառների համար։',
+    curatedMonumentStory_komitas:
+      'Կոմիտասին նվիրված բրոնզե արձանը տեղադրված է Ա. Սպենդիարյանի անվան օպերայի և բալետի թատրոնին կից հրապարակում՝ որպես քաղաքային մշակութային կենտրոնի տեսարժան վայր։ Հուշարձանը բացվել է խորհրդային շրջանում և խորհրդանշում է հայ երաժշտության համաշխարհային ներկայությունը։',
+    curatedMonumentStory_tumanyan:
+      'Թումանյանի հուշարձանը գտնվում է Կարապի լճի մոտ՝ քաղաքացիների սիրելի զբոսավայրում․ այստեղից բացվում է տեսարան դեպի շրջակա փողոցները։ Իբրև հանրային քանդակ այն հիշեցնում է հայ բանաստեղծության դիրքը նոր ժամանակների մշակույթում։',
+    curatedMonumentStory_sayat_nova:
+      'Սայաթ-Նովայի հուշարձանը կանգնեցված է նրա անունը կրող շատրվանի ու համերգային տարածքի մոտ՝ կապելով հիշատակը թաղամասի երաժշտական կյանքի հետ։ Քանդակը նշում է աշուղական ավանդույթի տեղը Հայաստանի և Կովկասի մշակույթում։',
+    curatedMonumentStory_charents:
+      'Չարենցի հուշարձանը գտնվում է Մաշտոցի պողոտայի խիտ հետիոտնային հատվածում․ մատուցվում է որպես քաղաքային գրական հիշատակում։ Հուշարձանը կոչված է պահպանել XX դարի վաղ շրջանի բանաստեղծի ընթերցողների հետ երկխոսությունը։',
     curatedBio_abovyan:
       'Խաչատուր Աբովյանը (1809–1848) հայ գրող և լուսավորիչ էր․ նրա վեպերը և դպրոցական բարեփոխումները կարևոր դեր ունեցան նոր հայ գրականության կազմավորման մեջ։ Երևանի այս հուշարձանը կանգնեցված է նրա անունը կրող փողոցի սկզբում՝ որպես հարգանքի նշան դեպի դասական դպրոց և ինստիտուտ, որոնք նույնպես կրում են նրա անունը։',
     curatedBio_komitas:
@@ -130,15 +142,35 @@ export const strings = {
     nearestHint: 'Սեղմիր «Թարմացնել»՝ քո կողմից մինչև 5 ամենամոտ չբացված կետերը տեսնելու համար։',
     nearestEmpty: 'Դեռ ցուցակ չկա — սեղմիր «Թարմացնել»։',
     nearestMeters: '{n} մ',
-    collectionLockedToggle: 'Միայն չբացված',
+    collectionUnlockedFilterToggle: 'Միայն բացված',
     collectionShowAll: 'Բոլորը',
-    collectionLockedHint: 'Ցուցադրել միայն այն կետերը, որոնք դեպ չեն բացվել։',
-    collectionLockedEmpty: 'Այս ֆիլտրով ոչինչ չկա։',
+    collectionUnlockedFilterHint:
+      'Ցուցադրել միայն բացված կետերը։ Լուսանկարով քարտերը վերևում են։',
+    collectionUnlockedFilterEmpty: 'Դեռ բացված կետեր չկան կամ ֆիլտրը դատարկ է։',
+    collectionCardLocked: 'Կողպված',
     menuRecentTitle: 'Վերջին բացումները',
     menuRecentEmpty: 'Դեռ բացումներ չկան։',
     shareAccessibility: 'Կիսվել',
     shareFailed: 'Կիսվելը չի ստացվել։',
     shareBody: '{name}\n{lat}, {lon}\nTsovic-Tsov',
+    mapTapHint: 'Հպիր արձանին՝ երթուղին և հեռավորությունը տեսնելու համար',
+    mapLegendOpen: 'Բացված',
+    mapLegendLocked: 'Փակ',
+    mapLegendSelected: 'Ընտրված',
+    mapStatueUnlocked: 'Բացված',
+    mapStatueLocked: 'Փակված',
+    mapRouteLoading: 'Երթուղին կառուցվում է…',
+    mapRouteWalkDistance: 'Ոտքով՝ {n} մ',
+    mapRouteDurationMin: '~{min} ր',
+    mapRouteDurationHr: '~{h} ժ {m} ր',
+    mapRouteCrowLine: 'Ուղիղ՝ {n} մ',
+    mapRouteFar:
+      'Երթուղի չի կառուցվում — GPS-ը շատ հեռու է։ Մոտեցիր Հայաստանին կամ ստուգիր էմուլյատորի տեղադրությունը։',
+    mapRouteFailed: 'Չհաջողվեց կառուցել երթուղին։',
+    mapRouteNearbyUnlock: '{n} մ շառավղում — կարող ես բացել տեղում',
+    mapNavigateCta: 'Գնալ',
+    mapDetailsCta: 'Մանրամասն',
+    mapClose: 'Փակել',
   },
   ru: {
     tabHome: 'Главная',
@@ -159,6 +191,18 @@ export const strings = {
     quickInfoOk: 'Хорошо',
     statueMetaLife: 'Годы жизни: {born}–{died}',
     statueMetaMonument: 'Памятник (ориентировочно {year})',
+    statueStoryHeading: 'История памятника',
+    statueLifeHeading: 'Кто изображён',
+    curatedMonumentStory_abovyan:
+      'Памятник стоит у начала улицы Абовяна в центре Еревана — там, где имя писателя связано с институтом и школами. Это популярная городская точка для памятных акций и туристических остановок.',
+    curatedMonumentStory_komitas:
+      'Скульптура Комитаса установлена у здания театра оперы и балета имени Спендиарова — в сердце культурного квартала. Памятник открыт в советский период и подчёркивает связь армянской музыки с мировой сценой.',
+    curatedMonumentStory_tumanyan:
+      'Монумент Туманяну расположен у Лебединого озера — любимого места прогулок; открываются виды на окрестные улицы. Как городская скульптура он подчёркивает роль поэта в новой армянской культуре.',
+    curatedMonumentStory_sayat_nova:
+      'Памятник стоит рядом с музыкальным комплексом и фонтаном имени Саят-Новы, связывая почётную память с жизнью квартала. Объект отмечает место ашугской традиции в музыкальном наследии региона.',
+    curatedMonumentStory_charents:
+      'Памятник Чаренцу находится на оживлённом проспекте Месропа Маштоца и работает как городской литературный ориентир. Он поддерживает живой интерес к поэту XX века среди прохожих.',
     curatedBio_abovyan:
       'Хачатур Абовян (1809–1848) — писатель и просветитель, один из основоположников новой армянской литературы; автор «Записок отчего человека» и участник школьной реформы. Памятник у подножия улицы Абовяна в Ереване соотнесён с его именем и с институтом, напоминая о вкладе в культуру и образование.',
     curatedBio_komitas:
@@ -268,15 +312,35 @@ export const strings = {
     nearestHint: 'Нажмите «Обновить», чтобы увидеть до 5 ближайших неоткрытых точек.',
     nearestEmpty: 'Список пуст — нажмите «Обновить».',
     nearestMeters: '{n} м',
-    collectionLockedToggle: 'Только закрытые',
+    collectionUnlockedFilterToggle: 'Только открытые',
     collectionShowAll: 'Все',
-    collectionLockedHint: 'Показывать только ещё не открытые точки.',
-    collectionLockedEmpty: 'По этому фильтру ничего нет.',
+    collectionUnlockedFilterHint:
+      'Показывать только уже открытые памятники. С превью сверху — у объектов с локальной картинкой.',
+    collectionUnlockedFilterEmpty: 'Нет открытых объектов или фильтр пуст.',
+    collectionCardLocked: 'Закрыто',
     menuRecentTitle: 'Последние открытия',
     menuRecentEmpty: 'Пока нет открытий.',
     shareAccessibility: 'Поделиться',
     shareFailed: 'Не удалось поделиться.',
     shareBody: '{name}\n{lat}, {lon}\nTsovic-Tsov',
+    mapTapHint: 'Нажмите на точку — увидите маршрут и расстояние',
+    mapLegendOpen: 'Открыто',
+    mapLegendLocked: 'Закрыто',
+    mapLegendSelected: 'Выбрано',
+    mapStatueUnlocked: 'Открыто',
+    mapStatueLocked: 'Закрыто',
+    mapRouteLoading: 'Строим маршрут…',
+    mapRouteWalkDistance: 'Пешком: {n} м',
+    mapRouteDurationMin: '~{min} мин',
+    mapRouteDurationHr: '~{h} ч {m} мин',
+    mapRouteCrowLine: 'По прямой: {n} м',
+    mapRouteFar:
+      'Маршрут не построен — GPS слишком далеко. Подойдите к Армении или проверьте эмулятор.',
+    mapRouteFailed: 'Не удалось построить маршрут.',
+    mapRouteNearbyUnlock: 'В радиусе {n} м — можно открыть на месте',
+    mapNavigateCta: 'Идти',
+    mapDetailsCta: 'Подробнее',
+    mapClose: 'Закрыть',
   },
   en: {
     tabHome: 'Home',
@@ -297,6 +361,18 @@ export const strings = {
     quickInfoOk: 'OK',
     statueMetaLife: 'Life: {born}–{died}',
     statueMetaMonument: 'Monument (c. {year})',
+    statueStoryHeading: 'About this monument',
+    statueLifeHeading: 'Who is commemorated',
+    curatedMonumentStory_abovyan:
+      'The monument stands at the foot of Abovyan Street in central Yerevan, tied to the writer’s name through nearby schools and institutes. It is a familiar civic spot for remembrance gatherings and walking tours.',
+    curatedMonumentStory_komitas:
+      'Komitas’s bronze statue sits beside the Spendiaryan Opera and Ballet Theatre — a landmark of the city’s arts quarter. Unveiled in the Soviet era, it marks Armenian music’s place on the world stage.',
+    curatedMonumentStory_tumanyan:
+      'Tumanyan’s memorial is set near Swan Lake, a busy leisure area with views into surrounding streets. As public sculpture it highlights the poet’s role in modern Armenian letters.',
+    curatedMonumentStory_sayat_nova:
+      'The memorial stands close to Sayat-Nova’s fountain and concert spaces, linking the tribute to the neighborhood’s musical life. It celebrates the ashugh tradition in Armenian and Caucasian heritage.',
+    curatedMonumentStory_charents:
+      'Charents’ monument sits along busy Mashtots Avenue as an urban literary landmark. It keeps the early 20th‑century poet visible to everyday passersby.',
     curatedBio_abovyan:
       'Khachatur Abovyan (1809–1848) was an Armenian writer and educator who helped shape modern Armenian literature and promoted schooling reforms. The monument stands near Abovyan Street and institutions bearing his name, honoring his cultural legacy.',
     curatedBio_komitas:
@@ -406,15 +482,35 @@ export const strings = {
     nearestHint: 'Tap refresh to list up to 5 nearest places you have not opened yet.',
     nearestEmpty: 'No list yet — tap refresh.',
     nearestMeters: '{n} m',
-    collectionLockedToggle: 'Locked only',
+    collectionUnlockedFilterToggle: 'Unlocked only',
     collectionShowAll: 'All',
-    collectionLockedHint: 'Show only points you have not unlocked yet.',
-    collectionLockedEmpty: 'Nothing matches this filter.',
+    collectionUnlockedFilterHint:
+      'Show monuments you have already unlocked. Items with bundled thumbnails appear first.',
+    collectionUnlockedFilterEmpty: 'No unlocked items yet, or nothing matches.',
+    collectionCardLocked: 'Locked',
     menuRecentTitle: 'Recent unlocks',
     menuRecentEmpty: 'No unlocks yet.',
     shareAccessibility: 'Share',
     shareFailed: 'Could not share.',
     shareBody: '{name}\n{lat}, {lon}\nTsovic-Tsov',
+    mapTapHint: 'Tap a monument to see the walking route and distance',
+    mapLegendOpen: 'Unlocked',
+    mapLegendLocked: 'Locked',
+    mapLegendSelected: 'Selected',
+    mapStatueUnlocked: 'Unlocked',
+    mapStatueLocked: 'Locked',
+    mapRouteLoading: 'Building route…',
+    mapRouteWalkDistance: 'On foot: {n} m',
+    mapRouteDurationMin: '~{min} min',
+    mapRouteDurationHr: '~{h} h {m} min',
+    mapRouteCrowLine: 'As the crow flies: {n} m',
+    mapRouteFar:
+      'Route not built — GPS is too far away. Move closer to Armenia or fix the emulator location.',
+    mapRouteFailed: 'Could not build the route.',
+    mapRouteNearbyUnlock: 'Within {n} m — unlock on the spot',
+    mapNavigateCta: 'Go',
+    mapDetailsCta: 'Details',
+    mapClose: 'Close',
   },
 };
 

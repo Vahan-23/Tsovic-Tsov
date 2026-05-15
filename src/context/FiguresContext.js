@@ -480,7 +480,7 @@ export function FiguresProvider({ children }) {
     [figuresForGrid, figures3dForGrid, pulpulaksForGrid]
   );
 
-  const lockedOnlyGridForMode = useCallback(
+  const unlockedOnlyGridForMode = useCallback(
     (mode) => {
       const source =
         mode === 'statues'
@@ -490,8 +490,8 @@ export function FiguresProvider({ children }) {
             : mode === 'pulpulaks'
               ? pulpulaks
               : figures;
-      const locked = source.filter((x) => !x.unlocked);
-      return cappedCollectionGrid(locked);
+      const opened = source.filter((x) => x.unlocked);
+      return cappedCollectionGrid(opened);
     },
     [figures, figures3d, pulpulaks]
   );
@@ -555,7 +555,7 @@ export function FiguresProvider({ children }) {
       resolveCollectionItem,
       isUnlockableId,
       discoveryHistory,
-      lockedOnlyGridForMode,
+      unlockedOnlyGridForMode,
       storageLoaded: unlockedLoaded && statuesLoaded,
       statuesRefreshing,
       refreshStatues,
@@ -576,7 +576,7 @@ export function FiguresProvider({ children }) {
       unlockForSearchMode,
       radarTargetsForMode,
       collectionGridForMode,
-      lockedOnlyGridForMode,
+      unlockedOnlyGridForMode,
       countsForSearchMode,
       resolveCollectionItem,
       isUnlockableId,
