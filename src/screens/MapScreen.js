@@ -29,6 +29,7 @@ import { haversineDistanceMeters } from '../utils/haversine';
 import { simplifyPolylineForMap } from '../utils/simplifyPolyline';
 import MapWalkBankUnlock from '../components/MapWalkBankUnlock';
 import UnlockCelebrationOverlay from '../components/UnlockCelebrationOverlay';
+import { useCelebrationPeek } from '../context/CelebrationPeekContext';
 import RarityBadge from '../components/RarityBadge';
 import { RARITY_TIER2, RARITY_TIER3 } from '../utils/statueRarity';
 
@@ -87,6 +88,7 @@ export default function MapScreen() {
   const [routeLoading, setRouteLoading] = useState(false);
   const [routeErrorKey, setRouteErrorKey] = useState(null);
   const [unlockCelebration, setUnlockCelebration] = useState(null);
+  const { celebrationHidden, beginDetailPeek } = useCelebrationPeek();
 
   const markers = useMemo(
     () =>
@@ -294,10 +296,15 @@ export default function MapScreen() {
           justifyContent: 'center',
           backgroundColor: colors.bg,
         },
+        sheetDismissBackdrop: {
+          ...StyleSheet.absoluteFillObject,
+          zIndex: 1,
+        },
         sheet: {
           position: 'absolute',
           left: 12,
           right: 12,
+          zIndex: 2,
           borderRadius: 16,
           paddingHorizontal: 16,
           paddingTop: 10,
@@ -570,6 +577,15 @@ export default function MapScreen() {
       ) : null}
 
       {selectedFigure ? (
+        <Pressable
+          style={styles.sheetDismissBackdrop}
+          onPress={clearSelection}
+          accessibilityRole="button"
+          accessibilityLabel={t('mapClose')}
+        />
+      ) : null}
+
+      {selectedFigure ? (
         <View style={[styles.sheet, { bottom: sheetBottom }]}>
           <View style={styles.sheetHeader}>
             <View style={{ flex: 1, gap: 6 }}>
@@ -657,8 +673,13 @@ export default function MapScreen() {
               commitHudCollectionProgress();
               setUnlockCelebration({
                 title: t('unlockedTitle'),
-                lines: [t('foundOne', { name: titleText })],
-                detailStatueId: selectedFigure.id,
+                unlockedItems: [
+                  {
+                    id: selectedFigure.id,
+                    name: titleText,
+                    rarity: selectedFigure.rarity,
+                  },
+                ],
                 collectionKind: COLLECTION_KIND,
               });
             }}
@@ -706,15 +727,16 @@ export default function MapScreen() {
 
       <UnlockCelebrationOverlay
         visible={unlockCelebration != null}
+        hiddenForPeek={celebrationHidden}
         onDismiss={() => {
           setUnlockCelebration(null);
           commitHudCollectionProgress();
         }}
         onViewPress={
-          unlockCelebration?.detailStatueId != null
+          unlockCelebration?.unlockedItems?.length === 1
             ? () => {
-                const id = unlockCelebration.detailStatueId;
-                setUnlockCelebration(null);
+                const id = unlockCelebration.unlockedItems[0].id;
+                beginDetailPeek();
                 navigation.navigate('StatueDetail', {
                   statueId: id,
                   collectionKind: COLLECTION_KIND,
@@ -722,8 +744,15 @@ export default function MapScreen() {
               }
             : undefined
         }
+        onItemPress={(id) => {
+          beginDetailPeek();
+          navigation.navigate('StatueDetail', {
+            statueId: id,
+            collectionKind: COLLECTION_KIND,
+          });
+        }}
         title={unlockCelebration?.title ?? ''}
-        lines={unlockCelebration?.lines ?? []}
+        unlockedItems={unlockCelebration?.unlockedItems ?? []}
         variant={unlockCelebration?.variant ?? 'success'}
       />
     </View>

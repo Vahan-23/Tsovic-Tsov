@@ -141,6 +141,7 @@ function mapYandexRecordToFigure(row) {
     place_id: row.place_id ?? null,
     category: row.category ?? 'monument',
     city: row.city ?? null,
+    address: row.address ?? null,
     collectedSource: 'yandex',
     hasQR: row.hasQR === true,
     collectedAt: row.collectedAt ?? null,

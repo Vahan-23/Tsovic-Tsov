@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   Animated,
   Dimensions,
@@ -14,6 +14,8 @@ import {
 import { Ionicons } from '@expo/vector-icons';
 import { useLanguage } from '../context/LanguageContext';
 import { useSettings } from '../context/SettingsContext';
+import RarityBadge from './RarityBadge';
+import { rarityAccentColor } from '../utils/statueRarity';
 
 const { width: W, height: H } = Dimensions.get('window');
 
@@ -31,7 +33,7 @@ const GOLD_SPARK_COLORS = [
   '#B8860B',
 ];
 
-const FIREWORK_COUNT = 160;
+const FIREWORK_COUNT = 48;
 /** Дальность искр — почти до краёв экрана (общий центр взрыва). */
 const MAX_BURST_RADIUS = Math.hypot(W, H) * 0.47;
 /** Один таймлайн на все частицы — иначе «взрыв» расползается во времени. */
@@ -128,13 +130,56 @@ function FireworkParticle({ index }) {
 }
 
 /**
+ * @typedef {{ id: string | number, name: string, rarity?: 1 | 2 | 3 }} UnlockedCelebrationItem
+ */
+
+function UnlockedItemRow({ item, onPress, styles, isSuccess }) {
+  const accent = item.rarity ? rarityAccentColor(item.rarity) : '#F5C84C';
+
+  return (
+    <Pressable
+      style={({ pressed }) => [
+        styles.itemRow,
+        pressed && styles.itemRowPressed,
+      ]}
+      onPress={() => onPress(item.id)}
+      accessibilityRole="button"
+      accessibilityLabel={item.name}
+    >
+      <View style={[styles.itemIconWrap, { borderColor: `${accent}88` }]}>
+        <Ionicons name="checkmark" size={20} color={accent} />
+      </View>
+      <View style={styles.itemBody}>
+        <Text style={styles.itemName} numberOfLines={2}>
+          {item.name}
+        </Text>
+        {item.rarity ? (
+          <View style={styles.itemBadge}>
+            <RarityBadge tier={item.rarity} compact />
+          </View>
+        ) : null}
+      </View>
+      {isSuccess ? (
+        <Ionicons name="chevron-forward" size={22} color={accent} />
+      ) : null}
+    </Pressable>
+  );
+}
+
+/**
  * Полноэкранное «вау» при открытии объекта в коллекции (вместо сухого Alert).
  */
 export default function UnlockCelebrationOverlay({
   visible,
+  /** Скрыто под StatueDetail — без повторной анимации при возврате */
+  hiddenForPeek = false,
   onDismiss,
-  /** «Посмотреть» — карточка объекта; только при success и если передан */
+  /** «Посмотреть» — карточка объекта; только при success, одном объекте и если передан */
   onViewPress,
+  /** Открытые объекты — список с именами (при нескольких) */
+  unlockedItems = [],
+  /** Переход в карточку по нажатию на строку */
+  onItemPress,
   title,
   lines = [],
   /** success = конфетти + трофей; soft = спокойная карточка (почти открылось / приехал) */
@@ -149,7 +194,17 @@ export default function UnlockCelebrationOverlay({
   const shockwave = useRef(new Animated.Value(0)).current;
 
   const isSuccess = variant === 'success';
-  const showViewButton = isSuccess && typeof onViewPress === 'function';
+  const hasItemList = unlockedItems.length > 0;
+  const multipleItems = unlockedItems.length > 1;
+  const showViewButton =
+    isSuccess &&
+    !multipleItems &&
+    typeof onViewPress === 'function' &&
+    (hasItemList || lines.length > 0);
+  const subtitleText = useMemo(() => {
+    if (!hasItemList || unlockedItems.length < 2) return null;
+    return t('foundManyIntro', { n: unlockedItems.length });
+  }, [hasItemList, t, unlockedItems]);
 
   const shockScale = shockwave.interpolate({
     inputRange: [0, 1],
@@ -161,15 +216,62 @@ export default function UnlockCelebrationOverlay({
   });
 
   const prevVisibleRef = useRef(false);
+  const bounceLoopRef = useRef(null);
+  const [showFireworkParticles, setShowFireworkParticles] = useState(false);
+
+  const stopBounceLoop = useCallback(() => {
+    if (bounceLoopRef.current) {
+      bounceLoopRef.current.stop();
+      bounceLoopRef.current = null;
+    }
+  }, []);
+
+  const startBounceLoop = useCallback(() => {
+    stopBounceLoop();
+    const bounceLoop = Animated.loop(
+      Animated.sequence([
+        Animated.timing(iconBounce, {
+          toValue: 1,
+          duration: 550,
+          easing: Easing.inOut(Easing.quad),
+          useNativeDriver: true,
+        }),
+        Animated.timing(iconBounce, {
+          toValue: 0,
+          duration: 550,
+          easing: Easing.inOut(Easing.quad),
+          useNativeDriver: true,
+        }),
+      ])
+    );
+    bounceLoop.start();
+    bounceLoopRef.current = bounceLoop;
+  }, [iconBounce, stopBounceLoop]);
 
   useEffect(() => {
     if (!visible) {
       prevVisibleRef.current = false;
+      setShowFireworkParticles(false);
+      stopBounceLoop();
+      return;
+    }
+
+    if (hiddenForPeek) {
+      setShowFireworkParticles(false);
+      stopBounceLoop();
       return;
     }
 
     const justOpened = !prevVisibleRef.current;
     prevVisibleRef.current = true;
+
+    if (!justOpened) {
+      cardScale.setValue(1);
+      cardOpacity.setValue(1);
+      glow.setValue(1);
+      startBounceLoop();
+      return stopBounceLoop;
+    }
 
     cardScale.setValue(0.45);
     cardOpacity.setValue(0);
@@ -195,7 +297,8 @@ export default function UnlockCelebrationOverlay({
       }),
     ]).start();
 
-    if (justOpened && isSuccess) {
+    if (isSuccess) {
+      setShowFireworkParticles(true);
       shockwave.setValue(0);
       Animated.timing(shockwave, {
         toValue: 1,
@@ -205,28 +308,20 @@ export default function UnlockCelebrationOverlay({
       }).start();
     }
 
-    const bounceLoop = Animated.loop(
-      Animated.sequence([
-        Animated.timing(iconBounce, {
-          toValue: 1,
-          duration: 550,
-          easing: Easing.inOut(Easing.quad),
-          useNativeDriver: true,
-        }),
-        Animated.timing(iconBounce, {
-          toValue: 0,
-          duration: 550,
-          easing: Easing.inOut(Easing.quad),
-          useNativeDriver: true,
-        }),
-      ])
-    );
-    bounceLoop.start();
-
-    return () => {
-      bounceLoop.stop();
-    };
-  }, [cardOpacity, cardScale, glow, iconBounce, isSuccess, shockwave, visible]);
+    startBounceLoop();
+    return stopBounceLoop;
+  }, [
+    cardOpacity,
+    cardScale,
+    glow,
+    hiddenForPeek,
+    iconBounce,
+    isSuccess,
+    shockwave,
+    startBounceLoop,
+    stopBounceLoop,
+    visible,
+  ]);
 
   const iconY = iconBounce.interpolate({
     inputRange: [0, 1],
@@ -318,6 +413,73 @@ export default function UnlockCelebrationOverlay({
           maxHeight: Math.min(220, H * 0.28),
           marginBottom: 8,
         },
+        subtitle: {
+          fontSize: 16,
+          fontWeight: '600',
+          lineHeight: 22,
+          color: colors.textSecondary,
+          textAlign: 'center',
+          marginBottom: 14,
+        },
+        itemListScroll: {
+          maxHeight: Math.min(320, H * 0.42),
+          marginBottom: 6,
+        },
+        itemListContent: {
+          paddingBottom: 4,
+        },
+        itemListHint: {
+          fontSize: 13,
+          fontWeight: '600',
+          color: colors.textMuted,
+          textAlign: 'center',
+          marginBottom: 10,
+        },
+        itemRow: {
+          flexDirection: 'row',
+          alignItems: 'center',
+          paddingVertical: 12,
+          paddingHorizontal: 14,
+          borderRadius: 16,
+          marginBottom: 10,
+          backgroundColor:
+            resolvedScheme === 'dark'
+              ? 'rgba(255,255,255,0.06)'
+              : 'rgba(0,0,0,0.04)',
+          borderWidth: 1,
+          borderColor: isSuccess ? 'rgba(245,200,76,0.28)' : colors.border,
+        },
+        itemRowPressed: {
+          opacity: 0.88,
+        },
+        itemIconWrap: {
+          width: 40,
+          height: 40,
+          borderRadius: 20,
+          borderWidth: 2,
+          alignItems: 'center',
+          justifyContent: 'center',
+          marginRight: 12,
+          backgroundColor:
+            resolvedScheme === 'dark'
+              ? 'rgba(245,200,76,0.12)'
+              : 'rgba(245,200,76,0.15)',
+        },
+        itemBody: {
+          flex: 1,
+          minWidth: 0,
+          marginRight: 8,
+        },
+        itemName: {
+          fontSize: 16,
+          fontWeight: '800',
+          color: colors.text,
+          lineHeight: 21,
+        },
+        itemBadge: {
+          marginTop: 6,
+          alignSelf: 'flex-start',
+        },
         ctaRow: {
           marginTop: 18,
           flexDirection: 'row',
@@ -381,9 +543,15 @@ export default function UnlockCelebrationOverlay({
     [colors, isSuccess, resolvedScheme]
   );
 
+  const modalShown = visible && !hiddenForPeek;
+
+  if (!visible) {
+    return null;
+  }
+
   return (
     <Modal
-      visible={visible}
+      visible={modalShown}
       transparent
       animationType="none"
       statusBarTranslucent
@@ -395,7 +563,7 @@ export default function UnlockCelebrationOverlay({
           pointerEvents="none"
         />
 
-        {isSuccess && visible ? (
+        {isSuccess && showFireworkParticles ? (
           <View style={styles.fireworkHost} pointerEvents="none">
             <Animated.View
               pointerEvents="none"
@@ -420,12 +588,13 @@ export default function UnlockCelebrationOverlay({
         ) : null}
 
         <Animated.View
+          pointerEvents="box-none"
           style={{
             opacity: cardOpacity,
             transform: [{ scale: cardScale }],
           }}
         >
-          <View style={styles.card}>
+          <View style={styles.card} pointerEvents="auto">
             <View style={styles.iconWrap}>
               {isSuccess ? <View style={styles.ring} /> : null}
               <Animated.View style={{ transform: [{ translateY: iconY }] }}>
@@ -439,16 +608,48 @@ export default function UnlockCelebrationOverlay({
 
             <Text style={styles.title}>{title}</Text>
 
-            <ScrollView
-              style={styles.scrollLines}
-              showsVerticalScrollIndicator={lines.length > 5}
-            >
-              {lines.map((line, i) => (
-                <Text key={i} style={styles.line}>
-                  {line}
-                </Text>
-              ))}
-            </ScrollView>
+            {hasItemList ? (
+              <>
+                {subtitleText ? (
+                  <Text style={styles.subtitle}>{subtitleText}</Text>
+                ) : null}
+                {multipleItems && typeof onItemPress === 'function' ? (
+                  <Text style={styles.itemListHint}>{t('celebrationTapItem')}</Text>
+                ) : null}
+                <ScrollView
+                  style={styles.itemListScroll}
+                  contentContainerStyle={styles.itemListContent}
+                  showsVerticalScrollIndicator={unlockedItems.length > 3}
+                  keyboardShouldPersistTaps="handled"
+                  nestedScrollEnabled
+                >
+                  {unlockedItems.map((item) => (
+                    <UnlockedItemRow
+                      key={String(item.id)}
+                      item={item}
+                      styles={styles}
+                      isSuccess={isSuccess && typeof onItemPress === 'function'}
+                      onPress={
+                        typeof onItemPress === 'function'
+                          ? onItemPress
+                          : () => {}
+                      }
+                    />
+                  ))}
+                </ScrollView>
+              </>
+            ) : (
+              <ScrollView
+                style={styles.scrollLines}
+                showsVerticalScrollIndicator={lines.length > 5}
+              >
+                {lines.map((line, i) => (
+                  <Text key={i} style={styles.line}>
+                    {line}
+                  </Text>
+                ))}
+              </ScrollView>
+            )}
 
             {showViewButton ? (
               <View style={styles.ctaRow}>

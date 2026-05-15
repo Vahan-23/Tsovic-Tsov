@@ -1,7 +1,6 @@
-import React, { useLayoutEffect, useMemo } from 'react';
+import React, { useEffect, useLayoutEffect, useMemo } from 'react';
 import {
   Alert,
-  Image,
   Platform,
   Pressable,
   ScrollView,
@@ -18,53 +17,20 @@ import { useFigures } from '../context/FiguresContext';
 import { useSettings } from '../context/SettingsContext';
 import { getStatueCollectionImageSource } from '../data/statueCollectionImages';
 import RarityBadge from '../components/RarityBadge';
-
-/** Текст про сам объект: где стоит, зачем поставлен, примечательности (см. i18n curatedMonumentStory_* или OSM/Yandex description). */
-function resolveMonumentStoryBody(figure, t) {
-  if (figure?.curatedKey) {
-    const k = `curatedMonumentStory_${figure.curatedKey}`;
-    const text = t(k);
-    if (text && text !== k) return text;
-  }
-  const d = typeof figure?.description === 'string' ? figure.description.trim() : '';
-  return d || null;
-}
-
-function MonumentStorySection({ figure, t, styles }) {
-  const body = resolveMonumentStoryBody(figure, t);
-  if (!body) return null;
-  return (
-    <View style={styles.storySection}>
-      <Text style={styles.storyHeading}>{t('statueStoryHeading')}</Text>
-      <Text style={styles.storyBody}>{body}</Text>
-    </View>
-  );
-}
-
-/** Биография персоны (курированные тексты); описание памятника перенесено в MonumentStorySection. */
-function CuratedStatueCopy({ figure, t, styles }) {
-  if (!figure?.curatedKey) {
-    return null;
-  }
-  const bioKey = `curatedBio_${figure.curatedKey}`;
-  const bio = t(bioKey);
-  return (
-    <>
-      <Text style={styles.sectionHeading}>{t('statueLifeHeading')}</Text>
-      <Text style={styles.metaMuted}>{t('statueMetaLife', { born: figure.born, died: figure.died })}</Text>
-      {figure.monumentUnveiled != null ? (
-        <Text style={[styles.metaMuted, styles.metaSpaced]}>
-          {t('statueMetaMonument', { year: figure.monumentUnveiled })}
-        </Text>
-      ) : null}
-      <Text style={[styles.body, styles.bioBlock]}>{bio}</Text>
-    </>
-  );
-}
+import MonumentDetailCard from '../components/monument/MonumentDetailCard';
+import { resolveMonumentCardContent } from '../utils/resolveMonumentCard';
+import { useCelebrationPeekOptional } from '../context/CelebrationPeekContext';
 
 export default function StatueDetailScreen({ route, navigation }) {
+  const celebrationPeek = useCelebrationPeekOptional();
   const { t, locale } = useLanguage();
-  const { colors } = useSettings();
+
+  useEffect(() => {
+    return () => {
+      celebrationPeek?.endDetailPeek();
+    };
+  }, [celebrationPeek]);
+  const { colors, resolvedScheme } = useSettings();
   const styles = useMemo(
     () =>
       StyleSheet.create({
@@ -76,6 +42,11 @@ export default function StatueDetailScreen({ route, navigation }) {
           backgroundColor: colors.bg,
         },
         scroll: {
+          padding: 16,
+          paddingBottom: 40,
+          backgroundColor: colors.bg,
+        },
+        lockedScroll: {
           padding: 20,
           paddingBottom: 40,
           backgroundColor: colors.bg,
@@ -114,39 +85,6 @@ export default function StatueDetailScreen({ route, navigation }) {
           lineHeight: 24,
           color: colors.iconMuted,
         },
-        metaMuted: {
-          fontSize: 14,
-          fontWeight: '600',
-          color: colors.textMuted,
-          lineHeight: 20,
-        },
-        metaSpaced: {
-          marginTop: 6,
-        },
-        bioBlock: {
-          marginTop: 14,
-        },
-        sectionHeading: {
-          fontSize: 17,
-          fontWeight: '800',
-          color: colors.text,
-          marginBottom: 10,
-          marginTop: 4,
-        },
-        storySection: {
-          marginBottom: 0,
-        },
-        storyHeading: {
-          fontSize: 17,
-          fontWeight: '800',
-          color: colors.text,
-          marginBottom: 10,
-        },
-        storyBody: {
-          fontSize: 16,
-          lineHeight: 24,
-          color: colors.iconMuted,
-        },
         coords: {
           fontSize: 14,
           color: colors.textMuted,
@@ -156,6 +94,9 @@ export default function StatueDetailScreen({ route, navigation }) {
           lineHeight: 24,
           color: colors.textSecondary,
           marginTop: 8,
+        },
+        rarityRow: {
+          marginBottom: 10,
         },
         navButtonOuter: {
           marginTop: 28,
@@ -186,104 +127,6 @@ export default function StatueDetailScreen({ route, navigation }) {
           fontWeight: '800',
           letterSpacing: 0.25,
         },
-        image: {
-          width: '100%',
-          height: 200,
-          borderRadius: 12,
-          marginBottom: 16,
-          backgroundColor: colors.placeholderBg,
-        },
-        heroWrap: {
-          borderRadius: 22,
-          overflow: 'hidden',
-          marginBottom: 18,
-          backgroundColor: colors.placeholderBg,
-          ...Platform.select({
-            ios: {
-              shadowColor: '#000',
-              shadowOffset: { width: 0, height: 8 },
-              shadowOpacity: 0.15,
-              shadowRadius: 16,
-            },
-            android: { elevation: 6 },
-          }),
-        },
-        heroImage: {
-          width: '100%',
-          height: 256,
-          backgroundColor: colors.placeholderBg,
-        },
-        heroBottom: {
-          position: 'absolute',
-          left: 0,
-          right: 0,
-          bottom: 0,
-          paddingHorizontal: 18,
-          paddingVertical: 18,
-          backgroundColor: 'rgba(15, 23, 42, 0.58)',
-        },
-        heroTitle: {
-          fontSize: 24,
-          fontWeight: '900',
-          color: '#FFFFFF',
-          letterSpacing: -0.6,
-          marginBottom: 10,
-          lineHeight: 30,
-        },
-        heroChip: {
-          flexDirection: 'row',
-          alignItems: 'center',
-          gap: 8,
-          alignSelf: 'flex-start',
-          paddingHorizontal: 12,
-          paddingVertical: 7,
-          borderRadius: 999,
-          backgroundColor: 'rgba(255,255,255,0.22)',
-        },
-        heroChipText: {
-          fontSize: 13,
-          fontWeight: '800',
-          color: '#FFFFFF',
-          letterSpacing: 0.2,
-        },
-        discoveredChipRow: {
-          flexDirection: 'row',
-          alignItems: 'center',
-          flexWrap: 'wrap',
-          gap: 8,
-          marginBottom: 18,
-        },
-        rarityRow: {
-          marginBottom: 10,
-        },
-        chipPill: {
-          flexDirection: 'row',
-          alignItems: 'center',
-          gap: 8,
-          paddingHorizontal: 14,
-          paddingVertical: 10,
-          borderRadius: 999,
-          backgroundColor: colors.chipBg,
-          borderWidth: StyleSheet.hairlineWidth,
-          borderColor: colors.borderMuted,
-        },
-        chipText: {
-          fontSize: 14,
-          fontWeight: '800',
-          color: colors.accentGreen,
-        },
-        detailSheet: {
-          padding: 18,
-          borderRadius: 20,
-          backgroundColor: colors.bgElevated,
-          borderWidth: StyleSheet.hairlineWidth,
-          borderColor: colors.border,
-        },
-        detailDivider: {
-          height: StyleSheet.hairlineWidth,
-          backgroundColor: colors.borderMuted,
-          marginVertical: 16,
-        },
       }),
     [colors]
   );
@@ -298,7 +141,6 @@ export default function StatueDetailScreen({ route, navigation }) {
 
   const titleText = figure ? labelForBrowseLocale(figure, locale) : '';
 
-  /** Локальный asset из bundle имеет приоритет над URL из данных. */
   const heroResolvedImageSource = useMemo(() => {
     if (!figure) return null;
     const local = getStatueCollectionImageSource(figure);
@@ -312,11 +154,18 @@ export default function StatueDetailScreen({ route, navigation }) {
     return null;
   }, [figure]);
 
-  const hasMonumentStory = useMemo(
-    () => (figure ? Boolean(resolveMonumentStoryBody(figure, t)) : false),
-    [figure, t]
-  );
-  const hasLifeBio = Boolean(figure?.curatedKey);
+  const monumentCard = useMemo(() => {
+    if (!figure || collectionKind !== 'statues') return null;
+    const content = resolveMonumentCardContent(figure, titleText, t);
+    return {
+      ...content,
+      discoveredLabel: t('statueDiscovered'),
+      factsSectionTitle: t('cardSectionFacts'),
+      whySectionTitle: t('cardSectionWhy'),
+      storySectionTitle: t('cardSectionStory'),
+      personSectionTitle: t('cardSectionPerson'),
+    };
+  }, [figure, collectionKind, titleText, t]);
 
   const canNavigateToTarget =
     figure != null &&
@@ -360,7 +209,7 @@ export default function StatueDetailScreen({ route, navigation }) {
             )
           : undefined,
     });
-  }, [navigation, figure, collectionKind, t, locale, titleText, shareMessage, colors.icon]);
+  }, [navigation, figure, collectionKind, t, titleText, shareMessage, colors.icon]);
 
   if (!figure) {
     return (
@@ -372,7 +221,7 @@ export default function StatueDetailScreen({ route, navigation }) {
 
   if (!figure.unlocked) {
     return (
-      <ScrollView contentContainerStyle={styles.scroll}>
+      <ScrollView contentContainerStyle={styles.lockedScroll}>
         {collectionKind === 'pulpulaks' ? (
           <Text style={styles.kind}>{t('pulpulakKindLabel')}</Text>
         ) : null}
@@ -439,98 +288,35 @@ export default function StatueDetailScreen({ route, navigation }) {
       <ScrollView contentContainerStyle={styles.scroll}>
         <Text style={[styles.kind, styles.kind3d]}>{t('statue3dKindLabel')}</Text>
         <Text style={styles.subLine}>{t('statue3dUnlockedLine')}</Text>
-        {heroResolvedImageSource ? (
-          <View style={styles.heroWrap}>
-            <Image
-              source={heroResolvedImageSource}
-              style={styles.heroImage}
-              resizeMode="cover"
-            />
-            <View style={styles.heroBottom}>
-              <Text style={styles.heroTitle} numberOfLines={3}>
-                {titleText}
-              </Text>
-            <View style={styles.heroChip}>
-              <Ionicons name="checkmark-circle" size={18} color="#FFFFFF" />
-              <Text style={styles.heroChipText}>{t('statueDiscovered')}</Text>
-            </View>
-            {figure.rarity ? (
-              <View style={{ marginTop: 10 }}>
-                <RarityBadge tier={figure.rarity} />
-              </View>
-            ) : null}
-          </View>
-        </View>
-      ) : (
-        <>
-          <Text style={styles.title}>{titleText}</Text>
-          <View style={styles.discoveredChipRow}>
-            <View style={styles.chipPill}>
-              <Ionicons name="checkmark-circle" size={18} color={colors.accentGreen} />
-              <Text style={styles.chipText}>{t('statueDiscovered')}</Text>
-            </View>
-            {figure.rarity ? <RarityBadge tier={figure.rarity} /> : null}
-          </View>
-        </>
-      )}
-      {hasMonumentStory || hasLifeBio ? (
-        <View style={styles.detailSheet}>
-          {hasMonumentStory ? (
-            <MonumentStorySection figure={figure} t={t} styles={styles} />
-          ) : null}
-          {hasMonumentStory && hasLifeBio ? (
-            <View style={styles.detailDivider} />
-          ) : null}
-          {hasLifeBio ? (
-            <CuratedStatueCopy figure={figure} t={t} styles={styles} />
-          ) : null}
-        </View>
-      ) : null}
-    </ScrollView>
-  );
-}
+        <Text style={styles.title}>{titleText}</Text>
+        <Text style={styles.discovered}>{t('statueDiscovered')}</Text>
+      </ScrollView>
+    );
+  }
 
   return (
-    <ScrollView contentContainerStyle={styles.scroll}>
-      {heroResolvedImageSource ? (
-        <View style={styles.heroWrap}>
-          <Image
-            source={heroResolvedImageSource}
-            style={styles.heroImage}
-            resizeMode="cover"
-          />
-          <View style={styles.heroBottom}>
-            <Text style={styles.heroTitle} numberOfLines={3}>
-              {titleText}
-            </Text>
-            <View style={styles.heroChip}>
-              <Ionicons name="checkmark-circle" size={18} color="#FFFFFF" />
-              <Text style={styles.heroChipText}>{t('statueDiscovered')}</Text>
-            </View>
-          </View>
-        </View>
-      ) : (
-        <>
-          <Text style={styles.title}>{titleText}</Text>
-          <View style={styles.discoveredChipRow}>
-            <View style={styles.chipPill}>
-              <Ionicons name="checkmark-circle" size={18} color={colors.accentGreen} />
-              <Text style={styles.chipText}>{t('statueDiscovered')}</Text>
-            </View>
-          </View>
-        </>
-      )}
-      {hasMonumentStory || hasLifeBio ? (
-        <View style={styles.detailSheet}>
-          {hasMonumentStory ? (
-            <MonumentStorySection figure={figure} t={t} styles={styles} />
-          ) : null}
-          {hasMonumentStory && hasLifeBio ? (
-            <View style={styles.detailDivider} />
-          ) : null}
-          {hasLifeBio ? <CuratedStatueCopy figure={figure} t={t} styles={styles} /> : null}
-        </View>
-      ) : null}
+    <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
+      <MonumentDetailCard
+        title={titleText}
+        figure={figure}
+        heroImageSource={heroResolvedImageSource}
+        card={monumentCard}
+        colors={colors}
+        resolvedScheme={resolvedScheme}
+        navigateLabel={t('statueLockedNavigateCta')}
+        onNavigate={
+          canNavigateToTarget
+            ? () =>
+                navigation.navigate('Navigate', {
+                  targetId: figure.id,
+                  targetLat: Number(figure.latitude),
+                  targetLon: Number(figure.longitude),
+                  targetName: titleText,
+                  collectionKind,
+                })
+            : undefined
+        }
+      />
     </ScrollView>
   );
 }

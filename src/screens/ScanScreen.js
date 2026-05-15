@@ -10,6 +10,7 @@ import { useFigures } from '../context/FiguresContext';
 import { useSettings } from '../context/SettingsContext';
 import { haversineDistanceMeters } from '../utils/haversine';
 import UnlockCelebrationOverlay from '../components/UnlockCelebrationOverlay';
+import { useCelebrationPeek } from '../context/CelebrationPeekContext';
 
 export default function ScanScreen({ navigation }) {
   const insets = useSafeAreaInsets();
@@ -113,6 +114,7 @@ export default function ScanScreen({ navigation }) {
   const { figures, unlockById, commitHudCollectionProgress } = useFigures();
   const [isChecking, setIsChecking] = useState(false);
   const [unlockCelebration, setUnlockCelebration] = useState(null);
+  const { celebrationHidden, beginDetailPeek } = useCelebrationPeek();
   const [statusText, setStatusText] = useState('');
   const pulseAnim = useRef(new Animated.Value(0)).current;
 
@@ -172,30 +174,27 @@ export default function ScanScreen({ navigation }) {
         return;
       }
 
-      const discoveredNames = [];
-      const unlockedStatueIds = [];
+      const unlockedItems = [];
       nearbyLockedStatues.forEach((figure) => {
         const result = unlockById(figure.id);
         if (result.ok && !result.alreadyHad) {
-          discoveredNames.push(figure.displayName ?? figure.name);
-          unlockedStatueIds.push(figure.id);
+          unlockedItems.push({
+            id: figure.id,
+            name: figure.displayName ?? figure.name,
+            rarity: figure.rarity,
+          });
         }
       });
 
-      if (discoveredNames.length === 0) {
+      if (unlockedItems.length === 0) {
         setStatusText('Նոր արձան չբացվեց։');
         return;
       }
 
-      const lines =
-        discoveredNames.length === 1
-          ? [t('foundOne', { name: discoveredNames[0] })]
-          : discoveredNames.map((name) => t('foundManyLine', { name }));
       setUnlockCelebration({
         title: t('unlockedTitle'),
-        lines,
+        unlockedItems,
         variant: 'success',
-        detailStatueId: unlockedStatueIds[0],
         collectionKind: 'statues',
       });
     } catch {
@@ -278,17 +277,18 @@ export default function ScanScreen({ navigation }) {
 
       <UnlockCelebrationOverlay
         visible={unlockCelebration != null}
+        hiddenForPeek={celebrationHidden}
         onDismiss={() => {
           setUnlockCelebration(null);
           commitHudCollectionProgress();
           navigation.goBack();
         }}
         onViewPress={
-          unlockCelebration?.detailStatueId != null
+          unlockCelebration?.unlockedItems?.length === 1
             ? () => {
-                const id = unlockCelebration.detailStatueId;
+                const id = unlockCelebration.unlockedItems[0].id;
                 const kind = unlockCelebration.collectionKind ?? 'statues';
-                setUnlockCelebration(null);
+                beginDetailPeek();
                 navigation.navigate('StatueDetail', {
                   statueId: id,
                   collectionKind: kind,
@@ -296,8 +296,16 @@ export default function ScanScreen({ navigation }) {
               }
             : undefined
         }
+        onItemPress={(id) => {
+          const kind = unlockCelebration?.collectionKind ?? 'statues';
+          beginDetailPeek();
+          navigation.navigate('StatueDetail', {
+            statueId: id,
+            collectionKind: kind,
+          });
+        }}
         title={unlockCelebration?.title ?? ''}
-        lines={unlockCelebration?.lines ?? []}
+        unlockedItems={unlockCelebration?.unlockedItems ?? []}
         variant={unlockCelebration?.variant ?? 'success'}
       />
     </View>

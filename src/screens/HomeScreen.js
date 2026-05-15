@@ -7,10 +7,12 @@ import {
 import DiscoverNearbyBlock from '../components/DiscoverNearbyBlock';
 import { useFigures } from '../context/FiguresContext';
 import { useSettings } from '../context/SettingsContext';
+import { useCelebrationPeek } from '../context/CelebrationPeekContext';
 
 export default function HomeScreen() {
   const { storageLoaded } = useFigures();
   const { colors } = useSettings();
+  const { celebrationHidden, beginDetailPeek } = useCelebrationPeek();
 
   const styles = useMemo(
     () =>
@@ -46,7 +48,11 @@ export default function HomeScreen() {
   return (
     <View style={styles.root}>
       <View style={styles.center}>
-        <DiscoverNearbyBlock layout="home" />
+        <DiscoverNearbyBlock
+          layout="home"
+          celebrationHidden={celebrationHidden}
+          beginCelebrationDetailPeek={beginDetailPeek}
+        />
       </View>
     </View>
   );

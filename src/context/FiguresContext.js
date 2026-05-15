@@ -96,6 +96,14 @@ export function FiguresProvider({ children }) {
   /** Header chip — updates on load and after celebration «Continue», not on unlock. */
   const [hudUnlockedCount, setHudUnlockedCount] = useState(0);
   const hudInitialSyncedRef = useRef(false);
+  /** Sync mirrors for batch unlocks in one event (setState updaters are not sync). */
+  const unlockedIdsRef = useRef(unlockedIds);
+  const unlocked3dIdsRef = useRef(unlocked3dIds);
+  const unlockedPulpulakIdsRef = useRef(unlockedPulpulakIds);
+
+  unlockedIdsRef.current = unlockedIds;
+  unlocked3dIdsRef.current = unlocked3dIds;
+  unlockedPulpulakIdsRef.current = unlockedPulpulakIds;
 
   const refreshStatues = useCallback(async () => {
     setStatuesRefreshing(true);
@@ -208,9 +216,13 @@ export function FiguresProvider({ children }) {
 
   const resetCollectionProgress = useCallback(async () => {
     LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-    setUnlockedIds(new Set());
-    setUnlocked3dIds(new Set());
-    setUnlockedPulpulakIds(new Set());
+    const empty = new Set();
+    unlockedIdsRef.current = empty;
+    unlocked3dIdsRef.current = empty;
+    unlockedPulpulakIdsRef.current = empty;
+    setUnlockedIds(empty);
+    setUnlocked3dIds(empty);
+    setUnlockedPulpulakIds(empty);
     setDiscoveryHistory([]);
     setHudUnlockedCount(0);
     hudInitialSyncedRef.current = true;
@@ -396,22 +408,20 @@ export function FiguresProvider({ children }) {
         return { ok: false, reason: 'unknown' };
       }
 
-      let added = false;
-      setUnlockedIds((prev) => {
-        if (prev.has(id)) return prev;
-        added = true;
-        const next = new Set(prev);
-        next.add(id);
-        return next;
-      });
-
-      if (added) {
-        LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-        const fig = figures.find((f) => String(f.id) === id);
-        appendDiscovery('statues', id, fig?.displayName ?? fig?.name ?? '');
+      if (unlockedIdsRef.current.has(id)) {
+        return { ok: true, alreadyHad: true };
       }
 
-      return { ok: true, alreadyHad: !added };
+      const next = new Set(unlockedIdsRef.current);
+      next.add(id);
+      unlockedIdsRef.current = next;
+      setUnlockedIds(next);
+
+      LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+      const fig = figures.find((f) => String(f.id) === id);
+      appendDiscovery('statues', id, fig?.displayName ?? fig?.name ?? '');
+
+      return { ok: true, alreadyHad: false };
     },
     [figures, appendDiscovery]
   );
@@ -424,23 +434,21 @@ export function FiguresProvider({ children }) {
         return { ok: false, reason: 'unknown' };
       }
 
-      let added = false;
-      setUnlocked3dIds((prev) => {
-        if (prev.has(id)) return prev;
-        added = true;
-        const next = new Set(prev);
-        next.add(id);
-        return next;
-      });
-
-      if (added) {
-        LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-        const fig = resolveLinkedStatue(figures, entry);
-        const label = fig?.displayName ?? fig?.name ?? id;
-        appendDiscovery('statues3d', id, label);
+      if (unlocked3dIdsRef.current.has(id)) {
+        return { ok: true, alreadyHad: true };
       }
 
-      return { ok: true, alreadyHad: !added };
+      const next = new Set(unlocked3dIdsRef.current);
+      next.add(id);
+      unlocked3dIdsRef.current = next;
+      setUnlocked3dIds(next);
+
+      LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+      const fig = resolveLinkedStatue(figures, entry);
+      const label = fig?.displayName ?? fig?.name ?? id;
+      appendDiscovery('statues3d', id, label);
+
+      return { ok: true, alreadyHad: false };
     },
     [figures, appendDiscovery]
   );
@@ -451,22 +459,20 @@ export function FiguresProvider({ children }) {
       return { ok: false, reason: 'unknown' };
     }
 
-    let added = false;
-    setUnlockedPulpulakIds((prev) => {
-      if (prev.has(id)) return prev;
-      added = true;
-      const next = new Set(prev);
-      next.add(id);
-      return next;
-    });
-
-    if (added) {
-      LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-      const pt = PULPULAK_POINTS.find((p) => String(p.id) === id);
-      appendDiscovery('pulpulaks', id, pt?.name ?? '');
+    if (unlockedPulpulakIdsRef.current.has(id)) {
+      return { ok: true, alreadyHad: true };
     }
 
-    return { ok: true, alreadyHad: !added };
+    const next = new Set(unlockedPulpulakIdsRef.current);
+    next.add(id);
+    unlockedPulpulakIdsRef.current = next;
+    setUnlockedPulpulakIds(next);
+
+    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+    const pt = PULPULAK_POINTS.find((p) => String(p.id) === id);
+    appendDiscovery('pulpulaks', id, pt?.name ?? '');
+
+    return { ok: true, alreadyHad: false };
   }, [appendDiscovery]);
 
   const unlockForSearchMode = useCallback(

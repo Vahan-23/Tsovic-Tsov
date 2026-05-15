@@ -99,6 +99,8 @@ function getDirectionLabel(bearing, directions) {
 export default function DiscoverNearbyBlock({
   navigation: navigationProp,
   layout = 'default',
+  celebrationHidden = false,
+  beginCelebrationDetailPeek,
 }) {
   const radarLayout = RADAR_LAYOUT[layout] ?? RADAR_LAYOUT.default;
   const navigationFallback = useNavigation();
@@ -478,17 +480,19 @@ export default function DiscoverNearbyBlock({
             outcome = { type: 'modal' };
           }
         } else {
-          const discovered = [];
-          const discoveredIds = [];
+          const unlockedItems = [];
           nearbyLockedStatues.forEach((figure) => {
             const result = unlockForSearchMode(searchMode, figure.id);
             if (result.ok && !result.alreadyHad) {
-              discovered.push(figure.displayName ?? figure.name);
-              discoveredIds.push(figure.id);
+              unlockedItems.push({
+                id: figure.id,
+                name: figure.displayName ?? figure.name,
+                rarity: figure.rarity,
+              });
             }
           });
 
-          if (discovered.length === 0) {
+          if (unlockedItems.length === 0) {
             outcome = {
               type: 'nonew',
               title: t('noticeTitle'),
@@ -496,15 +500,10 @@ export default function DiscoverNearbyBlock({
             };
             setGuidance(null);
           } else {
-            const lines =
-              discovered.length === 1
-                ? [t('foundOne', { name: discovered[0] })]
-                : discovered.map((name) => t('foundManyLine', { name }));
             outcome = {
               type: 'success',
               title: t('unlockedTitle'),
-              lines,
-              detailStatueId: discoveredIds[0],
+              unlockedItems,
               collectionKind: searchMode,
             };
             setGuidance(null);
@@ -522,9 +521,8 @@ export default function DiscoverNearbyBlock({
       } else if (outcome.type === 'success') {
         setUnlockCelebration({
           title: outcome.title,
-          lines: outcome.lines,
+          unlockedItems: outcome.unlockedItems,
           variant: 'success',
-          detailStatueId: outcome.detailStatueId,
           collectionKind: outcome.collectionKind,
         });
       } else if (outcome.type !== 'none') {
@@ -858,16 +856,17 @@ export default function DiscoverNearbyBlock({
 
       <UnlockCelebrationOverlay
         visible={unlockCelebration != null}
+        hiddenForPeek={celebrationHidden}
         onDismiss={() => {
           setUnlockCelebration(null);
           commitHudCollectionProgress();
         }}
         onViewPress={
-          unlockCelebration?.detailStatueId != null
+          unlockCelebration?.unlockedItems?.length === 1
             ? () => {
-                const id = unlockCelebration.detailStatueId;
+                const id = unlockCelebration.unlockedItems[0].id;
                 const kind = unlockCelebration.collectionKind ?? 'statues';
-                setUnlockCelebration(null);
+                beginCelebrationDetailPeek?.();
                 navigation.navigate('StatueDetail', {
                   statueId: id,
                   collectionKind: kind,
@@ -875,8 +874,16 @@ export default function DiscoverNearbyBlock({
               }
             : undefined
         }
+        onItemPress={(id) => {
+          const kind = unlockCelebration?.collectionKind ?? 'statues';
+          beginCelebrationDetailPeek?.();
+          navigation.navigate('StatueDetail', {
+            statueId: id,
+            collectionKind: kind,
+          });
+        }}
         title={unlockCelebration?.title ?? ''}
-        lines={unlockCelebration?.lines ?? []}
+        unlockedItems={unlockCelebration?.unlockedItems ?? []}
         variant={unlockCelebration?.variant ?? 'success'}
       />
     </View>

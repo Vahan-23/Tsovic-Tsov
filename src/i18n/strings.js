@@ -1,4 +1,6 @@
 /** UI copy: Armenian (default), Russian, English */
+import { monumentCardStrings } from './monumentCardStrings';
+
 export const SUPPORTED_LOCALES = ['hy', 'ru', 'en'];
 
 export const strings = {
@@ -71,7 +73,9 @@ export const strings = {
     noNewUnlockMessage: 'Նոր արձան չբացվեց։',
     unlockedTitle: 'Բացվեց',
     foundOne: 'Դու հայտնաբերեցիր {name}-ը։',
+    foundManyIntro: 'Դու բացեցիր {n} հուշարձան',
     foundManyLine: 'Դու հայտնաբերեցիր {name}-ը։',
+    celebrationTapItem: 'Հպիր՝ դիտելու համար',
     errorTitle: 'Սխալ',
     errorLocationMessage: 'Չհաջողվեց ստանալ տեղադրությունը։ Փորձիր կրկին։',
     modalNearbyTarget: 'ՄՈՏԱԿԱ ՆՊԱՏԱԿ',
@@ -217,6 +221,7 @@ export const strings = {
     walkBankTestGrantHint: 'Ավելացնում է 10 000 մ պահեստին',
     walkBankTestGrantDoneTitle: 'Պահեստը լիցքավորվեց',
     walkBankTestGrantDoneMessage: 'Ավելացվեց 10 կմ։ Կարող ես փորձել հեռվից բացել։',
+    ...monumentCardStrings.hy,
   },
   ru: {
     tabHome: 'Главная',
@@ -287,7 +292,9 @@ export const strings = {
     noNewUnlockMessage: 'Новый памятник не открыт.',
     unlockedTitle: 'Открыто',
     foundOne: 'Вы открыли: {name}.',
+    foundManyIntro: 'Открыто памятников: {n}',
     foundManyLine: 'Вы открыли: {name}.',
+    celebrationTapItem: 'Нажмите, чтобы открыть карточку',
     errorTitle: 'Ошибка',
     errorLocationMessage: 'Не удалось получить местоположение. Попробуйте снова.',
     modalNearbyTarget: 'БЛИЖАЙШАЯ ЦЕЛЬ',
@@ -433,6 +440,7 @@ export const strings = {
     walkBankTestGrantHint: 'Добавляет 10 000 м в запас',
     walkBankTestGrantDoneTitle: 'Запас пополнен',
     walkBankTestGrantDoneMessage: 'Добавлено 10 км. Можно пробовать открыть удалённо.',
+    ...monumentCardStrings.ru,
   },
   en: {
     tabHome: 'Home',
@@ -503,7 +511,9 @@ export const strings = {
     noNewUnlockMessage: 'No new statue unlocked.',
     unlockedTitle: 'Unlocked',
     foundOne: 'You discovered {name}.',
+    foundManyIntro: 'You unlocked {n} monuments',
     foundManyLine: 'You discovered {name}.',
+    celebrationTapItem: 'Tap to view details',
     errorTitle: 'Error',
     errorLocationMessage: 'Could not get your location. Try again.',
     modalNearbyTarget: 'NEARBY TARGET',
@@ -649,6 +659,7 @@ export const strings = {
     walkBankTestGrantHint: 'Adds 10,000 m to your reserve',
     walkBankTestGrantDoneTitle: 'Reserve topped up',
     walkBankTestGrantDoneMessage: 'Added 10 km. Try unlocking a distant statue on the map.',
+    ...monumentCardStrings.en,
   },
 };
 

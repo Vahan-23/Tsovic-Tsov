@@ -14,6 +14,7 @@ import { WalkBankProvider } from './src/context/WalkBankContext';
 import { LanguageProvider } from './src/context/LanguageContext';
 import { SettingsProvider, useSettings } from './src/context/SettingsContext';
 import { SearchTargetProvider } from './src/context/SearchTargetContext';
+import { CelebrationPeekProvider } from './src/context/CelebrationPeekContext';
 import { RU_NON_CYRILLIC_BUCKET } from './src/constants/alphabet';
 import MainTabNavigator from './src/navigation/MainTabNavigator';
 import StatueDetailScreen from './src/screens/StatueDetailScreen';
@@ -105,9 +106,11 @@ export default function App() {
           <SettingsProvider>
             <SearchTargetProvider>
               <FiguresProvider>
-                <WalkBankProvider>
-                  <RootStack />
-                </WalkBankProvider>
+                <CelebrationPeekProvider>
+                  <WalkBankProvider>
+                    <RootStack />
+                  </WalkBankProvider>
+                </CelebrationPeekProvider>
               </FiguresProvider>
             </SearchTargetProvider>
           </SettingsProvider>
