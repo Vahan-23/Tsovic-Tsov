@@ -1,3 +1,4 @@
+import './src/polyfills/textDecoderLatin1';
 import 'react-native-gesture-handler';
 import { registerRootComponent } from 'expo';
 

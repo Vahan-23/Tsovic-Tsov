@@ -19,6 +19,7 @@ import { getStatueCollectionImageSource } from '../data/statueCollectionImages';
 import RarityBadge from '../components/RarityBadge';
 import MonumentDetailCard from '../components/monument/MonumentDetailCard';
 import { resolveMonumentCardContent } from '../utils/resolveMonumentCard';
+import { resolveMonumentCardId } from '../data/monumentCards';
 import { useCelebrationPeekOptional } from '../context/CelebrationPeekContext';
 
 export default function StatueDetailScreen({ route, navigation }) {
@@ -294,6 +295,40 @@ export default function StatueDetailScreen({ route, navigation }) {
     );
   }
 
+  const isMotherArmeniaDetail =
+    figure &&
+    collectionKind === 'statues' &&
+    resolveMonumentCardId(figure) === 'mother_armenia';
+
+  if (isMotherArmeniaDetail && monumentCard) {
+    return (
+      <View style={{ flex: 1, backgroundColor: colors.bg }}>
+        <MonumentDetailCard
+          title={titleText}
+          figure={figure}
+          heroImageSource={heroResolvedImageSource}
+          card={monumentCard}
+          colors={colors}
+          resolvedScheme={resolvedScheme}
+          motherArmenia3dHint={t('statueMotherArmeniaModelHint')}
+          navigateLabel={t('statueLockedNavigateCta')}
+          onNavigate={
+            canNavigateToTarget
+              ? () =>
+                  navigation.navigate('Navigate', {
+                    targetId: figure.id,
+                    targetLat: Number(figure.latitude),
+                    targetLon: Number(figure.longitude),
+                    targetName: titleText,
+                    collectionKind,
+                  })
+              : undefined
+          }
+        />
+      </View>
+    );
+  }
+
   return (
     <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
       <MonumentDetailCard
@@ -303,6 +338,7 @@ export default function StatueDetailScreen({ route, navigation }) {
         card={monumentCard}
         colors={colors}
         resolvedScheme={resolvedScheme}
+        motherArmenia3dHint={t('statueMotherArmeniaModelHint')}
         navigateLabel={t('statueLockedNavigateCta')}
         onNavigate={
           canNavigateToTarget

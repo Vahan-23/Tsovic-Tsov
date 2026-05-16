@@ -1,15 +1,22 @@
-import React, { useMemo } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
+  Animated,
   Image,
   Platform,
   Pressable,
+  ScrollView,
   StyleSheet,
   Text,
   View,
+  useWindowDimensions,
 } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import RarityBadge from '../RarityBadge';
 import { rarityAccentColor } from '../../utils/statueRarity';
+import { resolveMonumentCardId } from '../../data/monumentCards';
+import MotherArmeniaGlbViewer from '../MotherArmeniaGlbViewer';
+import { useLanguage } from '../../context/LanguageContext';
 
 function FactTile({ fact, styles, accent }) {
   return (
@@ -35,7 +42,44 @@ export default function MonumentDetailCard({
   resolvedScheme,
   onNavigate,
   navigateLabel,
+  motherArmenia3dHint,
 }) {
+  const { t } = useLanguage();
+  const insets = useSafeAreaInsets();
+  const { height: windowHeight } = useWindowDimensions();
+  const scrollRef = useRef(null);
+  const [heroBlockHeight, setHeroBlockHeight] = useState(0);
+  const blinkDown = useRef(new Animated.Value(0)).current;
+  const blinkUp = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    const loop = (v) =>
+      Animated.loop(
+        Animated.sequence([
+          Animated.timing(v, { toValue: 1, duration: 900, useNativeDriver: true }),
+          Animated.timing(v, { toValue: 0, duration: 900, useNativeDriver: true }),
+        ])
+      );
+    const a = loop(blinkDown);
+    const b = loop(blinkUp);
+    a.start();
+    b.start();
+    return () => {
+      a.stop();
+      b.stop();
+    };
+  }, [blinkDown, blinkUp]);
+
+  const scrollToInfo = useCallback(() => {
+    if (heroBlockHeight > 0) {
+      scrollRef.current?.scrollTo({ y: heroBlockHeight, animated: true });
+    }
+  }, [heroBlockHeight]);
+
+  const scrollToModel = useCallback(() => {
+    scrollRef.current?.scrollTo({ y: 0, animated: true });
+  }, []);
+
   const tier = figure?.rarity ?? 2;
   const accent = rarityAccentColor(tier);
 
@@ -44,6 +88,39 @@ export default function MonumentDetailCard({
       StyleSheet.create({
         wrap: {
           gap: 16,
+        },
+        viewerBleed: {
+          marginHorizontal: -16,
+        },
+        motherModelWrap: {
+          width: '100%',
+          alignSelf: 'stretch',
+          alignItems: 'center',
+          justifyContent: 'center',
+        },
+        motherArrowPress: {
+          alignItems: 'center',
+          justifyContent: 'center',
+          paddingVertical: 12,
+          paddingHorizontal: 28,
+        },
+        motherInfoSection: {
+          paddingHorizontal: 16,
+          gap: 16,
+          paddingTop: 12,
+          paddingBottom: 8,
+        },
+        motherStickyUpBar: {
+          backgroundColor: colors.bg,
+          paddingTop: 4,
+          paddingBottom: 10,
+          alignItems: 'center',
+          justifyContent: 'center',
+          borderBottomWidth: StyleSheet.hairlineWidth,
+          borderBottomColor: colors.borderMuted,
+          ...Platform.select({
+            android: { elevation: 3 },
+          }),
         },
         heroWrap: {
           borderRadius: 24,
@@ -217,6 +294,45 @@ export default function MonumentDetailCard({
           fontWeight: '800',
           color: '#FFFFFF',
         },
+        compactHeader: {
+          borderRadius: 20,
+          padding: 18,
+          backgroundColor: colors.bgElevated,
+          borderWidth: 1,
+          borderColor: tier === 3 ? accent : colors.border,
+          gap: 10,
+        },
+        compactTitle: {
+          fontSize: 24,
+          fontWeight: '900',
+          color: colors.text,
+          letterSpacing: -0.5,
+        },
+        compactLead: {
+          fontSize: 15,
+          lineHeight: 22,
+          color: colors.textSecondary,
+        },
+        compactRow: {
+          flexDirection: 'row',
+          flexWrap: 'wrap',
+          alignItems: 'center',
+          gap: 8,
+        },
+        compactDiscoveredChip: {
+          flexDirection: 'row',
+          alignItems: 'center',
+          gap: 6,
+          paddingHorizontal: 10,
+          paddingVertical: 5,
+          borderRadius: 999,
+          backgroundColor: '#16A34A',
+        },
+        compactDiscoveredText: {
+          fontSize: 12,
+          fontWeight: '800',
+          color: '#FFFFFF',
+        },
         bioBlock: {
           marginTop: 4,
           padding: 14,
@@ -245,32 +361,11 @@ export default function MonumentDetailCard({
   const hasStory = Boolean(card.story);
   const hasPersonBio = Boolean(card.personBio) && card.personBio !== card.story;
 
-  return (
-    <View style={styles.wrap}>
-      <View style={styles.heroWrap}>
-        {heroImageSource ? (
-          <Image source={heroImageSource} style={styles.heroImage} resizeMode="cover" />
-        ) : (
-          <View style={[styles.heroImage, { backgroundColor: colors.bgMuted }]} />
-        )}
-        <View style={styles.heroShadeMid} pointerEvents="none" />
-        <View style={styles.heroShadeBot} pointerEvents="none" />
-        <View style={styles.heroContent}>
-          <Text style={styles.heroTitle}>{title}</Text>
-          {card.lead ? (
-            <Text style={styles.heroLead}>{card.lead}</Text>
-          ) : null}
-          <View style={styles.heroRow}>
-            <View style={styles.discoveredChip}>
-              <Ionicons name="checkmark-circle" size={14} color="#FFFFFF" />
-              <Text style={styles.discoveredText}>{card.discoveredLabel}</Text>
-            </View>
-            {figure?.rarity ? <RarityBadge tier={figure.rarity} compact /> : null}
-          </View>
-        </View>
-      </View>
+  const monumentCardId = resolveMonumentCardId(figure);
+  const showMotherArmenia3d = monumentCardId === 'mother_armenia';
 
-      <View style={styles.sheet}>
+  const sheetBody = (
+    <View style={styles.sheet}>
         {hasFacts ? (
           <>
             <Text style={styles.sectionLabel}>{card.factsSectionTitle}</Text>
@@ -327,7 +422,143 @@ export default function MonumentDetailCard({
             <Text style={styles.navBtnText}>{navigateLabel}</Text>
           </Pressable>
         ) : null}
+    </View>
+  );
+
+  if (showMotherArmenia3d) {
+    const topBand = Math.max(0, insets.top - 20);
+    const arrowBand = 92;
+    const rawGlH = Math.max(
+      300,
+      Math.min(
+        Math.round(windowHeight * 0.8),
+        windowHeight - topBand - arrowBand - insets.bottom
+      )
+    );
+    const glViewerHeight = Number.isFinite(rawGlH) && rawGlH > 0 ? rawGlH : 320;
+    const gold = '#d8a85a';
+    const downArrowAnimatedStyle = {
+      opacity: blinkDown.interpolate({ inputRange: [0, 1], outputRange: [0.34, 1] }),
+      transform: [
+        {
+          translateY: blinkDown.interpolate({ inputRange: [0, 1], outputRange: [0, 10] }),
+        },
+      ],
+    };
+    const upArrowAnimatedStyle = {
+      opacity: blinkUp.interpolate({ inputRange: [0, 1], outputRange: [0.34, 1] }),
+      transform: [
+        {
+          translateY: blinkUp.interpolate({ inputRange: [0, 1], outputRange: [0, -10] }),
+        },
+      ],
+    };
+
+    return (
+      <ScrollView
+        ref={scrollRef}
+        style={{ flex: 1 }}
+        contentContainerStyle={{ paddingBottom: insets.bottom + 28 }}
+        showsVerticalScrollIndicator={false}
+        keyboardShouldPersistTaps="handled"
+        stickyHeaderIndices={[1]}
+      >
+        <View
+          style={{
+            minHeight: windowHeight,
+            width: '100%',
+            paddingTop: Math.max(0, insets.top - 18),
+          }}
+          onLayout={(e) => setHeroBlockHeight(e.nativeEvent.layout.height)}
+        >
+          <View
+            style={[
+              styles.motherModelWrap,
+              {
+                height: glViewerHeight,
+                minHeight: glViewerHeight,
+                marginTop: -54,
+              },
+            ]}
+            collapsable={false}
+          >
+            <MotherArmeniaGlbViewer
+              key={`ma-glb-${glViewerHeight}`}
+              colors={colors}
+              hintLabel={motherArmenia3dHint ?? ''}
+              viewerHeight={glViewerHeight}
+            />
+          </View>
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel={t('statueMotherArmeniaScrollToInfo')}
+            android_ripple={{ color: 'rgba(216,168,90,0.28)' }}
+            onPress={scrollToInfo}
+            style={({ pressed }) => [styles.motherArrowPress, pressed && { opacity: 0.88 }]}
+          >
+            <Animated.View style={downArrowAnimatedStyle}>
+              <Ionicons name="chevron-down-circle" size={48} color={gold} />
+            </Animated.View>
+          </Pressable>
+        </View>
+
+        <View style={styles.motherStickyUpBar}>
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel={t('statueMotherArmeniaScrollToModel')}
+            android_ripple={{ color: 'rgba(216,168,90,0.28)' }}
+            onPress={scrollToModel}
+            style={({ pressed }) => [styles.motherArrowPress, pressed && { opacity: 0.88 }]}
+          >
+            <Animated.View style={upArrowAnimatedStyle}>
+              <Ionicons name="chevron-up-circle" size={48} color={gold} />
+            </Animated.View>
+          </Pressable>
+        </View>
+
+        <View style={styles.motherInfoSection}>
+          <View style={styles.compactHeader}>
+            {card.lead ? <Text style={styles.compactLead}>{card.lead}</Text> : null}
+            <View style={styles.compactRow}>
+              <View style={styles.compactDiscoveredChip}>
+                <Ionicons name="checkmark-circle" size={14} color="#FFFFFF" />
+                <Text style={styles.compactDiscoveredText}>{card.discoveredLabel}</Text>
+              </View>
+              {figure?.rarity ? <RarityBadge tier={figure.rarity} compact /> : null}
+            </View>
+          </View>
+          {sheetBody}
+        </View>
+      </ScrollView>
+    );
+  }
+
+  return (
+    <View style={styles.wrap}>
+      <View style={styles.heroWrap}>
+        {heroImageSource ? (
+          <Image source={heroImageSource} style={styles.heroImage} resizeMode="cover" />
+        ) : (
+          <View style={[styles.heroImage, { backgroundColor: colors.bgMuted }]} />
+        )}
+        <View style={styles.heroShadeMid} pointerEvents="none" />
+        <View style={styles.heroShadeBot} pointerEvents="none" />
+        <View style={styles.heroContent}>
+          <Text style={styles.heroTitle}>{title}</Text>
+          {card.lead ? (
+            <Text style={styles.heroLead}>{card.lead}</Text>
+          ) : null}
+          <View style={styles.heroRow}>
+            <View style={styles.discoveredChip}>
+              <Ionicons name="checkmark-circle" size={14} color="#FFFFFF" />
+              <Text style={styles.discoveredText}>{card.discoveredLabel}</Text>
+            </View>
+            {figure?.rarity ? <RarityBadge tier={figure.rarity} compact /> : null}
+          </View>
+        </View>
       </View>
+
+      {sheetBody}
     </View>
   );
 }

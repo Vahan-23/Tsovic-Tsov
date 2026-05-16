@@ -103,6 +103,9 @@ export const strings = {
     statueLockedHint:
       'Օբյեկտը բացելու համար պետք է գտնվես դրա {n} մ շառավղում։',
     statueDiscovered: 'Դու հայտնաբերել ես այս արձանը',
+    statueMotherArmeniaModelHint: '«Շոշափիր պատմությունը» — պտտիր մատով ձախ-աջ։',
+    statueMotherArmeniaScrollToInfo: 'Թերթել ներքև՝ մանրամասներին',
+    statueMotherArmeniaScrollToModel: 'Թերթել վերև՝ 3D մոդելին',
     statue3dKindLabel: '3D մոդել',
     statue3dLockedHint:
       '3D բացելու համար մոտեցիր հուշարձանին՝ առավելագույնը {n} մ շառավղում։',
@@ -322,6 +325,9 @@ export const strings = {
     statueLockedHint:
       'Чтобы открыть объект, подойдите в радиусе {n} м от него.',
     statueDiscovered: 'Вы открыли этот памятник',
+    statueMotherArmeniaModelHint: '«Прикоснись к истории» — проведите пальцем влево-вправо.',
+    statueMotherArmeniaScrollToInfo: 'Прокрутить вниз к описанию',
+    statueMotherArmeniaScrollToModel: 'Прокрутить вверх к 3D-модели',
     statue3dKindLabel: '3D-модель',
     statue3dLockedHint:
       'Подойдите к памятнику в радиусе {n} м, чтобы открыть 3D.',
@@ -541,6 +547,9 @@ export const strings = {
     statueLockedHint:
       'Come within {n} m of the object to unlock it.',
     statueDiscovered: 'You have discovered this statue',
+    statueMotherArmeniaModelHint: '“Touch the story” — swipe left or right to turn the model.',
+    statueMotherArmeniaScrollToInfo: 'Scroll down to details',
+    statueMotherArmeniaScrollToModel: 'Scroll up to 3D model',
     statue3dKindLabel: '3D model',
     statue3dLockedHint:
       'Come within {n} m of the monument to unlock 3D.',
