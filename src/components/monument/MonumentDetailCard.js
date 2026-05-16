@@ -42,7 +42,6 @@ export default function MonumentDetailCard({
   resolvedScheme,
   onNavigate,
   navigateLabel,
-  motherArmenia3dHint,
 }) {
   const { t } = useLanguage();
   const insets = useSafeAreaInsets();
@@ -50,35 +49,23 @@ export default function MonumentDetailCard({
   const scrollRef = useRef(null);
   const [heroBlockHeight, setHeroBlockHeight] = useState(0);
   const blinkDown = useRef(new Animated.Value(0)).current;
-  const blinkUp = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
-    const loop = (v) =>
-      Animated.loop(
-        Animated.sequence([
-          Animated.timing(v, { toValue: 1, duration: 900, useNativeDriver: true }),
-          Animated.timing(v, { toValue: 0, duration: 900, useNativeDriver: true }),
-        ])
-      );
-    const a = loop(blinkDown);
-    const b = loop(blinkUp);
-    a.start();
-    b.start();
-    return () => {
-      a.stop();
-      b.stop();
-    };
-  }, [blinkDown, blinkUp]);
+    const loop = Animated.loop(
+      Animated.sequence([
+        Animated.timing(blinkDown, { toValue: 1, duration: 900, useNativeDriver: true }),
+        Animated.timing(blinkDown, { toValue: 0, duration: 900, useNativeDriver: true }),
+      ])
+    );
+    loop.start();
+    return () => loop.stop();
+  }, [blinkDown]);
 
   const scrollToInfo = useCallback(() => {
     if (heroBlockHeight > 0) {
       scrollRef.current?.scrollTo({ y: heroBlockHeight, animated: true });
     }
   }, [heroBlockHeight]);
-
-  const scrollToModel = useCallback(() => {
-    scrollRef.current?.scrollTo({ y: 0, animated: true });
-  }, []);
 
   const tier = figure?.rarity ?? 2;
   const accent = rarityAccentColor(tier);
@@ -109,18 +96,6 @@ export default function MonumentDetailCard({
           gap: 16,
           paddingTop: 12,
           paddingBottom: 8,
-        },
-        motherStickyUpBar: {
-          backgroundColor: colors.bg,
-          paddingTop: 4,
-          paddingBottom: 10,
-          alignItems: 'center',
-          justifyContent: 'center',
-          borderBottomWidth: StyleSheet.hairlineWidth,
-          borderBottomColor: colors.borderMuted,
-          ...Platform.select({
-            android: { elevation: 3 },
-          }),
         },
         heroWrap: {
           borderRadius: 24,
@@ -445,15 +420,6 @@ export default function MonumentDetailCard({
         },
       ],
     };
-    const upArrowAnimatedStyle = {
-      opacity: blinkUp.interpolate({ inputRange: [0, 1], outputRange: [0.34, 1] }),
-      transform: [
-        {
-          translateY: blinkUp.interpolate({ inputRange: [0, 1], outputRange: [0, -10] }),
-        },
-      ],
-    };
-
     return (
       <ScrollView
         ref={scrollRef}
@@ -461,7 +427,6 @@ export default function MonumentDetailCard({
         contentContainerStyle={{ paddingBottom: insets.bottom + 28 }}
         showsVerticalScrollIndicator={false}
         keyboardShouldPersistTaps="handled"
-        stickyHeaderIndices={[1]}
       >
         <View
           style={{
@@ -485,7 +450,6 @@ export default function MonumentDetailCard({
             <MotherArmeniaGlbViewer
               key={`ma-glb-${glViewerHeight}`}
               colors={colors}
-              hintLabel={motherArmenia3dHint ?? ''}
               viewerHeight={glViewerHeight}
             />
           </View>
@@ -498,20 +462,6 @@ export default function MonumentDetailCard({
           >
             <Animated.View style={downArrowAnimatedStyle}>
               <Ionicons name="chevron-down-circle" size={48} color={gold} />
-            </Animated.View>
-          </Pressable>
-        </View>
-
-        <View style={styles.motherStickyUpBar}>
-          <Pressable
-            accessibilityRole="button"
-            accessibilityLabel={t('statueMotherArmeniaScrollToModel')}
-            android_ripple={{ color: 'rgba(216,168,90,0.28)' }}
-            onPress={scrollToModel}
-            style={({ pressed }) => [styles.motherArrowPress, pressed && { opacity: 0.88 }]}
-          >
-            <Animated.View style={upArrowAnimatedStyle}>
-              <Ionicons name="chevron-up-circle" size={48} color={gold} />
             </Animated.View>
           </Pressable>
         </View>

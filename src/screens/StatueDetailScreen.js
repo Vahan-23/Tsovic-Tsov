@@ -310,7 +310,6 @@ export default function StatueDetailScreen({ route, navigation }) {
           card={monumentCard}
           colors={colors}
           resolvedScheme={resolvedScheme}
-          motherArmenia3dHint={t('statueMotherArmeniaModelHint')}
           navigateLabel={t('statueLockedNavigateCta')}
           onNavigate={
             canNavigateToTarget
@@ -338,7 +337,6 @@ export default function StatueDetailScreen({ route, navigation }) {
         card={monumentCard}
         colors={colors}
         resolvedScheme={resolvedScheme}
-        motherArmenia3dHint={t('statueMotherArmeniaModelHint')}
         navigateLabel={t('statueLockedNavigateCta')}
         onNavigate={
           canNavigateToTarget
