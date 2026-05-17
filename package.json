@@ -11,9 +11,11 @@
     "collect:monuments": "npx tsx scripts/collectMonuments.ts",
     "import:apify": "npx tsx scripts/importApifyExport.ts",
     "convert:all": "npx tsx scripts/convertAll.ts",
+    "optimize:glb": "npx tsx scripts/convertGlbTextures.ts",
     "enrich:translations": "npx tsx scripts/enrichYandexTranslations.ts"
   },
   "dependencies": {
+    "@jsquash/webp": "^1.5.0",
     "@react-native-async-storage/async-storage": "2.2.0",
     "@react-navigation/bottom-tabs": "^7.15.11",
     "@react-navigation/material-top-tabs": "^7.4.24",
@@ -45,11 +47,14 @@
   },
   "private": true,
   "devDependencies": {
+    "@gltf-transform/core": "^4.3.0",
+    "@gltf-transform/functions": "^4.3.0",
     "@types/better-sqlite3": "^7.6.13",
     "@types/node": "^25.6.0",
     "@types/react": "~19.1.10",
     "p-limit": "^7.3.0",
     "playwright": "^1.59.1",
+    "sharp": "^0.34.5",
     "ts-node": "^10.9.2",
     "tsx": "^4.21.0",
     "typescript": "~5.9.2"

@@ -15,7 +15,8 @@ import { Ionicons } from '@expo/vector-icons';
 import RarityBadge from '../RarityBadge';
 import { rarityAccentColor } from '../../utils/statueRarity';
 import { resolveMonumentCardId } from '../../data/monumentCards';
-import MotherArmeniaGlbViewer from '../MotherArmeniaGlbViewer';
+import MonumentGlbViewer from '../MonumentGlbViewer';
+import { monumentHasGlbPreview } from '../../data/monumentGlbModels';
 import { useLanguage } from '../../context/LanguageContext';
 
 function FactTile({ fact, styles, accent }) {
@@ -337,7 +338,7 @@ export default function MonumentDetailCard({
   const hasPersonBio = Boolean(card.personBio) && card.personBio !== card.story;
 
   const monumentCardId = resolveMonumentCardId(figure);
-  const showMotherArmenia3d = monumentCardId === 'mother_armenia';
+  const showMonument3d = monumentHasGlbPreview(monumentCardId);
 
   const sheetBody = (
     <View style={styles.sheet}>
@@ -400,7 +401,7 @@ export default function MonumentDetailCard({
     </View>
   );
 
-  if (showMotherArmenia3d) {
+  if (showMonument3d) {
     const topBand = Math.max(0, insets.top - 20);
     const arrowBand = 92;
     const rawGlH = Math.max(
@@ -447,8 +448,9 @@ export default function MonumentDetailCard({
             ]}
             collapsable={false}
           >
-            <MotherArmeniaGlbViewer
-              key={`ma-glb-${glViewerHeight}`}
+            <MonumentGlbViewer
+              key={`glb-${monumentCardId}-${glViewerHeight}`}
+              monumentCardId={monumentCardId}
               colors={colors}
               viewerHeight={glViewerHeight}
             />

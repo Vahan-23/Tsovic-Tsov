@@ -20,6 +20,7 @@ import RarityBadge from '../components/RarityBadge';
 import MonumentDetailCard from '../components/monument/MonumentDetailCard';
 import { resolveMonumentCardContent } from '../utils/resolveMonumentCard';
 import { resolveMonumentCardId } from '../data/monumentCards';
+import { monumentHasGlbPreview } from '../data/monumentGlbModels';
 import { useCelebrationPeekOptional } from '../context/CelebrationPeekContext';
 
 export default function StatueDetailScreen({ route, navigation }) {
@@ -295,12 +296,13 @@ export default function StatueDetailScreen({ route, navigation }) {
     );
   }
 
-  const isMotherArmeniaDetail =
+  const monumentCardIdFor3d = figure ? resolveMonumentCardId(figure) : null;
+  const isMonument3dDetail =
     figure &&
     collectionKind === 'statues' &&
-    resolveMonumentCardId(figure) === 'mother_armenia';
+    monumentHasGlbPreview(monumentCardIdFor3d);
 
-  if (isMotherArmeniaDetail && monumentCard) {
+  if (isMonument3dDetail && monumentCard) {
     return (
       <View style={{ flex: 1, backgroundColor: colors.bg }}>
         <MonumentDetailCard

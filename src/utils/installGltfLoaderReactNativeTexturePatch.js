@@ -4,6 +4,17 @@ import * as jpeg from 'jpeg-js';
 
 const patchedLoaders = new WeakMap();
 
+/** @type {((buffer: ArrayBuffer) => Promise<ImageData>) | null} */
+let webpDecodeFn = null;
+
+async function getWebpDecode() {
+  if (!webpDecodeFn) {
+    const mod = await import('@jsquash/webp');
+    webpDecodeFn = mod.decode;
+  }
+  return webpDecodeFn;
+}
+
 function expandPngToRgba(width, height, src, channels) {
   const n = width * height;
   const out = new Uint8Array(n * 4);
@@ -50,13 +61,51 @@ function expandPngToRgba(width, height, src, channels) {
   throw new Error(`GLTF RN texture: unsupported PNG channel count ${channels}`);
 }
 
+function createDataTextureFromRgba(rgba, width, height, mimeType) {
+  const tex = new THREE.DataTexture(
+    rgba,
+    width,
+    height,
+    THREE.RGBAFormat,
+    THREE.UnsignedByteType
+  );
+  tex.needsUpdate = true;
+  tex.flipY = false;
+  tex.colorSpace = THREE.SRGBColorSpace;
+  tex.generateMipmaps = false;
+  tex.unpackAlignment = 1;
+  tex.userData.mimeType = mimeType;
+  return tex;
+}
+
+/** Neutral stone tone when a texture fails to decode. */
+function createPlaceholderTexture(mimeType) {
+  return createDataTextureFromRgba(
+    new Uint8Array([168, 160, 152, 255]),
+    1,
+    1,
+    mimeType || 'image/placeholder'
+  );
+}
+
+async function decodeWebpToRgba(arrayBuffer) {
+  const decode = await getWebpDecode();
+  const imageData = await decode(arrayBuffer);
+  const { width, height, data } = imageData;
+  const rgba =
+    data instanceof Uint8Array
+      ? data
+      : new Uint8Array(data.buffer, data.byteOffset, data.byteLength);
+  return { width, height, rgba };
+}
+
 /**
  * DOM-free path for embedded glTF images (React Native has no `document` / HTMLImageElement).
  * @param {ArrayBuffer} arrayBuffer
  * @param {string} mimeType
- * @returns {THREE.DataTexture}
+ * @returns {Promise<THREE.DataTexture>}
  */
-function decodeBufferToDataTexture(arrayBuffer, mimeType) {
+async function decodeBufferToDataTexture(arrayBuffer, mimeType) {
   const u8 = new Uint8Array(arrayBuffer);
   const m = (mimeType || '').toLowerCase();
 
@@ -79,26 +128,12 @@ function decodeBufferToDataTexture(arrayBuffer, mimeType) {
     }
     rgba = expandPngToRgba(width, height, img.data, img.channels);
   } else if (m.includes('webp')) {
-    throw new Error(
-      'GLTF RN texture: image/webp is not supported in-app; re-export textures as JPEG or PNG'
-    );
+    ({ width, height, rgba } = await decodeWebpToRgba(arrayBuffer));
   } else {
     throw new Error(`GLTF RN texture: unsupported image mime type "${mimeType}"`);
   }
 
-  const tex = new THREE.DataTexture(
-    rgba,
-    width,
-    height,
-    THREE.RGBAFormat,
-    THREE.UnsignedByteType
-  );
-  tex.needsUpdate = true;
-  tex.flipY = false;
-  tex.colorSpace = THREE.SRGBColorSpace;
-  tex.generateMipmaps = false;
-  tex.unpackAlignment = 1;
-  return tex;
+  return createDataTextureFromRgba(rgba, width, height, mimeType);
 }
 
 function assignImageExtras(texture, sourceDef) {
@@ -152,16 +187,18 @@ export function installGltfLoaderReactNativeTexturePatch(loader) {
         })
         .then((texture) => {
           assignImageExtras(texture, sourceDef);
-          texture.userData.mimeType = mimeType;
           return texture;
         })
         .catch((error) => {
-          console.error(
+          console.warn(
             "THREE.GLTFLoader: Couldn't load texture (RN DataTexture path)",
             sourceIndex,
+            mimeType,
             error
           );
-          throw error;
+          const placeholder = createPlaceholderTexture(mimeType);
+          assignImageExtras(placeholder, sourceDef);
+          return placeholder;
         });
 
       parser.sourceCache[sourceIndex] = promise;

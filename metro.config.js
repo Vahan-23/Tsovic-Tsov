@@ -11,5 +11,8 @@ if (!config.resolver.assetExts.includes('gltf')) {
 if (!config.resolver.sourceExts.includes('cjs')) {
   config.resolver.sourceExts.push('cjs');
 }
+if (!config.resolver.assetExts.includes('wasm')) {
+  config.resolver.assetExts.push('wasm');
+}
 
 module.exports = config;
