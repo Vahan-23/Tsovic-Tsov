@@ -1,8 +1,14 @@
 /**
  * Локальные превью для коллекции и экрана объекта — без запросов по URL в сетке.
- * Добавляйте файлы в assets/collection/ и связывайте по id или OSM node id.
+ * 3D-памятники: PNG в assets/3Dmodels/3DPNG/ (см. monument3dPreviewImages.js).
  */
 import { resolveFigureOsmId } from './curatedStatueProfiles';
+import {
+  getMonument3dPreviewSource,
+  hasMonument3dPreview,
+} from './monument3dPreviewImages';
+
+export { hasMonument3dPreview };
 
 /** Общая заглушка до замены на реальные фото в assets/collection/ */
 const FALLBACK_MONUMENT = require('../../assets/search_ico/monument.png');
@@ -28,6 +34,8 @@ const BY_OSM_ID = {
  */
 export function getStatueCollectionImageSource(figure) {
   if (!figure) return null;
+  const preview3d = getMonument3dPreviewSource(figure);
+  if (preview3d != null) return preview3d;
   const slug = String(figure.id ?? '').trim();
   if (slug && BY_SLUG[slug]) return BY_SLUG[slug];
 

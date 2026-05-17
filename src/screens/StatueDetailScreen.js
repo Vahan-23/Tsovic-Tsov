@@ -7,6 +7,7 @@ import {
   Share,
   StyleSheet,
   Text,
+  useWindowDimensions,
   View,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
@@ -15,7 +16,11 @@ import { useLanguage } from '../context/LanguageContext';
 import { labelForBrowseLocale } from '../utils/alphabetBrowse';
 import { useFigures } from '../context/FiguresContext';
 import { useSettings } from '../context/SettingsContext';
-import { getStatueCollectionImageSource } from '../data/statueCollectionImages';
+import {
+  getStatueCollectionImageSource,
+  hasMonument3dPreview,
+} from '../data/statueCollectionImages';
+import Monument3dPreviewImage from '../components/monument/Monument3dPreviewImage';
 import RarityBadge from '../components/RarityBadge';
 import MonumentDetailCard from '../components/monument/MonumentDetailCard';
 import { resolveMonumentCardContent } from '../utils/resolveMonumentCard';
@@ -26,6 +31,7 @@ import { useCelebrationPeekOptional } from '../context/CelebrationPeekContext';
 export default function StatueDetailScreen({ route, navigation }) {
   const celebrationPeek = useCelebrationPeekOptional();
   const { t, locale } = useLanguage();
+  const { width: windowWidth } = useWindowDimensions();
 
   useEffect(() => {
     return () => {
@@ -129,8 +135,14 @@ export default function StatueDetailScreen({ route, navigation }) {
           fontWeight: '800',
           letterSpacing: 0.25,
         },
+        lockedPreviewWrap: {
+          width: '100%',
+          height: Math.min(windowWidth * 0.92, 380),
+          marginBottom: 20,
+          backgroundColor: 'transparent',
+        },
       }),
-    [colors]
+    [colors, windowWidth]
   );
 
   const { statueId, collectionKind = 'statues' } = route.params || {};
@@ -221,9 +233,23 @@ export default function StatueDetailScreen({ route, navigation }) {
     );
   }
 
+  const lockedPreviewSource =
+    figure && collectionKind === 'statues' && hasMonument3dPreview(figure)
+      ? getStatueCollectionImageSource(figure)
+      : null;
+
   if (!figure.unlocked) {
     return (
       <ScrollView contentContainerStyle={styles.lockedScroll}>
+        {lockedPreviewSource ? (
+          <View style={styles.lockedPreviewWrap}>
+            <Monument3dPreviewImage
+              source={lockedPreviewSource}
+              unlocked={false}
+              style={StyleSheet.absoluteFillObject}
+            />
+          </View>
+        ) : null}
         {collectionKind === 'pulpulaks' ? (
           <Text style={styles.kind}>{t('pulpulakKindLabel')}</Text>
         ) : null}

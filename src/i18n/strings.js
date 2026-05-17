@@ -173,6 +173,7 @@ export const strings = {
     nearestMeters: '{n} մ',
     collectionUnlockedFilterToggle: 'Միայն բացված',
     collectionShowAll: 'Բոլորը',
+    collectionTabOpened: 'Բացված',
     collectionUnlockedFilterHint:
       'Ցուցադրել միայն բացված կետերը։ Լուսանկարով քարտերը վերևում են։',
     collectionUnlockedFilterEmpty: 'Դեռ բացված կետեր չկան կամ ֆիլտրը դատարկ է։',
@@ -397,6 +398,7 @@ export const strings = {
     nearestMeters: '{n} м',
     collectionUnlockedFilterToggle: 'Только открытые',
     collectionShowAll: 'Все',
+    collectionTabOpened: 'Открытые',
     collectionUnlockedFilterHint:
       'Показывать только уже открытые памятники. С превью сверху — у объектов с локальной картинкой.',
     collectionUnlockedFilterEmpty: 'Нет открытых объектов или фильтр пуст.',
@@ -621,6 +623,7 @@ export const strings = {
     nearestMeters: '{n} m',
     collectionUnlockedFilterToggle: 'Unlocked only',
     collectionShowAll: 'All',
+    collectionTabOpened: 'Opened',
     collectionUnlockedFilterHint:
       'Show monuments you have already unlocked. Items with bundled thumbnails appear first.',
     collectionUnlockedFilterEmpty: 'No unlocked items yet, or nothing matches.',

@@ -10,7 +10,6 @@ import {
   Image,
   Pressable,
   StyleSheet,
-  Switch,
   Text,
   useWindowDimensions,
   View,
@@ -24,19 +23,27 @@ import { useSettings } from '../context/SettingsContext';
 import { useFigures } from '../context/FiguresContext';
 import { labelForBrowseLocale } from '../utils/alphabetBrowse';
 import {
-  getStatueCollectionImageSource,
-  hasStatueCollectionImage,
-} from '../data/statueCollectionImages';
-import RarityBadge from '../components/RarityBadge';
-import { rarityBorderColor } from '../utils/statueRarity';
+  getMonument3dPreviewSource,
+  hasMonument3dPreview,
+} from '../data/monument3dPreviewImages';
+import { hasStatueCollectionImage } from '../data/statueCollectionImages';
+import Monument3dPreviewImage from '../components/monument/Monument3dPreviewImage';
 
 const UNLOCKED_ONLY_FILTER_KEY = '@tsovic_tsov/collection_unlocked_only';
 
 /** Сначала объекты с локальным превью в assets, затем по алфавиту. */
+const COLLECTION_PREVIEW_OPTS = { fillWithPlaceholder: true };
+
 function sortStatuesForCollection(items, locale) {
   return [...items].sort((a, b) => {
-    const pa = hasStatueCollectionImage(a) ? 1 : 0;
-    const pb = hasStatueCollectionImage(b) ? 1 : 0;
+    const pa =
+      hasMonument3dPreview(a, COLLECTION_PREVIEW_OPTS) || hasStatueCollectionImage(a)
+        ? 1
+        : 0;
+    const pb =
+      hasMonument3dPreview(b, COLLECTION_PREVIEW_OPTS) || hasStatueCollectionImage(b)
+        ? 1
+        : 0;
     if (pb !== pa) return pb - pa;
     const la = labelForBrowseLocale(a, locale).toLowerCase();
     const lb = labelForBrowseLocale(b, locale).toLowerCase();
@@ -73,11 +80,10 @@ function CollectionFigureTile({
   resolvedScheme,
 }) {
   const title = labelForBrowseLocale(item, locale);
-  const localThumb = getStatueCollectionImageSource(item);
+  const localThumb = getMonument3dPreviewSource(item, COLLECTION_PREVIEW_OPTS);
+  const is3dPreview = localThumb != null;
   const initial = (title || '?').trim().charAt(0).toUpperCase() || '•';
   const tint = placeholderTint(item.id, resolvedScheme === 'dark');
-  const tier = item.rarity ?? 1;
-  const rarityBorder = rarityBorderColor(tier, colors);
 
   return (
     <Pressable
@@ -93,15 +99,23 @@ function CollectionFigureTile({
       <View
         style={[
           styles.tileCard,
-          { borderColor: rarityBorder, borderWidth: tier === 3 ? 2 : 1 },
-          !item.unlocked && styles.tileCardLocked,
+          is3dPreview ? styles.tileCard3d : styles.tileCardPlain,
+          !item.unlocked && !is3dPreview && styles.tileCardLocked,
         ]}
       >
-        <View style={styles.rarityBadgePos}>
-          <RarityBadge tier={tier} compact />
-        </View>
-        <View style={styles.tileImageSection}>
-          {localThumb ? (
+        <View
+          style={[
+            styles.tileImageSection,
+            is3dPreview && styles.tileImageSection3d,
+          ]}
+        >
+          {localThumb && is3dPreview ? (
+            <Monument3dPreviewImage
+              source={localThumb}
+              unlocked={item.unlocked}
+              style={StyleSheet.absoluteFillObject}
+            />
+          ) : localThumb ? (
             <Image source={localThumb} style={styles.tileImage} resizeMode="cover" />
           ) : (
             <View style={[styles.tilePlaceholder, { backgroundColor: tint }]}>
@@ -111,32 +125,38 @@ function CollectionFigureTile({
               </View>
             </View>
           )}
-          {!item.unlocked ? (
+          {!item.unlocked && !is3dPreview ? (
             <View style={styles.tileLockOverlay}>
               <View style={styles.tileLockBubble}>
                 <Ionicons name="lock-closed" size={22} color="#FFFFFF" />
               </View>
             </View>
-          ) : (
+          ) : !item.unlocked ? null : !is3dPreview ? (
             <View style={styles.tileOpenBadge}>
               <Ionicons name="checkmark-circle" size={20} color="#FFFFFF" />
             </View>
-          )}
+          ) : null}
         </View>
-        <View style={styles.tileFooter}>
+        <View style={[styles.tileFooter, is3dPreview && styles.tileFooter3d]}>
           <Text
-            style={[styles.tileTitle, !item.unlocked && styles.tileTitleMuted]}
-            numberOfLines={2}
+            style={[
+              styles.tileTitle,
+              is3dPreview && styles.tileTitle3d,
+              !item.unlocked && styles.tileTitleMuted,
+            ]}
+            numberOfLines={is3dPreview ? 1 : 2}
           >
             {title}
           </Text>
-          {!item.unlocked ? (
-            <Text style={styles.tileLockedHint}>{t('collectionCardLocked')}</Text>
-          ) : (
-            <Text style={styles.tileOpenHint} numberOfLines={1}>
-              {t('statueDiscovered')}
-            </Text>
-          )}
+          {!is3dPreview ? (
+            !item.unlocked ? (
+              <Text style={styles.tileLockedHint}>{t('collectionCardLocked')}</Text>
+            ) : (
+              <Text style={styles.tileOpenHint} numberOfLines={1}>
+                {t('statueDiscovered')}
+              </Text>
+            )
+          ) : null}
         </View>
       </View>
     </Pressable>
@@ -145,13 +165,17 @@ function CollectionFigureTile({
 
 export default function CollectionScreen({ navigation }) {
   const insets = useSafeAreaInsets();
-  const { width } = useWindowDimensions();
+  const { width, height } = useWindowDimensions();
   const { t, locale } = useLanguage();
   const { colors, resolvedScheme } = useSettings();
-  const pad = 12;
+  const pad = 10;
   const tileWidth = Math.max(
     140,
     (width - pad * 2 - COLUMN_GAP) / 2
+  );
+  const tileImageHeight3d = Math.max(
+    200,
+    Math.min(300, Math.round((height - 168) * 0.32))
   );
 
   const styles = useMemo(
@@ -161,7 +185,7 @@ export default function CollectionScreen({ navigation }) {
           flex: 1,
           backgroundColor: colors.bg,
           paddingHorizontal: pad,
-          paddingTop: 10,
+          paddingTop: 4,
         },
         centered: {
           flex: 1,
@@ -169,55 +193,54 @@ export default function CollectionScreen({ navigation }) {
           justifyContent: 'center',
           backgroundColor: colors.bg,
         },
-        progressWrap: {
-          marginBottom: 14,
-          paddingVertical: 14,
-          paddingHorizontal: 16,
-          borderRadius: 18,
-          backgroundColor: colors.bgElevated,
-          borderWidth: StyleSheet.hairlineWidth,
-          borderColor: colors.border,
-        },
-        progressTitle: {
-          fontSize: 13,
-          fontWeight: '700',
-          color: colors.textMuted,
-          letterSpacing: 0.6,
-          textTransform: 'uppercase',
-          marginBottom: 6,
-        },
-        progressStat: {
-          fontSize: 26,
-          fontWeight: '900',
-          letterSpacing: -0.8,
-          color: colors.text,
-        },
-        filterRow: {
+        toolbar: {
           flexDirection: 'row',
           alignItems: 'center',
-          justifyContent: 'space-between',
-          gap: 12,
-          marginBottom: 14,
-          paddingVertical: 12,
-          paddingHorizontal: 14,
-          backgroundColor: colors.bgElevated,
-          borderRadius: 14,
-          borderWidth: 1,
-          borderColor: colors.border,
+          gap: 8,
+          marginBottom: 8,
         },
-        filterTextWrap: {
+        toolPill: {
           flex: 1,
+          flexDirection: 'row',
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: 6,
+          paddingVertical: 6,
+          paddingHorizontal: 11,
+          borderRadius: 999,
+          backgroundColor:
+            resolvedScheme === 'dark'
+              ? 'rgba(15, 20, 32, 0.92)'
+              : 'rgba(255, 255, 255, 0.95)',
+          borderWidth: 1.5,
+          borderColor: colors.border,
+          shadowColor: '#000',
+          shadowOffset: { width: 0, height: 2 },
+          shadowOpacity: resolvedScheme === 'dark' ? 0.28 : 0.1,
+          shadowRadius: 4,
+          elevation: 2,
         },
-        filterTitle: {
-          fontSize: 15,
-          fontWeight: '700',
+        toolPillActive: {
+          borderColor: colors.primary,
+          backgroundColor: colors.primaryBg,
+        },
+        toolPillLabel: {
+          fontSize: 14,
+          fontWeight: '800',
+          color: colors.textSecondary,
+          letterSpacing: -0.2,
+        },
+        toolPillLabelActive: {
           color: colors.text,
         },
-        filterHint: {
-          marginTop: 4,
-          fontSize: 12,
+        toolPillCount: {
+          fontSize: 15,
+          fontWeight: '900',
           color: colors.textMuted,
-          lineHeight: 16,
+          letterSpacing: -0.3,
+        },
+        toolPillCountActive: {
+          color: colors.primary,
         },
         emptyFilter: {
           textAlign: 'center',
@@ -238,25 +261,19 @@ export default function CollectionScreen({ navigation }) {
           opacity: 0.94,
           transform: [{ scale: 0.988 }],
         },
-        rarityBadgePos: {
-          position: 'absolute',
-          top: 8,
-          left: 8,
-          zIndex: 4,
-        },
         tileCard: {
-          borderRadius: 18,
           overflow: 'hidden',
-          backgroundColor: colors.bgElevated,
+          backgroundColor: 'transparent',
           position: 'relative',
-          shadowColor: colors.shadow,
-          shadowOffset: { width: 0, height: 6 },
-          shadowOpacity: 0.12,
-          shadowRadius: 12,
-          elevation: 4,
+        },
+        tileCardPlain: {
+          borderRadius: 18,
+          backgroundColor: colors.bgElevated,
+          borderWidth: 0,
+          shadowOpacity: 0,
+          elevation: 0,
         },
         tileCardLocked: {
-          borderColor: colors.borderMuted,
           opacity: 0.96,
         },
         tileImageSection: {
@@ -264,6 +281,28 @@ export default function CollectionScreen({ navigation }) {
           aspectRatio: 1.05,
           backgroundColor: colors.placeholderBg,
           position: 'relative',
+        },
+        tileCard3d: {
+          borderWidth: 0,
+          backgroundColor: 'transparent',
+          shadowOpacity: 0,
+          elevation: 0,
+        },
+        tileImageSection3d: {
+          backgroundColor: 'transparent',
+          height: tileImageHeight3d,
+          aspectRatio: undefined,
+        },
+        tileFooter3d: {
+          paddingHorizontal: 4,
+          paddingTop: 2,
+          paddingBottom: 4,
+        },
+        tileTitle3d: {
+          fontSize: 11,
+          lineHeight: 14,
+          textAlign: 'center',
+          fontWeight: '700',
         },
         tileImage: {
           width: '100%',
@@ -346,7 +385,7 @@ export default function CollectionScreen({ navigation }) {
           color: colors.accentGreen,
         },
       }),
-    [colors]
+    [colors, resolvedScheme, tileImageHeight3d]
   );
 
   const {
@@ -415,29 +454,61 @@ export default function CollectionScreen({ navigation }) {
 
   return (
     <View style={[styles.container, { paddingBottom: 8 }]}>
-      <View style={styles.progressWrap}>
-        <Text style={styles.progressTitle}>{t('collectionEntryHeroTitle')}</Text>
-        <Text style={styles.progressStat}>
-          {t('progressLabel', { unlocked: unlockedCount, total: totalCount })}
-        </Text>
-      </View>
-
-      <View style={styles.filterRow}>
-        <View style={styles.filterTextWrap}>
-          <Text style={styles.filterTitle}>{t('collectionUnlockedFilterToggle')}</Text>
-          <Text style={styles.filterHint}>{t('collectionUnlockedFilterHint')}</Text>
-        </View>
-        <Switch
-          value={unlockedOnlyFilter}
-          onValueChange={toggleUnlockedOnlyFilter}
-          trackColor={{
-            false: colors.switchTrackOff,
-            true: colors.switchTrackOn,
-          }}
-          thumbColor={
-            unlockedOnlyFilter ? colors.switchThumbOn : colors.switchThumbOff
-          }
-        />
+      <View style={styles.toolbar}>
+        <Pressable
+          accessibilityRole="button"
+          accessibilityState={{ selected: !unlockedOnlyFilter }}
+          onPress={() => toggleUnlockedOnlyFilter(false)}
+          style={({ pressed }) => [
+            styles.toolPill,
+            !unlockedOnlyFilter && styles.toolPillActive,
+            pressed && { opacity: 0.9 },
+          ]}
+        >
+          <Text
+            style={[
+              styles.toolPillLabel,
+              !unlockedOnlyFilter && styles.toolPillLabelActive,
+            ]}
+          >
+            {t('collectionShowAll')}
+          </Text>
+          <Text
+            style={[
+              styles.toolPillCount,
+              !unlockedOnlyFilter && styles.toolPillCountActive,
+            ]}
+          >
+            {totalCount}
+          </Text>
+        </Pressable>
+        <Pressable
+          accessibilityRole="button"
+          accessibilityState={{ selected: unlockedOnlyFilter }}
+          onPress={() => toggleUnlockedOnlyFilter(true)}
+          style={({ pressed }) => [
+            styles.toolPill,
+            unlockedOnlyFilter && styles.toolPillActive,
+            pressed && { opacity: 0.9 },
+          ]}
+        >
+          <Text
+            style={[
+              styles.toolPillLabel,
+              unlockedOnlyFilter && styles.toolPillLabelActive,
+            ]}
+          >
+            {t('collectionTabOpened')}
+          </Text>
+          <Text
+            style={[
+              styles.toolPillCount,
+              unlockedOnlyFilter && styles.toolPillCountActive,
+            ]}
+          >
+            {unlockedCount}
+          </Text>
+        </Pressable>
       </View>
 
       {gridData.length === 0 ? (
@@ -453,6 +524,7 @@ export default function CollectionScreen({ navigation }) {
         </Text>
       ) : (
         <FlatList
+          style={{ flex: 1 }}
           data={gridData}
           keyExtractor={(item) => String(item.id)}
           numColumns={2}
@@ -460,6 +532,7 @@ export default function CollectionScreen({ navigation }) {
           contentContainerStyle={[
             styles.grid,
             {
+              flexGrow: 1,
               paddingBottom: TAB_BAR_SCROLL_SPACER + Math.max(insets.bottom, 8),
             },
           ]}
