@@ -17,7 +17,7 @@ import { getMonumentGlbAsset, getMonumentGlbViewTuning } from '../data/monumentG
 
 
 /** Bump when model cache format / material pipeline changes. */
-const MODEL_CACHE_VERSION = 8;
+const MODEL_CACHE_VERSION = 12;
 
 /** @type {Map<string, { modelRoot: import('three').Group | null, assetUri: string | null, preloadPromise: Promise<string> | null, modelVersion: number }>} */
 const modelCaches = new Map();
@@ -305,6 +305,13 @@ function fitModelToView(root, camera, embedLarge, monumentCardId) {
 
   let sphere = recenterRootOnSphere(root);
   alignStatueFrontTowardCamera(root);
+
+  // Other GLBs export facing -Z; auto ±90° leaves them back-on. Mother uses tuning PI only.
+  if (monumentCardId !== 'mother_armenia') {
+    root.rotation.y += Math.PI;
+    root.updateMatrixWorld(true);
+    sphere = recenterRootOnSphere(root);
+  }
 
   const tuning = getMonumentGlbViewTuning(monumentCardId);
   if (tuning?.initialRotationY) {
